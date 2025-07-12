@@ -1,7 +1,7 @@
-type THttpClientConfig = {
-  baseURL: string
+type THttpRequestOptions = {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   headers?: Record<string, string>
-  timeout?: number
+  body?: unknown
 }
 
 type THttpResponse<T = unknown> = {
@@ -11,51 +11,127 @@ type THttpResponse<T = unknown> = {
   headers: Record<string, string>
 }
 
-function createHttpClient(config: THttpClientConfig) {
+type TPaginatedResponse<T = unknown> = {
+  data: T[]
+  hasNext: boolean
+  nextUrl?: string
+  totalCount?: number
+}
+
+function parseLinkHeader(linkHeader: string): Record<string, string> {
+  const links: Record<string, string> = {}
+  const parts = linkHeader.split(',')
+  
+  for (const part of parts) {
+    const section = part.split(';')
+    if (section.length !== 2) continue
+    
+    const url = section[0].replace(/<(.*)>/, '$1').trim()
+    const name = section[1].replace(/rel="(.*)"/, '$1').trim()
+    links[name] = url
+  }
+  
+  return links
+}
+
+function createAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Accept': 'application/vnd.github.v3+json',
+    'User-Agent': 'github-api-service'
+  }
+  
+  if (process.env.GITHUB_TOKEN) {
+    headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`
+  }
+  
+  return headers
+}
+
+async function httpRequest<T = unknown>(
+  url: string,
+  query?: Record<string, string | number>,
+  signal?: AbortSignal
+): Promise<THttpResponse<T>> {
+  const searchParams = new URLSearchParams()
+  
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      searchParams.append(key, String(value))
+    }
+  }
+  
+  const fullUrl = searchParams.toString() 
+    ? `${url}?${searchParams.toString()}`
+    : url
+  
+  const response = await fetch(fullUrl, {
+    method: 'GET',
+    headers: createAuthHeaders(),
+    signal
+  })
+  
+  if (!response.ok) {
+    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
+  }
+  
+  const data = await response.json()
+  
   return {
-    async get<T = unknown>(url: string, options?: RequestInit): Promise<THttpResponse<T>> {
-      const response = await fetch(`${config.baseURL}${url}`, {
-        method: 'GET',
-        headers: {
-          ...config.headers,
-          ...options?.headers,
-        },
-        ...options,
-      })
-
-      const data = await response.json()
-
-      return {
-        data,
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
-      }
-    },
-
-    async post<T = unknown>(url: string, body?: unknown, options?: RequestInit): Promise<THttpResponse<T>> {
-      const response = await fetch(`${config.baseURL}${url}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...config.headers,
-          ...options?.headers,
-        },
-        body: body ? JSON.stringify(body) : undefined,
-        ...options,
-      })
-
-      const data = await response.json()
-
-      return {
-        data,
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
-      }
-    },
+    data,
+    status: response.status,
+    statusText: response.statusText,
+    headers: Object.fromEntries(response.headers.entries())
   }
 }
 
-export { createHttpClient }
-export type { THttpClientConfig, THttpResponse }
+async function httpRequestWithPagination<T = unknown>(
+  url: string,
+  query?: Record<string, string | number>,
+  signal?: AbortSignal
+): Promise<TPaginatedResponse<T>> {
+  const searchParams = new URLSearchParams()
+  
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      searchParams.append(key, String(value))
+    }
+  }
+  
+  const fullUrl = searchParams.toString() 
+    ? `${url}?${searchParams.toString()}`
+    : url
+  
+  const response = await fetch(fullUrl, {
+    method: 'GET',
+    headers: createAuthHeaders(),
+    signal
+  })
+  
+  if (!response.ok) {
+    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
+  }
+  
+  const data = await response.json()
+  const linkHeader = response.headers.get('link')
+  
+  let hasNext = false
+  let nextUrl: string | undefined
+  
+  if (linkHeader) {
+    const links = parseLinkHeader(linkHeader)
+    hasNext = Boolean(links.next)
+    nextUrl = links.next
+  }
+  
+  return {
+    data: Array.isArray(data) ? data : [data],
+    hasNext,
+    nextUrl,
+    totalCount: response.headers.get('x-total-count') 
+      ? parseInt(response.headers.get('x-total-count')!, 10)
+      : undefined
+  }
+}
+
+export { httpRequest, httpRequestWithPagination }
+export type { THttpResponse, TPaginatedResponse, THttpRequestOptions }
