@@ -5,7 +5,7 @@ export type { TGitHubRepository } from './types/github-repository'
 export { createHttpClient } from './services/http-client'
 export type { THttpClientConfig, THttpResponse } from './services/http-client'
 
-export { cacheServiceFactory } from './services/cache-service'
+export { setCache, getCache, memoize } from './services/cache-service'
 
 export { 
   filterUsers, 
