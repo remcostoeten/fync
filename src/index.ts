@@ -7,6 +7,12 @@ export type { THttpClientConfig, THttpResponse } from './services/http-client'
 
 export { setCache, getCache, memoize } from './services/cache-service'
 
+export { fetchUser } from './services/user-fetcher'
+export type { TFetchUserOpts } from './services/user-fetcher'
+
+export { fetchRepositories } from './services/repo-fetcher'
+export type { TFetchRepositoriesOpts } from './services/repo-fetcher'
+
 export { 
   filterUsers, 
   filterUsersByType, 
