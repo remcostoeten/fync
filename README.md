@@ -1,5 +1,7 @@
 # GitHub Easy Fetcher
 
+![npm](https://img.shields.io/npm/v/gheasy)
+
 A flexible, chainable GitHub API client for JavaScript/TypeScript that makes it easy to fetch any GitHub data.
 
 ## Features
@@ -14,13 +16,13 @@ A flexible, chainable GitHub API client for JavaScript/TypeScript that makes it 
 ## Installation
 
 ```bash
-npm install github-easy-fetcher
+npm install gheasy
 ```
 
 ## Basic Usage
 
 ```typescript
-import { GitHub } from 'github-easy-fetcher'
+import { GitHub } from 'gheasy'
 
 // Create a client (optionally with a token)
 const github = GitHub({ token: 'your-github-token' })
@@ -225,7 +227,7 @@ All `get()`, `post()`, `put()`, `patch()`, and `delete()` methods accept options
 The package still supports the original filtering API:
 
 ```typescript
-import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from 'github-easy-fetcher'
+import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from 'gheasy'
 
 const user = await fetchUser('octocat')
 const repos = await fetchRepositories('octocat')
