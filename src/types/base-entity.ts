@@ -1,7 +1,5 @@
-type TBaseEntity = {
+export type TBaseEntity = {
   id: number
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
-
-export type { TBaseEntity }
