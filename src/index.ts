@@ -1,92 +1,121 @@
-export type { TBaseEntity } from './types/base-entity'
-export type { TGitHubUser } from './types/github-user'
-export type { TGitHubRepository } from './types/github-repository'
+// Main fluent API
 
-export { createHttpClient } from './services/http-client'
-export type { THttpClientConfig, THttpResponse } from './services/http-client'
-
-export { setCache, getCache, memoize } from './services/cache-service'
-
-export { fetchUser } from './services/user-fetcher'
-export type { TFetchUserOpts } from './services/user-fetcher'
-
-export { fetchRepositories } from './services/repo-fetcher'
-export type { TFetchRepositoriesOpts } from './services/repo-fetcher'
-
-export {
-  filterUsers,
-  filterUserFields,
-  filterUsersByType,
-  filterUsersByFollowers,
-  filterUsersByPublicRepos,
-  filterUsersByLocation,
-  filterUsersByCompany,
-} from './filters/user-filters'
 export type {
-  TUserFilterCriteria,
-  TUserFieldFilter,
-} from './filters/user-filters'
-
+	TApiResponse,
+	TErrorResponse,
+	TFluentResponse,
+	TResponseBuilderOptions,
+	TSimpleResponse,
+	TStructuredResponse,
+} from "./builders/response-builder";
 export {
-  filterRepositories,
-  filterRepositoriesByAdvancedCriteria,
-  filterRepositoriesByLanguage,
-  filterRepositoriesByForks,
-  filterRepositoriesByStars,
-  filterRepositoriesByWatchers,
-  filterRepositoriesByTopics,
-  filterRepositoriesByLicense,
-} from './filters/repository-filters'
+	buildErrorResponse,
+	buildFluent,
+	buildSimple,
+	buildSingleItemResponse,
+	buildStructured,
+	buildSuccessResponse,
+	paginateData,
+} from "./builders/response-builder";
 export type {
-  TRepositoryFilterCriteria,
-  TRepositoryFilterOptions,
-} from './filters/repository-filters'
-
+	TRepositoryFilterCriteria,
+	TRepositoryFilterOptions,
+} from "./filters/repository-filters";
 export {
-  buildSuccessResponse,
-  buildErrorResponse,
-  buildSingleItemResponse,
-  paginateData,
-  buildSimple,
-  buildStructured,
-  buildFluent,
-} from './builders/response-builder'
+	filterRepositories,
+	filterRepositoriesByAdvancedCriteria,
+	filterRepositoriesByForks,
+	filterRepositoriesByLanguage,
+	filterRepositoriesByLicense,
+	filterRepositoriesByStars,
+	filterRepositoriesByTopics,
+	filterRepositoriesByWatchers,
+} from "./filters/repository-filters";
 export type {
-  TApiResponse,
-  TErrorResponse,
-  TResponseBuilderOptions,
-  TSimpleResponse,
-  TStructuredResponse,
-  TFluentResponse,
-} from './builders/response-builder'
+	TUserFieldFilter,
+	TUserFilterCriteria,
+} from "./filters/user-filters";
+export {
+	filterUserFields,
+	filterUsers,
+	filterUsersByCompany,
+	filterUsersByFollowers,
+	filterUsersByLocation,
+	filterUsersByPublicRepos,
+	filterUsersByType,
+} from "./filters/user-filters";
+export type {
+	TAuthenticatedUserClient,
+	TGistClient,
+	TGitHub,
+	TOrgClient,
+	TRepoClient,
+	TSearchClient,
+	TUserClient,
+} from "./github";
+export { GitHub } from "./github";
+// Cache exports (for advanced users)
+export { getCache, memoize, setCache } from "./services/cache-service";
+export type {
+	TChainableClient,
+	TGitHubClientConfig,
+	TRequestOptions,
+} from "./services/github-client";
+// Chainable client exports
+export { createGitHubClient } from "./services/github-client";
+export type { THttpClientConfig, THttpResponse } from "./services/http-client";
+// HTTP client exports (for advanced users)
+export { createHttpClient } from "./services/http-client";
+export type { TFetchRepositoriesOpts } from "./services/repo-fetcher";
+export { fetchRepositories } from "./services/repo-fetcher";
+export type { TFetchUserOpts } from "./services/user-fetcher";
+// Legacy exports for backward compatibility
+export { fetchUser } from "./services/user-fetcher";
+// Type exports
+export type { TBaseEntity } from "./types/base-entity";
+export type { TGitHubRepository } from "./types/github-repository";
+export type { TGitHubUser } from "./types/github-user";
+
+import {
+	buildFluent as buildFluentFunc,
+	buildSimple as buildSimpleFunc,
+	buildStructured as buildStructuredFunc,
+} from "./builders/response-builder";
+import { fetchRepositories as fetchReposFunc } from "./services/repo-fetcher";
+// Legacy function for backward compatibility
+import { fetchUser as fetchUserFunc } from "./services/user-fetcher";
+import type { TGitHubRepository as TGitHubRepo } from "./types/github-repository";
 
 type TFetchGitHubDataOptions = {
-  format?: 'simple' | 'structured' | 'fluent'
-  filters?: ((repos: TGitHubRepository[]) => TGitHubRepository[])
+	format?: "simple" | "structured" | "fluent";
+	filters?: (repos: TGitHubRepo[]) => TGitHubRepo[];
+};
+
+function fetchGitHubData(
+	username: string,
+	options: TFetchGitHubDataOptions = {},
+) {
+	const { format = "simple", filters } = options;
+
+	return async function () {
+		const user = await fetchUserFunc(username);
+		let repos = await fetchReposFunc(username);
+
+		if (filters) {
+			repos = filters(repos);
+		}
+
+		switch (format) {
+			case "structured":
+				return buildStructuredFunc(user, repos);
+			case "fluent":
+				return buildFluentFunc(user, repos);
+			case "simple":
+			default:
+				return buildSimpleFunc(user, repos);
+		}
+	};
 }
 
-function fetchGitHubData(username: string, options: TFetchGitHubDataOptions = {}) {
-  const { format = 'simple', filters } = options
-  
-  return async function() {
-    const user = await fetchUser(username)
-    let repos = await fetchRepositories(username)
-    
-    if (filters) {
-      repos = filters(repos)
-    }
-    
-    switch (format) {
-      case 'structured':
-        return buildStructured(user, repos)
-      case 'fluent':
-        return buildFluent(user, repos)
-      case 'simple':
-      default:
-        return buildSimple(user, repos)
-    }
-  }
-}
-
-export { fetchGitHubData }
-export type { TFetchGitHubDataOptions }
+export { fetchGitHubData };
+export type { TFetchGitHubDataOptions };
