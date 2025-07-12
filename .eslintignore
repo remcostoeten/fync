@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.js
+!.eslintrc.js
+.husky/
+*.d.ts
