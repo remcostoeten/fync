@@ -6,17 +6,23 @@ type TFetchUserOpts = {
   signal?: AbortSignal
 }
 
-async function fetchUserInternal(username: string, opts: TFetchUserOpts = {}): Promise<TGitHubUser> {
+async function fetchUserInternal(
+  username: string,
+  opts: TFetchUserOpts = {}
+): Promise<TGitHubUser> {
   const response = await httpRequest<TGitHubUser>(
     `https://api.github.com/users/${username}`,
     undefined,
     opts.signal
   )
-  
+
   return response.data
 }
 
-function fetchUser(username: string, opts: TFetchUserOpts = {}): Promise<TGitHubUser> {
+function fetchUser(
+  username: string,
+  opts: TFetchUserOpts = {}
+): Promise<TGitHubUser> {
   return memoizedFetchUser(username, opts)
 }
 

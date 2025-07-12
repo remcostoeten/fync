@@ -21,29 +21,29 @@ type TPaginatedResponse<T = unknown> = {
 function parseLinkHeader(linkHeader: string): Record<string, string> {
   const links: Record<string, string> = {}
   const parts = linkHeader.split(',')
-  
+
   for (const part of parts) {
     const section = part.split(';')
     if (section.length !== 2) continue
-    
+
     const url = section[0].replace(/<(.*)>/, '$1').trim()
     const name = section[1].replace(/rel="(.*)"/, '$1').trim()
     links[name] = url
   }
-  
+
   return links
 }
 
 function createAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'github-api-service'
+    Accept: 'application/vnd.github.v3+json',
+    'User-Agent': 'github-api-service',
   }
-  
+
   if (process.env.GITHUB_TOKEN) {
     headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`
   }
-  
+
   return headers
 }
 
@@ -53,34 +53,34 @@ async function httpRequest<T = unknown>(
   signal?: AbortSignal
 ): Promise<THttpResponse<T>> {
   const searchParams = new URLSearchParams()
-  
+
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       searchParams.append(key, String(value))
     }
   }
-  
-  const fullUrl = searchParams.toString() 
+
+  const fullUrl = searchParams.toString()
     ? `${url}?${searchParams.toString()}`
     : url
-  
+
   const response = await fetch(fullUrl, {
     method: 'GET',
     headers: createAuthHeaders(),
-    signal
+    signal,
   })
-  
+
   if (!response.ok) {
     throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
   }
-  
+
   const data = await response.json()
-  
+
   return {
     data,
     status: response.status,
     statusText: response.statusText,
-    headers: Object.fromEntries(response.headers.entries())
+    headers: Object.fromEntries(response.headers.entries()),
   }
 }
 
@@ -90,46 +90,46 @@ async function httpRequestWithPagination<T = unknown>(
   signal?: AbortSignal
 ): Promise<TPaginatedResponse<T>> {
   const searchParams = new URLSearchParams()
-  
+
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       searchParams.append(key, String(value))
     }
   }
-  
-  const fullUrl = searchParams.toString() 
+
+  const fullUrl = searchParams.toString()
     ? `${url}?${searchParams.toString()}`
     : url
-  
+
   const response = await fetch(fullUrl, {
     method: 'GET',
     headers: createAuthHeaders(),
-    signal
+    signal,
   })
-  
+
   if (!response.ok) {
     throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
   }
-  
+
   const data = await response.json()
   const linkHeader = response.headers.get('link')
-  
+
   let hasNext = false
   let nextUrl: string | undefined
-  
+
   if (linkHeader) {
     const links = parseLinkHeader(linkHeader)
     hasNext = Boolean(links.next)
     nextUrl = links.next
   }
-  
+
   return {
     data: Array.isArray(data) ? data : [data],
     hasNext,
     nextUrl,
-    totalCount: response.headers.get('x-total-count') 
+    totalCount: response.headers.get('x-total-count')
       ? parseInt(response.headers.get('x-total-count')!, 10)
-      : undefined
+      : undefined,
   }
 }
 
@@ -140,19 +140,36 @@ type THttpClientConfig = {
 }
 
 function createHttpClient(config: THttpClientConfig = {}) {
-  const { baseUrl = 'https://api.github.com', defaultHeaders = {}, timeout = 10000 } = config
-  
+  const {
+    baseUrl = 'https://api.github.com',
+    defaultHeaders = {},
+    timeout = 10000,
+  } = config
+
   return {
-    get: async <T = unknown>(endpoint: string, query?: Record<string, string | number>, signal?: AbortSignal): Promise<THttpResponse<T>> => {
+    get: async <T = unknown>(
+      endpoint: string,
+      query?: Record<string, string | number>,
+      signal?: AbortSignal
+    ): Promise<THttpResponse<T>> => {
       const url = baseUrl + endpoint
       return httpRequest<T>(url, query, signal)
     },
-    getPaginated: async <T = unknown>(endpoint: string, query?: Record<string, string | number>, signal?: AbortSignal): Promise<TPaginatedResponse<T>> => {
+    getPaginated: async <T = unknown>(
+      endpoint: string,
+      query?: Record<string, string | number>,
+      signal?: AbortSignal
+    ): Promise<TPaginatedResponse<T>> => {
       const url = baseUrl + endpoint
       return httpRequestWithPagination<T>(url, query, signal)
-    }
+    },
   }
 }
 
 export { httpRequest, httpRequestWithPagination, createHttpClient }
-export type { THttpResponse, TPaginatedResponse, THttpRequestOptions, THttpClientConfig }
+export type {
+  THttpResponse,
+  TPaginatedResponse,
+  THttpRequestOptions,
+  THttpClientConfig,
+}

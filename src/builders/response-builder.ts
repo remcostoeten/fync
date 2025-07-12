@@ -1,3 +1,62 @@
+import type { TGitHubUser } from '../types/github-user'
+import type { TGitHubRepository } from '../types/github-repository'
+
+type TSimpleResponse = {
+  user: TGitHubUser
+  repos: TGitHubRepository[]
+}
+
+type TStructuredResponse = {
+  metadata: {
+    fetchedAt: string
+    repoCount: number
+  }
+  data: {
+    user: TGitHubUser
+    repos: TGitHubRepository[]
+  }
+}
+
+type TFluentResponse = {
+  getUser(): TGitHubUser
+  filterRepos(callback: (repo: TGitHubRepository) => boolean): TFluentResponse
+  value(): TSimpleResponse
+}
+
+function buildSimple(user: TGitHubUser, repos: TGitHubRepository[]): TSimpleResponse {
+  return { user, repos }
+}
+
+function buildStructured(user: TGitHubUser, repos: TGitHubRepository[]): TStructuredResponse {
+  return {
+    metadata: {
+      fetchedAt: new Date().toISOString(),
+      repoCount: repos.length,
+    },
+    data: { user, repos },
+  }
+}
+
+function buildFluent(user: TGitHubUser, repos: TGitHubRepository[]): TFluentResponse {
+  let filteredRepos = repos
+  
+  return {
+    getUser() {
+      return user
+    },
+    filterRepos(callback: (repo: TGitHubRepository) => boolean) {
+      filteredRepos = filteredRepos.filter(callback)
+      return this
+    },
+    value() {
+      return { user, repos: filteredRepos }
+    },
+  }
+}
+
+export { buildSimple, buildStructured, buildFluent }
+export type { TSimpleResponse, TStructuredResponse, TFluentResponse }
+
 type TApiResponse<T = unknown> = {
   data: T
   meta: {
@@ -30,7 +89,7 @@ type TResponseBuilderOptions = {
 }
 
 function buildSuccessResponse<T>(
-  data: T[], 
+  data: T[],
   options: TResponseBuilderOptions = {}
 ): TApiResponse<T[]> {
   const { baseUrl = '', page = 1, per_page = 30, total = data.length } = options
@@ -46,16 +105,23 @@ function buildSuccessResponse<T>(
     },
     links: {
       first: total_pages > 0 ? `${baseUrl}?page=1&per_page=${per_page}` : null,
-      last: total_pages > 0 ? `${baseUrl}?page=${total_pages}&per_page=${per_page}` : null,
-      prev: page > 1 ? `${baseUrl}?page=${page - 1}&per_page=${per_page}` : null,
-      next: page < total_pages ? `${baseUrl}?page=${page + 1}&per_page=${per_page}` : null,
+      last:
+        total_pages > 0
+          ? `${baseUrl}?page=${total_pages}&per_page=${per_page}`
+          : null,
+      prev:
+        page > 1 ? `${baseUrl}?page=${page - 1}&per_page=${per_page}` : null,
+      next:
+        page < total_pages
+          ? `${baseUrl}?page=${page + 1}&per_page=${per_page}`
+          : null,
     },
   }
 }
 
 function buildErrorResponse(
-  message: string, 
-  code: string, 
+  message: string,
+  code: string,
   details?: Record<string, unknown>
 ): TErrorResponse {
   return {
@@ -77,10 +143,10 @@ function paginateData<T>(data: T[], page: number, per_page: number): T[] {
   return data.slice(startIndex, endIndex)
 }
 
-export { 
-  buildSuccessResponse, 
-  buildErrorResponse, 
-  buildSingleItemResponse, 
-  paginateData 
+export {
+  buildSuccessResponse,
+  buildErrorResponse,
+  buildSingleItemResponse,
+  paginateData,
 }
 export type { TApiResponse, TErrorResponse, TResponseBuilderOptions }

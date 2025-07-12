@@ -26,11 +26,14 @@ function getCache(key: string): unknown {
   return entry ? entry.data : undefined
 }
 
-function memoize<T>(fetcher: TFetcher<T>, keyGenerator: (...args: unknown[]) => string): TFetcher<T> {
+function memoize<T>(
+  fetcher: TFetcher<T>,
+  keyGenerator: (...args: unknown[]) => string
+): TFetcher<T> {
   return async (...args: unknown[]): Promise<T> => {
     const key = keyGenerator(...args)
     const cachedData = getCache(key)
-    
+
     if (cachedData !== undefined) {
       return cachedData as T
     }

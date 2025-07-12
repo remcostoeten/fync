@@ -12,30 +12,30 @@ type TFetchRepositoriesOpts = {
 }
 
 async function fetchRepositoriesInternal(
-  username: string, 
+  username: string,
   opts: TFetchRepositoriesOpts = {}
 ): Promise<TGitHubRepository[]> {
   const { signal, ...queryParams } = opts
-  
+
   const defaultParams = {
     type: 'all',
     sort: 'updated',
     direction: 'desc',
     per_page: 30,
-    ...queryParams
+    ...queryParams,
   }
-  
+
   const response = await httpRequestWithPagination<TGitHubRepository>(
     `https://api.github.com/users/${username}/repos`,
     defaultParams,
     signal
   )
-  
+
   return response.data
 }
 
 function fetchRepositories(
-  username: string, 
+  username: string,
   opts: TFetchRepositoriesOpts = {}
 ): Promise<TGitHubRepository[]> {
   return memoizedFetchRepositories(username, opts)
