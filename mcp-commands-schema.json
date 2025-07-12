@@ -1,0 +1,758 @@
+{
+  "mcp_version": "1.0",
+  "name": "github-easy-fetcher",
+  "description": "A flexible, chainable GitHub API client with built-in caching and TypeScript support",
+  "commands": [
+    {
+      "name": "getUserInfo",
+      "description": "Retrieve detailed information about a GitHub user",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getUserInfo",
+        "params": {
+          "username": "string",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "login": "string",
+          "avatar_url": "string",
+          "html_url": "string",
+          "name": "string | null",
+          "company": "string | null",
+          "blog": "string | null",
+          "location": "string | null",
+          "email": "string | null",
+          "bio": "string | null",
+          "public_repos": "number",
+          "public_gists": "number",
+          "followers": "number",
+          "following": "number",
+          "type": "User | Organization",
+          "site_admin": "boolean",
+          "id": "number",
+          "created_at": "string",
+          "updated_at": "string"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getUserRepositories",
+      "description": "Retrieve all repositories for a specific user",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getUserRepositories",
+        "params": {
+          "username": "string",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubRepository[]",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getRepositoryInfo",
+      "description": "Retrieve detailed information about a specific repository",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getRepositoryInfo",
+        "params": {
+          "owner": "string",
+          "repo": "string",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "name": "string",
+          "full_name": "string",
+          "owner": "TGitHubUser",
+          "private": "boolean",
+          "html_url": "string",
+          "description": "string | null",
+          "fork": "boolean",
+          "language": "string | null",
+          "forks_count": "number",
+          "stargazers_count": "number",
+          "watchers_count": "number",
+          "size": "number",
+          "default_branch": "string",
+          "open_issues_count": "number",
+          "topics": "string[]",
+          "archived": "boolean",
+          "disabled": "boolean",
+          "visibility": "public | private | internal",
+          "pushed_at": "string",
+          "clone_url": "string",
+          "ssh_url": "string",
+          "homepage": "string | null",
+          "license": "TLicense | null",
+          "id": "number",
+          "created_at": "string",
+          "updated_at": "string"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getRepositoryBranches",
+      "description": "Retrieve all branches for a repository",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getRepositoryBranches",
+        "params": {
+          "owner": "string",
+          "repo": "string",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubBranch[]",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getRepositoryCommits",
+      "description": "Retrieve commits for a repository",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getRepositoryCommits",
+        "params": {
+          "owner": "string",
+          "repo": "string",
+          "branch": "string?",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubCommit[]",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "searchRepositories",
+      "description": "Search for repositories using GitHub's search API",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "searchRepositories",
+        "params": {
+          "query": "string",
+          "sort": "stars | forks | updated?",
+          "order": "asc | desc?",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "total_count": "number",
+          "incomplete_results": "boolean",
+          "items": "TGitHubRepository[]"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "searchUsers",
+      "description": "Search for users using GitHub's search API",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "searchUsers",
+        "params": {
+          "query": "string",
+          "sort": "followers | repositories | joined?",
+          "order": "asc | desc?",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "total_count": "number",
+          "incomplete_results": "boolean",
+          "items": "TGitHubUser[]"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "searchCode",
+      "description": "Search for code using GitHub's search API",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "searchCode",
+        "params": {
+          "query": "string",
+          "sort": "indexed?",
+          "order": "asc | desc?",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "total_count": "number",
+          "incomplete_results": "boolean",
+          "items": "TGitHubCodeResult[]"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getOrganizationInfo",
+      "description": "Retrieve information about a GitHub organization",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getOrganizationInfo",
+        "params": {
+          "org": "string",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubOrganization",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getOrganizationRepositories",
+      "description": "Retrieve all repositories for an organization",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getOrganizationRepositories",
+        "params": {
+          "org": "string",
+          "type": "all | public | private | forks | sources | member?",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubRepository[]",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getGistInfo",
+      "description": "Retrieve information about a GitHub gist",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getGistInfo",
+        "params": {
+          "gistId": "string",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubGist",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "filterRepositories",
+      "description": "Filter repositories based on various criteria",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "filterRepositories",
+        "params": {
+          "repositories": "TGitHubRepository[]",
+          "filters": {
+            "names": "string[]?",
+            "languages": "string[]?",
+            "starsMin": "number?",
+            "starsMax": "number?",
+            "forksMin": "number?",
+            "forksMax": "number?",
+            "topics": "string[]?",
+            "license": "string?",
+            "isPrivate": "boolean?",
+            "isFork": "boolean?",
+            "isArchived": "boolean?",
+            "isDisabled": "boolean?",
+            "visibility": "public | private | internal?"
+          }
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubRepository[]",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "filterUsers",
+      "description": "Filter users based on various criteria",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "filterUsers",
+        "params": {
+          "users": "TGitHubUser[]",
+          "filters": {
+            "type": "User | Organization?",
+            "minFollowers": "number?",
+            "maxFollowers": "number?",
+            "minRepos": "number?",
+            "maxRepos": "number?",
+            "location": "string?",
+            "company": "string?"
+          }
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubUser[]",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "buildResponseSimple",
+      "description": "Build a simple response format from user and repository data",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "buildResponseSimple",
+        "params": {
+          "user": "TGitHubUser",
+          "repositories": "TGitHubRepository[]"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TSimpleResponse",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "buildResponseStructured",
+      "description": "Build a structured response format from user and repository data",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "buildResponseStructured",
+        "params": {
+          "user": "TGitHubUser",
+          "repositories": "TGitHubRepository[]"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TStructuredResponse",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "buildResponseFluent",
+      "description": "Build a fluent response format from user and repository data",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "buildResponseFluent",
+        "params": {
+          "user": "TGitHubUser",
+          "repositories": "TGitHubRepository[]"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TFluentResponse",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getAuthenticatedUser",
+      "description": "Get information about the currently authenticated user",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getAuthenticatedUser",
+        "params": {
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": "TGitHubUser",
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getConfigOptions",
+      "description": "Retrieve current configuration options for the GitHub client",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getConfigOptions",
+        "params": {}
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "token": "string?",
+          "baseUrl": "string",
+          "cache": "boolean",
+          "cacheTTL": "number"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "listApiEndpoints",
+      "description": "List all available API endpoints and their capabilities",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "listApiEndpoints",
+        "params": {}
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "endpoints": "string[]",
+          "capabilities": {
+            "pagination": "boolean",
+            "caching": "boolean",
+            "streaming": "boolean",
+            "filtering": "boolean",
+            "search": "boolean"
+          }
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getApiUsageStats",
+      "description": "Get current API usage statistics and rate limits",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getApiUsageStats",
+        "params": {}
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "rateLimit": {
+            "limit": "number",
+            "remaining": "number",
+            "reset": "number"
+          },
+          "cacheStats": {
+            "hits": "number",
+            "misses": "number",
+            "size": "number"
+          }
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getTypeDefinition",
+      "description": "Get TypeScript type definition for a specific type",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getTypeDefinition",
+        "params": {
+          "typeName": "TGitHubUser | TGitHubRepository | TGitHubGist | TGitHubOrganization | TRepositoryFilterOptions | TUserFilterCriteria"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "typeName": "string",
+          "definition": "object",
+          "properties": "object",
+          "required": "string[]"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "getExamples",
+      "description": "Get usage examples for a specific API command",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "getExamples",
+        "params": {
+          "commandName": "string"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "examples": [
+            {
+              "title": "string",
+              "description": "string",
+              "code": "string",
+              "input": "object",
+              "output": "object"
+            }
+          ]
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "searchGitHubSurface",
+      "description": "Search across all GitHub surface areas (repositories, users, code, issues, commits, topics, labels)",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "searchGitHubSurface",
+        "params": {
+          "query": "string",
+          "surfaces": "repositories | users | code | issues | commits | topics | labels[]",
+          "paginate": "boolean?",
+          "allPages": "boolean?",
+          "cache": "boolean?",
+          "cacheTTL": "number?"
+        }
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "repositories": "TGitHubSearchRepositoriesResponse?",
+          "users": "TGitHubSearchUsersResponse?",
+          "code": "TGitHubSearchCodeResponse?",
+          "issues": "TGitHubSearchIssuesResponse?",
+          "commits": "TGitHubSearchCommitsResponse?",
+          "topics": "TGitHubSearchTopicsResponse?",
+          "labels": "TGitHubSearchLabelsResponse?"
+        },
+        "error": "string?"
+      }
+    },
+    {
+      "name": "listAvailableFilters",
+      "description": "List all available filters for repositories and users",
+      "request": {
+        "id": "string",
+        "version": "1.0",
+        "command": "listAvailableFilters",
+        "params": {}
+      },
+      "response": {
+        "id": "string",
+        "version": "1.0",
+        "status": "success | error",
+        "data": {
+          "repositoryFilters": {
+            "names": "string[]",
+            "languages": "string[]",
+            "starsMin": "number",
+            "starsMax": "number",
+            "forksMin": "number", 
+            "forksMax": "number",
+            "topics": "string[]",
+            "license": "string",
+            "isPrivate": "boolean",
+            "isFork": "boolean",
+            "isArchived": "boolean",
+            "isDisabled": "boolean",
+            "visibility": "public | private | internal"
+          },
+          "userFilters": {
+            "type": "User | Organization",
+            "minFollowers": "number",
+            "maxFollowers": "number",
+            "minRepos": "number",
+            "maxRepos": "number",
+            "location": "string",
+            "company": "string"
+          }
+        },
+        "error": "string?"
+      }
+    }
+  ],
+  "types": {
+    "TGitHubUser": {
+      "description": "GitHub user object with all properties",
+      "properties": {
+        "login": "string",
+        "avatar_url": "string",
+        "html_url": "string",
+        "name": "string | null",
+        "company": "string | null",
+        "blog": "string | null",
+        "location": "string | null",
+        "email": "string | null",
+        "bio": "string | null",
+        "public_repos": "number",
+        "public_gists": "number",
+        "followers": "number",
+        "following": "number",
+        "type": "User | Organization",
+        "site_admin": "boolean",
+        "id": "number",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    },
+    "TGitHubRepository": {
+      "description": "GitHub repository object with all properties",
+      "properties": {
+        "name": "string",
+        "full_name": "string",
+        "owner": "TGitHubUser",
+        "private": "boolean",
+        "html_url": "string",
+        "description": "string | null",
+        "fork": "boolean",
+        "language": "string | null",
+        "forks_count": "number",
+        "stargazers_count": "number",
+        "watchers_count": "number",
+        "size": "number",
+        "default_branch": "string",
+        "open_issues_count": "number",
+        "topics": "string[]",
+        "archived": "boolean",
+        "disabled": "boolean",
+        "visibility": "public | private | internal",
+        "pushed_at": "string",
+        "clone_url": "string",
+        "ssh_url": "string",
+        "homepage": "string | null",
+        "license": "TLicense | null",
+        "id": "number",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    },
+    "TLicense": {
+      "description": "GitHub license object",
+      "properties": {
+        "key": "string",
+        "name": "string",
+        "spdx_id": "string",
+        "url": "string | null"
+      }
+    },
+    "TSimpleResponse": {
+      "description": "Simple response format",
+      "properties": {
+        "user": "TGitHubUser",
+        "repositories": "TGitHubRepository[]"
+      }
+    },
+    "TStructuredResponse": {
+      "description": "Structured response format with organized data",
+      "properties": {
+        "user": "TGitHubUser",
+        "repositories": "TGitHubRepository[]",
+        "stats": "object",
+        "languages": "string[]",
+        "topics": "string[]"
+      }
+    },
+    "TFluentResponse": {
+      "description": "Fluent response format with chainable methods",
+      "properties": {
+        "user": "TGitHubUser",
+        "repositories": "TGitHubRepository[]",
+        "getUser": "function",
+        "filterRepos": "function",
+        "value": "function"
+      }
+    }
+  }
+}
