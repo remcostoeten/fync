@@ -1,6 +1,8 @@
 # GitHub Easy Fetcher
 
 ![npm](https://img.shields.io/npm/v/gheasy)
+![GitHub](https://img.shields.io/github/license/remcostoeten/github-easy-fetcher)
+![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
 A flexible, chainable GitHub API client for JavaScript/TypeScript that makes it easy to fetch any GitHub data.
 
