@@ -133,5 +133,26 @@ async function httpRequestWithPagination<T = unknown>(
   }
 }
 
-export { httpRequest, httpRequestWithPagination }
-export type { THttpResponse, TPaginatedResponse, THttpRequestOptions }
+type THttpClientConfig = {
+  baseUrl?: string
+  defaultHeaders?: Record<string, string>
+  timeout?: number
+}
+
+function createHttpClient(config: THttpClientConfig = {}) {
+  const { baseUrl = 'https://api.github.com', defaultHeaders = {}, timeout = 10000 } = config
+  
+  return {
+    get: async <T = unknown>(endpoint: string, query?: Record<string, string | number>, signal?: AbortSignal): Promise<THttpResponse<T>> => {
+      const url = baseUrl + endpoint
+      return httpRequest<T>(url, query, signal)
+    },
+    getPaginated: async <T = unknown>(endpoint: string, query?: Record<string, string | number>, signal?: AbortSignal): Promise<TPaginatedResponse<T>> => {
+      const url = baseUrl + endpoint
+      return httpRequestWithPagination<T>(url, query, signal)
+    }
+  }
+}
+
+export { httpRequest, httpRequestWithPagination, createHttpClient }
+export type { THttpResponse, TPaginatedResponse, THttpRequestOptions, THttpClientConfig }
