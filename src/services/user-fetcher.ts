@@ -26,10 +26,16 @@ function fetchUser(
 	return memoizedFetchUser(username, opts);
 }
 
-const memoizedFetchUser = memoize(fetchUserInternal, (...args: unknown[]) => {
+const fetchUserWrapper = async (...args: unknown[]): Promise<TGitHubUser> => {
+	const username = args[0] as string;
+	const opts = (args[1] as TFetchUserOpts) || {};
+	return fetchUserInternal(username, opts);
+};
+
+const memoizedFetchUser = memoize(fetchUserWrapper, (...args: unknown[]) => {
 	const username = args[0] as string;
 	return `user:${username}`;
-}) as typeof fetchUserInternal;
+}) as typeof fetchUserWrapper;
 
 export { fetchUser };
 export type { TFetchUserOpts };

@@ -152,9 +152,11 @@ type THttpClientConfig = {
 function createHttpClient(config: THttpClientConfig = {}) {
 	const {
 		baseUrl = "https://api.github.com",
-		_defaultHeaders = {},
-		_timeout = 10000,
+		defaultHeaders = {},
+		timeout = 10000,
 	} = config;
+	const _defaultHeaders = defaultHeaders;
+	const _timeout = timeout;
 
 	return {
 		get: async <T = unknown>(

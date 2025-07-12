@@ -41,15 +41,23 @@ function fetchRepositories(
 	return memoizedFetchRepositories(username, opts);
 }
 
+const fetchRepositoriesWrapper = async (
+	...args: unknown[]
+): Promise<TGitHubRepository[]> => {
+	const username = args[0] as string;
+	const opts = (args[1] as TFetchRepositoriesOpts) || {};
+	return fetchRepositoriesInternal(username, opts);
+};
+
 const memoizedFetchRepositories = memoize(
-	fetchRepositoriesInternal,
+	fetchRepositoriesWrapper,
 	(...args: unknown[]) => {
 		const username = args[0] as string;
 		const opts = (args[1] as TFetchRepositoriesOpts) || {};
 		const { signal: _signal, ...cacheableOpts } = opts;
 		return `repos:${username}:${JSON.stringify(cacheableOpts)}`;
 	},
-) as typeof fetchRepositoriesInternal;
+) as typeof fetchRepositoriesWrapper;
 
 export { fetchRepositories };
 export type { TFetchRepositoriesOpts };

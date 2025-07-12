@@ -54,8 +54,9 @@ function createChainableClient(
 		const {
 			params,
 			cache = config.cache !== false,
-			_cacheTTL = config.cacheTTL,
+			cacheTTL = config.cacheTTL,
 		} = options || {};
+		const _cacheTTL = cacheTTL; // Keep for future use
 
 		const requestFn = async () => {
 			switch (method) {
@@ -95,10 +96,10 @@ function createChainableClient(
 		if (cache && method === "GET") {
 			const cacheKey = `${path}:${JSON.stringify(params || {})}`;
 			const memoizedFn = memoize(requestFn, () => cacheKey);
-			return memoizedFn();
+			return memoizedFn() as Promise<T>;
 		}
 
-		return requestFn();
+		return requestFn() as Promise<T>;
 	}
 
 	async function* streamPages<T = unknown>(
@@ -108,11 +109,11 @@ function createChainableClient(
 		const { params } = options || {};
 
 		let response = await httpClient.getPaginated(path, params);
-		yield* response.data;
+		yield* response.data as Awaited<T>[];
 
 		while (response.nextUrl) {
 			response = await httpClient.getPaginated(response.nextUrl);
-			yield* response.data;
+			yield* response.data as Awaited<T>[];
 		}
 	}
 
