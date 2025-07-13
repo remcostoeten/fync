@@ -62,9 +62,7 @@ export function createApiClient<T extends TBaseEntity>(
 		}
 
 		async function list(options?: TFilterOptions<T>): Promise<T[]> {
-			const response = await httpClient.get(resourceConfig.endpoint, {
-				params: options,
-			});
+			const response = await httpClient.get(resourceConfig.endpoint);
 			return applyFilterOptions(response.data as T[], options || {});
 		}
 
