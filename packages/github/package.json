@@ -1,6 +1,6 @@
 {
-  "name": "@fync/github",
-  "version": "1.0.0",
+  "name": "@remcostoeten/fync-github",
+  "version": "3.0.0",
   "description": "GitHub API client for the fync ecosystem",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "build": "tsc && vite build",
+    "build": "tsc",
     "dev": "tsc --watch",
     "lint": "biome lint src/",
     "lint:fix": "biome lint --write src/",
@@ -43,8 +43,18 @@
     "commits",
     "branches"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remcostoeten/fync.git",
+    "directory": "packages/github"
+  },
+  "homepage": "https://github.com/remcostoeten/fync#readme",
+  "bugs": {
+    "url": "https://github.com/remcostoeten/fync/issues"
+  },
+  "license": "MIT",
   "dependencies": {
-    "@fync/core": "*"
+    "@remcostoeten/fync-core": "*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",

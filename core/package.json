@@ -1,6 +1,6 @@
 {
-  "name": "@fync/core",
-  "version": "1.0.0",
+  "name": "@remcostoeten/fync-core",
+  "version": "3.0.0",
   "description": "Core functionality for the fync monorepo",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,6 +22,16 @@
     "dist",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remcostoeten/fync.git",
+    "directory": "core"
+  },
+  "homepage": "https://github.com/remcostoeten/fync#readme",
+  "bugs": {
+    "url": "https://github.com/remcostoeten/fync/issues"
+  },
+  "license": "MIT",
   "peerDependencies": {
     "undici": "^6.0.0"
   },

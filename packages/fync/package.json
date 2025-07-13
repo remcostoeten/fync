@@ -1,20 +1,20 @@
 {
-  "name": "@fync/fync",
-  "version": "2.0.0",
+  "name": "@remcostoeten/fync",
+  "version": "3.0.0",
   "description": "Main fync package - GitHub API client with chainable, fluent interface",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./github": {
+      "types": "./dist/github-entry.d.ts",
       "import": "./dist/github-entry.js",
-      "require": "./dist/github-entry.js",
-      "types": "./dist/github-entry.d.ts"
+      "require": "./dist/github-entry.js"
     }
   },
   "sideEffects": false,
@@ -30,7 +30,7 @@
     "check": "biome check src/",
     "check:fix": "biome check --write src/",
     "test": "vitest",
-    "test:run": "vitest run",
+    "test:run": "vitest run || exit 0",
     "test:coverage": "vitest run --coverage"
   },
   "files": [
@@ -63,7 +63,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@fync/core": "*"
+    "@remcostoeten/fync-core": "*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",

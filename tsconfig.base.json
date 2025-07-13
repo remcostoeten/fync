@@ -13,8 +13,10 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@fync/core": ["./core/src"],
-      "@fync/core/*": ["./core/src/*"]
+      "@remcostoeten/fync-core": ["./core/src"],
+      "@remcostoeten/fync-core/*": ["./core/src/*"],
+      "@remcostoeten/fync-github": ["./packages/github/src"],
+      "@remcostoeten/fync-github/*": ["./packages/github/src/*"]
     }
   },
   "exclude": [
