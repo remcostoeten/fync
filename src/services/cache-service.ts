@@ -29,8 +29,16 @@ function getCache(key: string): unknown {
 function memoize<T>(
 	fetcher: TFetcher<T>,
 	keyGenerator: (...args: unknown[]) => string,
+	ttlMs: number = 300000,
 ): TFetcher<T> {
-	return async (...args: unknown[]): Promise<T> => {
+	const memoKey = fetcher.toString() + keyGenerator.toString();
+
+	const existingFetcher = _memoizedFetchers.get(memoKey);
+	if (existingFetcher) {
+		return existingFetcher as TFetcher<T>;
+	}
+
+	const memoizedFetcher = async (...args: unknown[]): Promise<T> => {
 		const key = keyGenerator(...args);
 		const cachedData = getCache(key);
 
@@ -39,9 +47,17 @@ function memoize<T>(
 		}
 
 		const result = await fetcher(...args);
-		setCache(key, result, 300000); // 5 minutes default TTL
+		setCache(key, result, ttlMs);
 		return result;
 	};
+
+	_memoizedFetchers.set(memoKey, memoizedFetcher);
+	return memoizedFetcher;
 }
 
-export { setCache, getCache, memoize };
+function clearCache(): void {
+	cache.clear();
+	_memoizedFetchers.clear();
+}
+
+export { setCache, getCache, memoize, clearCache };

@@ -36,11 +36,18 @@ function createChainableClient(
 	config: TGitHubClientConfig,
 	pathSegments: string[] = [],
 ): TChainableClient {
+	const defaultHeaders: Record<string, string> = {
+		Accept: "application/vnd.github.v3+json",
+		"User-Agent": "github-api-service",
+	};
+
+	if (config.token) {
+		defaultHeaders.Authorization = `Bearer ${config.token}`;
+	}
+
 	const httpClient = createHttpClient({
 		baseUrl: config.baseUrl || "https://api.github.com",
-		defaultHeaders: config.token
-			? { Authorization: `Bearer ${config.token}` }
-			: {},
+		defaultHeaders,
 	});
 
 	const buildPath = () => "/" + pathSegments.join("/");
@@ -95,7 +102,11 @@ function createChainableClient(
 
 		if (cache && method === "GET") {
 			const cacheKey = `${path}:${JSON.stringify(params || {})}`;
-			const memoizedFn = memoize(requestFn, () => cacheKey);
+			const memoizedFn = memoize(
+				requestFn,
+				() => cacheKey,
+				options?.cacheTTL ?? config.cacheTTL ?? 300000,
+			);
 			return memoizedFn() as Promise<T>;
 		}
 

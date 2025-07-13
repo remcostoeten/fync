@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createGitHubClient } from '../src/services/github-client'
+import { clearCache } from '../src/services/cache-service'
 
 describe('GitHub Chainable Client', () => {
   let mockFetch: any
@@ -7,6 +8,7 @@ describe('GitHub Chainable Client', () => {
   beforeEach(() => {
     mockFetch = vi.fn()
     global.fetch = mockFetch
+    clearCache()
   })
 
   describe('path building', () => {

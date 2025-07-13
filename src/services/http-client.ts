@@ -51,6 +51,7 @@ async function httpRequest<T = unknown>(
 	url: string,
 	query?: Record<string, string | number>,
 	signal?: AbortSignal,
+	extraHeaders?: Record<string, string>,
 ): Promise<THttpResponse<T>> {
 	const searchParams = new URLSearchParams();
 
@@ -64,9 +65,11 @@ async function httpRequest<T = unknown>(
 		? `${url}?${searchParams.toString()}`
 		: url;
 
+	const headers = { ...createAuthHeaders(), ...extraHeaders };
+
 	const response = await fetch(fullUrl, {
 		method: "GET",
-		headers: createAuthHeaders(),
+		headers,
 		signal,
 	});
 
@@ -97,6 +100,7 @@ async function httpRequestWithPagination<T = unknown>(
 	url: string,
 	query?: Record<string, string | number>,
 	signal?: AbortSignal,
+	extraHeaders?: Record<string, string>,
 ): Promise<TPaginatedResponse<T>> {
 	const searchParams = new URLSearchParams();
 
@@ -110,9 +114,11 @@ async function httpRequestWithPagination<T = unknown>(
 		? `${url}?${searchParams.toString()}`
 		: url;
 
+	const headers = { ...createAuthHeaders(), ...extraHeaders };
+
 	const response = await fetch(fullUrl, {
 		method: "GET",
-		headers: createAuthHeaders(),
+		headers,
 		signal,
 	});
 
@@ -165,7 +171,7 @@ function createHttpClient(config: THttpClientConfig = {}) {
 			signal?: AbortSignal,
 		): Promise<THttpResponse<T>> => {
 			const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
-			return httpRequest<T>(url, query, signal);
+			return httpRequest<T>(url, query, signal, _defaultHeaders);
 		},
 		getPaginated: async <T = unknown>(
 			endpoint: string,
@@ -173,7 +179,7 @@ function createHttpClient(config: THttpClientConfig = {}) {
 			signal?: AbortSignal,
 		): Promise<TPaginatedResponse<T>> => {
 			const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
-			return httpRequestWithPagination<T>(url, query, signal);
+			return httpRequestWithPagination<T>(url, query, signal, _defaultHeaders);
 		},
 	};
 }
