@@ -1,40 +1,39 @@
 # Fync
 
-![npm](https://img.shields.io/npm/v/@remcostoeten/fync)
+![npm](https://img.shields.io/npm/v/@remcostoeten/fync-github)
 ![GitHub](https://img.shields.io/github/license/remcostoeten/fync)
 
 _A unified platform for fetching data from popular APIs_
 
 Fync is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, Spotify, GitLab, and more. Built with TypeScript and designed for developer productivity.
 
-> **⚠️ Development Status**: This project is currently under active development. The main `@remcostoeten/fync` package is being restructured from the original `gheasy` package. Some features may not be fully implemented yet.
-
 ## Packages
 
 - **[@remcostoeten/fync-core](./core/)** - Core functionality and utilities
-- **[@remcostoeten/fync](./packages/fync/)** - Main Fync package with GitHub API client
-- **[@remcostoeten/fync-github](./packages/github/)** - GitHub API client
+- **[@remcostoeten/fync-github](./packages/github/)** - GitHub API client with OAuth2 support
 
 ## Features
 
-- **Fluent, chainable API** - Access any API endpoint with intuitive method chaining
+- **Fluent, chainable API** - Access any GitHub API endpoint with intuitive method chaining
+- **Comprehensive TypeScript support** - Full type safety with excellent LSP support
+- **OAuth2 authentication** - Complete OAuth2 flow with Next.js integration
 - **Built-in caching** - Avoid rate limits with automatic request caching
-- **TypeScript support** - Full type safety and IntelliSense
+- **Advanced GitHub API coverage** - Pull requests, releases, actions, issues, and more
 - **Pagination handling** - Easy pagination with `paginate()` and `stream()` methods
-- **Token authentication** - Support for private repositories
+- **Rate limiting** - Built-in rate limit monitoring and handling
 - **Framework agnostic** - Works with any JavaScript environment
 - **Monorepo structure** - Modular packages for different services
 
 ## Installation
 
 ```bash
-npm install @remcostoeten/fync
+npm install @remcostoeten/fync-github
 ```
 
 ## Basic Usage
 
 ```typescript
-import { GitHub } from '@remcostoeten/fync'
+import { GitHub } from '@remcostoeten/fync-github'
 
 // Create a client (optionally with a token)
 const github = GitHub({ token: 'your-github-token' })
@@ -45,8 +44,11 @@ const user = await github.user('octocat').get()
 // Get user's repositories
 const repos = await github.user('octocat').repos.get()
 
-// Get only user's gists
-const gists = await github.user('octocat').gists.get()
+// Get pull requests with full typing
+const pulls = await github.repo('facebook', 'react').getPulls()
+
+// Get releases with comprehensive types
+const releases = await github.repo('facebook', 'react').getReleases()
 ```
 
 ## Chainable API
@@ -234,21 +236,51 @@ All `get()`, `post()`, `put()`, `patch()`, and `delete()` methods accept options
 - `.stream(options?)` - Stream paginated results
 - `.path()` - Get the current API path
 
-## Legacy API
+## OAuth2 Authentication
 
-The package still supports the original filtering API:
+Fync provides comprehensive OAuth2 support for GitHub authentication:
 
 ```typescript
-import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from '@remcostoeten/fync'
+import { createGitHubOAuth2Flow, GITHUB_OAUTH2_SCOPES } from '@remcostoeten/fync-github/oauth'
 
-const user = await fetchUser('octocat')
-const repos = await fetchRepositories('octocat')
-const jsRepos = filterRepositoriesByLanguage(repos, 'JavaScript')
+// Create OAuth2 flow
+const oauth2 = createGitHubOAuth2Flow({
+  clientId: process.env.GITHUB_CLIENT_ID!,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+  redirectUri: 'http://localhost:3000/api/auth/callback',
+  scopes: [GITHUB_OAUTH2_SCOPES.USER_EMAIL, GITHUB_OAUTH2_SCOPES.REPO_READ],
+})
+
+// Generate authorization URL
+const authUrl = oauth2.getAuthorizationUrl({ state: 'secure-state' })
+
+// Exchange code for token
+const tokens = await oauth2.exchangeCodeForToken({ code, state })
+
+// Use token with GitHub client
+const github = GitHub({ token: tokens.access_token })
+```
+
+### Next.js Integration
+
+```typescript
+import { createNextJSAPIHandler } from '@remcostoeten/fync-github/oauth'
+
+// pages/api/auth/[...oauth].ts
+export default createNextJSAPIHandler({
+  clientId: process.env.GITHUB_CLIENT_ID!,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+  redirectUri: 'http://localhost:3000/api/auth/callback',
+  onSuccess: async (tokens) => {
+    // Handle successful authentication
+    return NextResponse.redirect('/dashboard')
+  },
+})
 ```
 
 ## Migration from gheasy
 
-The `gheasy` package has been renamed and restructured as `@remcostoeten/fync` within the Fync monorepo. To migrate:
+The `gheasy` package has been restructured as `@remcostoeten/fync-github`:
 
 1. Update your imports:
    ```typescript
@@ -256,16 +288,16 @@ The `gheasy` package has been renamed and restructured as `@remcostoeten/fync` w
    import { GitHub } from 'gheasy'
    
    // New
-   import { GitHub } from '@remcostoeten/fync'
+   import { GitHub } from '@remcostoeten/fync-github'
    ```
 
 2. Update your package.json:
    ```bash
    npm uninstall gheasy
-   npm install @remcostoeten/fync
+   npm install @remcostoeten/fync-github
    ```
 
-All existing APIs remain the same, so no code changes are needed beyond updating imports.
+All existing APIs remain the same, with many new features added.
 
 ---
 
