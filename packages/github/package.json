@@ -1,0 +1,57 @@
+{
+  "name": "@deify/github",
+  "version": "1.0.0",
+  "description": "GitHub API client for the deify ecosystem",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "tsc --watch",
+    "lint": "biome lint src/",
+    "lint:fix": "biome lint --write src/",
+    "format": "biome format --write src/",
+    "check": "biome check src/",
+    "check:fix": "biome check --write src/",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "github",
+    "api",
+    "github-api",
+    "chainable",
+    "fluent",
+    "typescript",
+    "cache",
+    "pagination",
+    "gist",
+    "repository",
+    "commits",
+    "branches"
+  ],
+  "dependencies": {
+    "@deify/core": "*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.1.1",
+    "@types/node": "^24.0.13",
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,20 +1,28 @@
-# GitHub Easy Fetcher
+# Deify
 
 ![npm](https://img.shields.io/npm/v/gheasy)
 ![GitHub](https://img.shields.io/github/license/remcostoeten/github-easy-fetcher)
 
-_Because i'm tired of writing the same querys over and over._
+_A unified platform for fetching data from popular APIs_
 
-A flexible, chainable GitHub API client for JavaScript/TypeScript that makes it easy to fetch any GitHub data.
+Deify is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, Spotify, GitLab, and more. Built with TypeScript and designed for developer productivity.
+
+## Packages
+
+- **[@deify/core](./core/)** - Core functionality and utilities
+- **[@deify/github](./packages/github/)** - GitHub API client
+- **[@deify/example](./packages/example/)** - Example package
+- **[gheasy](https://npmjs.com/package/gheasy)** - Legacy GitHub package (standalone)
 
 ## Features
 
-- **Fluent, chainable API** - Access any GitHub endpoint with intuitive method chaining
+- **Fluent, chainable API** - Access any API endpoint with intuitive method chaining
 - **Built-in caching** - Avoid rate limits with automatic request caching
 - **TypeScript support** - Full type safety and IntelliSense
 - **Pagination handling** - Easy pagination with `paginate()` and `stream()` methods
 - **Token authentication** - Support for private repositories
 - **Framework agnostic** - Works with any JavaScript environment
+- **Monorepo structure** - Modular packages for different services
 
 ## Installation
 
