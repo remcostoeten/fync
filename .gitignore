@@ -1,4 +1,53 @@
-node_modules
-dist
-*.lock
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+.turbo/
+
+# Test coverage
 coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Workspace specific
+*.tsbuildinfo
+.changeset/
+!.changeset/config.json
+!.changeset/README.md
+
+# Lock files (keep only one type)
+*.lock
+!yarn.lock
+!package-lock.json
+!pnpm-lock.yaml
