@@ -4,8 +4,33 @@ import type {
 	TRequestOptions,
 } from "./services/github-client";
 import { createGitHubClient } from "./services/github-client";
+import type {
+	TGitHubActionSecret,
+	TGitHubRateLimitResponse,
+	TGitHubWorkflow,
+	TGitHubWorkflowJob,
+	TGitHubWorkflowRun,
+} from "./types/github-actions";
 import type { TGitHubGist } from "./types/github-gist";
+import type {
+	TGitHubIssue,
+	TGitHubIssueComment,
+	TGitHubIssueEvent,
+	TGitHubLabel,
+	TGitHubMilestone,
+	TGitHubNotification,
+} from "./types/github-issues";
 import type { TGitHubOrganization } from "./types/github-organization";
+import type {
+	TGitHubPullRequest,
+	TGitHubPullRequestComment,
+	TGitHubPullRequestReview,
+} from "./types/github-pull-request";
+import type {
+	TGitHubRelease,
+	TGitHubReleaseAsset,
+	TGitHubTag,
+} from "./types/github-release";
 import type { TGitHubRepository } from "./types/github-repository";
 import type {
 	TGitHubSearchCodeResponse,
@@ -33,6 +58,22 @@ type TGitHub = {
 
 	// Current authenticated user (if token provided)
 	me: TAuthenticatedUserClient;
+
+	// Rate limiting information
+	rateLimit: {
+		get(): Promise<TGitHubRateLimitResponse>;
+	};
+
+	// Notifications
+	notifications: {
+		get(options?: TRequestOptions): Promise<TGitHubNotification[]>;
+		markAsRead(options?: TRequestOptions): Promise<void>;
+		markRepoAsRead(
+			owner: string,
+			repo: string,
+			options?: TRequestOptions,
+		): Promise<void>;
+	};
 };
 
 type TUserClient = {
@@ -70,6 +111,67 @@ type TRepoClient = {
 	releases: TChainableClient;
 	tags: TChainableClient;
 	topics: TChainableClient;
+	labels: TChainableClient;
+	milestones: TChainableClient;
+
+	// Enhanced typed methods for common operations
+	getIssues(options?: TRequestOptions): Promise<TGitHubIssue[]>;
+	getIssue(issueNumber: number): Promise<TGitHubIssue>;
+	getIssueComments(
+		issueNumber: number,
+		options?: TRequestOptions,
+	): Promise<TGitHubIssueComment[]>;
+	getIssueEvents(
+		issueNumber: number,
+		options?: TRequestOptions,
+	): Promise<TGitHubIssueEvent[]>;
+
+	getPulls(options?: TRequestOptions): Promise<TGitHubPullRequest[]>;
+	getPull(pullNumber: number): Promise<TGitHubPullRequest>;
+	getPullReviews(
+		pullNumber: number,
+		options?: TRequestOptions,
+	): Promise<TGitHubPullRequestReview[]>;
+	getPullComments(
+		pullNumber: number,
+		options?: TRequestOptions,
+	): Promise<TGitHubPullRequestComment[]>;
+
+	getReleases(options?: TRequestOptions): Promise<TGitHubRelease[]>;
+	getRelease(releaseId: number): Promise<TGitHubRelease>;
+	getLatestRelease(): Promise<TGitHubRelease>;
+	getReleaseAssets(releaseId: number): Promise<TGitHubReleaseAsset[]>;
+
+	getTags(options?: TRequestOptions): Promise<TGitHubTag[]>;
+	getLabels(options?: TRequestOptions): Promise<TGitHubLabel[]>;
+	getMilestones(options?: TRequestOptions): Promise<TGitHubMilestone[]>;
+
+	// Actions and workflows
+	actions: {
+		workflows: {
+			list(options?: TRequestOptions): Promise<TGitHubWorkflow[]>;
+			get(workflowId: number): Promise<TGitHubWorkflow>;
+			runs(
+				workflowId: number,
+				options?: TRequestOptions,
+			): Promise<TGitHubWorkflowRun[]>;
+			jobs(
+				runId: number,
+				options?: TRequestOptions,
+			): Promise<TGitHubWorkflowJob[]>;
+		};
+		runs: {
+			list(options?: TRequestOptions): Promise<TGitHubWorkflowRun[]>;
+			get(runId: number): Promise<TGitHubWorkflowRun>;
+			jobs(
+				runId: number,
+				options?: TRequestOptions,
+			): Promise<TGitHubWorkflowJob[]>;
+		};
+		secrets: {
+			get(options?: TRequestOptions): Promise<TGitHubActionSecret[]>;
+		};
+	};
 
 	// Direct chain access
 	chain: TChainableClient;
@@ -189,6 +291,61 @@ function GitHub(config?: TGitHubClientConfig): TGitHub {
 			releases: repoBase.releases,
 			tags: repoBase.tags,
 			topics: repoBase.topics,
+			labels: repoBase.labels,
+			milestones: repoBase.milestones,
+
+			// Enhanced typed methods for common operations
+			getIssues: (options?: TRequestOptions) => repoBase.issues.get(options),
+			getIssue: (issueNumber: number) => repoBase.issues[issueNumber].get(),
+			getIssueComments: (issueNumber: number, options?: TRequestOptions) =>
+				repoBase.issues[issueNumber].comments.get(options),
+			getIssueEvents: (issueNumber: number, options?: TRequestOptions) =>
+				repoBase.issues[issueNumber].events.get(options),
+
+			getPulls: (options?: TRequestOptions) => repoBase.pulls.get(options),
+			getPull: (pullNumber: number) => repoBase.pulls[pullNumber].get(),
+			getPullReviews: (pullNumber: number, options?: TRequestOptions) =>
+				repoBase.pulls[pullNumber].reviews.get(options),
+			getPullComments: (pullNumber: number, options?: TRequestOptions) =>
+				repoBase.pulls[pullNumber].comments.get(options),
+
+			getReleases: (options?: TRequestOptions) =>
+				repoBase.releases.get(options),
+			getRelease: (releaseId: number) => repoBase.releases[releaseId].get(),
+			getLatestRelease: () => repoBase.releases.latest.get(),
+			getReleaseAssets: (releaseId: number) =>
+				repoBase.releases[releaseId].assets.get(),
+
+			getTags: (options?: TRequestOptions) => repoBase.tags.get(options),
+			getLabels: (options?: TRequestOptions) => repoBase.labels.get(options),
+			getMilestones: (options?: TRequestOptions) =>
+				repoBase.milestones.get(options),
+
+			// Actions and workflows
+			actions: {
+				workflows: {
+					list: (options?: TRequestOptions) =>
+						repoBase.actions.workflows.get(options),
+					get: (workflowId: number) =>
+						repoBase.actions.workflows[workflowId].get(),
+					runs: (workflowId: number, options?: TRequestOptions) =>
+						repoBase.actions.workflows[workflowId].runs.get(options),
+					jobs: (runId: number, options?: TRequestOptions) =>
+						repoBase.actions.runs[runId].jobs.get(options),
+				},
+				runs: {
+					list: (options?: TRequestOptions) =>
+						repoBase.actions.runs.get(options),
+					get: (runId: number) => repoBase.actions.runs[runId].get(),
+					jobs: (runId: number, options?: TRequestOptions) =>
+						repoBase.actions.runs[runId].jobs.get(options),
+				},
+				secrets: {
+					get: (options?: TRequestOptions) =>
+						repoBase.actions.secrets.get(options),
+				},
+			},
+
 			chain: repoBase,
 		};
 	}
@@ -270,6 +427,19 @@ function GitHub(config?: TGitHubClientConfig): TGitHub {
 		chain: client.user,
 	};
 
+	const rateLimitClient = {
+		get: () => client.rate_limit.get() as Promise<TGitHubRateLimitResponse>,
+	};
+
+	const notificationsClient = {
+		get: (options?: TRequestOptions) =>
+			client.notifications.get(options) as Promise<TGitHubNotification[]>,
+		markAsRead: (options?: TRequestOptions) =>
+			client.notifications.put({}, options) as Promise<void>,
+		markRepoAsRead: (owner: string, repo: string, options?: TRequestOptions) =>
+			client.repos[owner][repo].notifications.put({}, options) as Promise<void>,
+	};
+
 	return {
 		api: client,
 		user: createUserClient,
@@ -278,6 +448,8 @@ function GitHub(config?: TGitHubClientConfig): TGitHub {
 		gist: createGistClient,
 		search: searchClient,
 		me: authenticatedUserClient,
+		rateLimit: rateLimitClient,
+		notifications: notificationsClient,
 	};
 }
 
@@ -290,4 +462,30 @@ export type {
 	TGistClient,
 	TSearchClient,
 	TAuthenticatedUserClient,
+	// Pull Request types
+	TGitHubPullRequest,
+	TGitHubPullRequestReview,
+	TGitHubPullRequestComment,
+	// Release types
+	TGitHubRelease,
+	TGitHubReleaseAsset,
+	TGitHubTag,
+	// Actions types
+	TGitHubWorkflow,
+	TGitHubWorkflowRun,
+	TGitHubWorkflowJob,
+	TGitHubActionSecret,
+	TGitHubRateLimitResponse,
+	// Issues types
+	TGitHubIssue,
+	TGitHubIssueComment,
+	TGitHubIssueEvent,
+	TGitHubLabel,
+	TGitHubMilestone,
+	TGitHubNotification,
+	// Existing types
+	TGitHubUser,
+	TGitHubRepository,
+	TGitHubOrganization,
+	TGitHubGist,
 };
