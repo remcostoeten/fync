@@ -1,18 +1,19 @@
 # Fync
 
-![npm](https://img.shields.io/npm/v/@deify/deify)
-![GitHub](https://img.shields.io/github/license/remcostoeten/github-easy-fetcher)
+![npm](https://img.shields.io/npm/v/@remcostoeten/fync)
+![GitHub](https://img.shields.io/github/license/remcostoeten/fync)
 
 _A unified platform for fetching data from popular APIs_
 
 Fync is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, Spotify, GitLab, and more. Built with TypeScript and designed for developer productivity.
 
+> **⚠️ Development Status**: This project is currently under active development. The main `@remcostoeten/fync` package is being restructured from the original `gheasy` package. Some features may not be fully implemented yet.
+
 ## Packages
 
-- **[@fync/core](./core/)** - Core functionality and utilities
-- **[@fync/github](./packages/github/)** - GitHub API client
-- **[@fync/example](./packages/example/)** - Example package
-- **[gheasy](https://npmjs.com/package/gheasy)** - Legacy GitHub package (standalone)
+- **[@remcostoeten/fync-core](./core/)** - Core functionality and utilities
+- **[@remcostoeten/fync](./packages/fync/)** - Main Fync package with GitHub API client
+- **[@remcostoeten/fync-github](./packages/github/)** - GitHub API client
 
 ## Features
 
@@ -27,13 +28,13 @@ Fync is a modern monorepo that provides easy-to-use, chainable API clients for p
 ## Installation
 
 ```bash
-npm install @deify/deify
+npm install @remcostoeten/fync
 ```
 
 ## Basic Usage
 
 ```typescript
-import { GitHub } from '@deify/deify'
+import { GitHub } from '@remcostoeten/fync'
 
 // Create a client (optionally with a token)
 const github = GitHub({ token: 'your-github-token' })
@@ -238,7 +239,7 @@ All `get()`, `post()`, `put()`, `patch()`, and `delete()` methods accept options
 The package still supports the original filtering API:
 
 ```typescript
-import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from '@deify/deify'
+import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from '@remcostoeten/fync'
 
 const user = await fetchUser('octocat')
 const repos = await fetchRepositories('octocat')
@@ -247,7 +248,7 @@ const jsRepos = filterRepositoriesByLanguage(repos, 'JavaScript')
 
 ## Migration from gheasy
 
-The `gheasy` package has been renamed and restructured as `@deify/deify` within the Deify monorepo. To migrate:
+The `gheasy` package has been renamed and restructured as `@remcostoeten/fync` within the Fync monorepo. To migrate:
 
 1. Update your imports:
    ```typescript
@@ -255,13 +256,13 @@ The `gheasy` package has been renamed and restructured as `@deify/deify` within 
    import { GitHub } from 'gheasy'
    
    // New
-   import { GitHub } from '@deify/deify'
+   import { GitHub } from '@remcostoeten/fync'
    ```
 
 2. Update your package.json:
    ```bash
    npm uninstall gheasy
-   npm install @deify/deify
+   npm install @remcostoeten/fync
    ```
 
 All existing APIs remain the same, so no code changes are needed beyond updating imports.
