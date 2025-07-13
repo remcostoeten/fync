@@ -6,7 +6,9 @@ import type {
   TSortOrder, 
   TFilterOptions 
 } from './types';
-import { createFilterFunction, applyFilters } from './engine';
+import { createFilterFunction, applyFilters, createOperatorFilter } from './engine';
+
+export { createOperatorFilter };
 
 export function composeFilters<T>(...filters: TFilter<T>[]): TFilterFunction<T> {
   return function(item: T): boolean {

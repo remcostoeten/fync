@@ -87,32 +87,3 @@ export function createGroupFilter<T>(
   return { conditions, operator };
 }
 
-export function applyFilterOptions<T>(items: T[], options: { filters?: any[]; sort?: any; limit?: number; offset?: number }): T[] {
-  let result = [...items];
-  
-  if (options.filters && options.filters.length > 0) {
-    result = applyFilters(result, options.filters);
-  }
-  
-  if (options.sort) {
-    result = result.sort((a, b) => {
-      const aValue = a[options.sort.field];
-      const bValue = b[options.sort.field];
-      const direction = options.sort.direction === 'desc' ? -1 : 1;
-      
-      if (aValue < bValue) return -1 * direction;
-      if (aValue > bValue) return 1 * direction;
-      return 0;
-    });
-  }
-  
-  if (options.offset) {
-    result = result.slice(options.offset);
-  }
-  
-  if (options.limit) {
-    result = result.slice(0, options.limit);
-  }
-  
-  return result;
-}

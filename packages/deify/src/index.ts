@@ -54,6 +54,8 @@ export type {
 	TUserClient,
 } from "./github";
 export { GitHub } from "./github";
+export { GitHub as github } from "./github";
+export { GitHub as default } from "./github";
 // Cache exports (for advanced users)
 export { getCache, memoize, setCache } from "./services/cache-service";
 export type {

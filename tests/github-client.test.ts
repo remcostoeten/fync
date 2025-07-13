@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createGitHubClient } from '../src/services/github-client'
-import { clearCache } from '../src/services/cache-service'
+import { createGitHubClient } from '../packages/deify/src/services/github-client'
+import { clearCache } from '../packages/deify/src/services/cache-service'
 
 describe('GitHub Chainable Client', () => {
   let mockFetch: any

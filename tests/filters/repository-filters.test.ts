@@ -8,7 +8,7 @@ import {
   filterRepositoriesByLicense,
   filterRepositories,
   filterRepositoriesByAdvancedCriteria
-} from '../../src/filters/repository-filters'
+} from '../../packages/deify/src/filters/repository-filters'
 
 const mockRepositories = [
   {

@@ -1,6 +1,6 @@
 # Deify
 
-![npm](https://img.shields.io/npm/v/gheasy)
+![npm](https://img.shields.io/npm/v/@deify/deify)
 ![GitHub](https://img.shields.io/github/license/remcostoeten/github-easy-fetcher)
 
 _A unified platform for fetching data from popular APIs_
@@ -11,8 +11,8 @@ Deify is a modern monorepo that provides easy-to-use, chainable API clients for 
 
 - **[@deify/core](./core/)** - Core functionality and utilities
 - **[@deify/github](./packages/github/)** - GitHub API client
+- **[@deify/deify](./packages/deify/)** - Main deify package (formerly gheasy)
 - **[@deify/example](./packages/example/)** - Example package
-- **[gheasy](https://npmjs.com/package/gheasy)** - Legacy GitHub package (standalone)
 
 ## Features
 
@@ -27,13 +27,13 @@ Deify is a modern monorepo that provides easy-to-use, chainable API clients for 
 ## Installation
 
 ```bash
-npm install gheasy
+npm install @deify/deify
 ```
 
 ## Basic Usage
 
 ```typescript
-import { GitHub } from 'gheasy'
+import { GitHub } from '@deify/deify'
 
 // Create a client (optionally with a token)
 const github = GitHub({ token: 'your-github-token' })
@@ -238,12 +238,34 @@ All `get()`, `post()`, `put()`, `patch()`, and `delete()` methods accept options
 The package still supports the original filtering API:
 
 ```typescript
-import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from 'gheasy'
+import { fetchUser, fetchRepositories, filterRepositoriesByLanguage } from '@deify/deify'
 
 const user = await fetchUser('octocat')
 const repos = await fetchRepositories('octocat')
 const jsRepos = filterRepositoriesByLanguage(repos, 'JavaScript')
 ```
-xxx
+
+## Migration from gheasy
+
+The `gheasy` package has been renamed and restructured as `@deify/deify` within the Deify monorepo. To migrate:
+
+1. Update your imports:
+   ```typescript
+   // Old
+   import { GitHub } from 'gheasy'
+   
+   // New
+   import { GitHub } from '@deify/deify'
+   ```
+
+2. Update your package.json:
+   ```bash
+   npm uninstall gheasy
+   npm install @deify/deify
+   ```
+
+All existing APIs remain the same, so no code changes are needed beyond updating imports.
+
+---
 
 remco stoeten

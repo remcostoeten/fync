@@ -7,7 +7,7 @@ import {
   filterUsersByCompany,
   filterUserFields,
   filterUsers
-} from '../../src/filters/user-filters'
+} from '../../packages/deify/src/filters/user-filters'
 
 const mockUsers = [
   {
