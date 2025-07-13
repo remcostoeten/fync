@@ -1,34 +1,40 @@
-import type { THttpConfig, TRequestOptions } from './types';
-import { createHttpClient } from './client';
+import { createHttpClient } from "./client";
+import type { THttpConfig, TRequestOptions } from "./types";
 
-export function memoizeRequest(fetchFn: typeof fetch, options: TRequestOptions) {
-  const cache: Record<string, any> = {};
+export function memoizeRequest(
+	fetchFn: typeof fetch,
+	options: TRequestOptions,
+) {
+	const cache: Record<string, Response> = {};
 
-  return async function (url: string, config: RequestInit = {}): Promise<Response> {
-    const cacheKey = options.cacheKey || url;
+	return async function (
+		url: string,
+		config: RequestInit = {},
+	): Promise<Response> {
+		const cacheKey = options.cacheKey || url;
 
-    if (options.cache && cache[cacheKey]) {
-      return cache[cacheKey];
-    }
+		if (options.cache && cache[cacheKey]) {
+			return cache[cacheKey];
+		}
 
-    const response = await fetchFn(url, config);
+		const response = await fetchFn(url, config);
 
-    if (options.cache) {
-      cache[cacheKey] = response.clone();
-      if (options.cacheTTL) {
-        setTimeout(() => {
-          delete cache[cacheKey];
-        }, options.cacheTTL);
-      }
-    }
+		if (options.cache) {
+			cache[cacheKey] = response.clone();
+			if (options.cacheTTL) {
+				setTimeout(() => {
+					delete cache[cacheKey];
+				}, options.cacheTTL);
+			}
+		}
 
-    return response;
-  };
+		return response;
+	};
 }
 
 export const client = createHttpClient({
-  baseURL: 'https://api.example.com',
-  timeout: 10000,
-  retries: 3,
-  retryDelay: 1000
+	baseURL: "https://api.example.com",
+	timeout: 10000,
+	retries: 3,
+	retryDelay: 1000,
 });

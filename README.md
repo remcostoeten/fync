@@ -1,18 +1,18 @@
-# Deify
+# Fync
 
 ![npm](https://img.shields.io/npm/v/@deify/deify)
 ![GitHub](https://img.shields.io/github/license/remcostoeten/github-easy-fetcher)
 
 _A unified platform for fetching data from popular APIs_
 
-Deify is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, Spotify, GitLab, and more. Built with TypeScript and designed for developer productivity.
+Fync is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, Spotify, GitLab, and more. Built with TypeScript and designed for developer productivity.
 
 ## Packages
 
-- **[@deify/core](./core/)** - Core functionality and utilities
-- **[@deify/github](./packages/github/)** - GitHub API client
-- **[@deify/deify](./packages/deify/)** - Main deify package (formerly gheasy)
-- **[@deify/example](./packages/example/)** - Example package
+- **[@fync/core](./core/)** - Core functionality and utilities
+- **[@fync/github](./packages/github/)** - GitHub API client
+- **[@fync/example](./packages/example/)** - Example package
+- **[gheasy](https://npmjs.com/package/gheasy)** - Legacy GitHub package (standalone)
 
 ## Features
 

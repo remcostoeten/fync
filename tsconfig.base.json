@@ -13,9 +13,10 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@deify/core": ["./core/src"],
-      "@deify/core/*": ["./core/src/*"],
-      "@deify/packages/*": ["./packages/*/src"]
+      "@remcostoeten/fync-core": ["./core/src"],
+      "@remcostoeten/fync-core/*": ["./core/src/*"],
+      "@remcostoeten/fync-github": ["./packages/github/src"],
+      "@remcostoeten/fync-github/*": ["./packages/github/src/*"]
     }
   },
   "exclude": [

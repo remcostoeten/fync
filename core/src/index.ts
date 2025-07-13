@@ -1,8 +1,8 @@
 export function createCore() {
 	return {
-		name: "@deify/core",
+		name: "@remcostoeten/fync-core",
 		version: "1.0.0",
-		description: "Core functionality for the deify monorepo",
+		description: "Core functionality for the fync monorepo",
 	};
 }
 
