@@ -1,4 +1,4 @@
-import { createCore } from "@fync/core";
+import { createCore } from "@remcostoeten/fync-core";
 
 export function createExample() {
 	const core = createCore();

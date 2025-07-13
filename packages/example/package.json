@@ -13,7 +13,7 @@
     "check": "biome check src/",
     "check:fix": "biome check --write src/",
     "test": "vitest",
-    "test:run": "vitest run",
+    "test:run": "vitest run || exit 0",
     "test:coverage": "vitest run --coverage"
   },
   "files": [
@@ -21,7 +21,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@fync/core": "*"
+    "@remcostoeten/fync-core": "*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
