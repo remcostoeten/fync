@@ -1,20 +1,28 @@
 {
-  "name": "@fync/github",
-  "version": "1.0.0",
-  "description": "GitHub API client for the fync ecosystem",
+  "name": "@fync/fync",
+  "version": "2.0.0",
+  "description": "Main fync package - GitHub API client with chainable, fluent interface",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
-    "./package.json": "./package.json"
+    "./github": {
+      "import": "./dist/github-entry.js",
+      "require": "./dist/github-entry.js",
+      "types": "./dist/github-entry.d.ts"
+    }
   },
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsc && vite build",
+    "build": "tsc",
     "dev": "tsc --watch",
     "lint": "biome lint src/",
     "lint:fix": "biome lint --write src/",
@@ -41,8 +49,19 @@
     "gist",
     "repository",
     "commits",
-    "branches"
+    "branches",
+    "fync"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remcostoeten/fync.git",
+    "directory": "packages/fync"
+  },
+  "homepage": "https://github.com/remcostoeten/fync#readme",
+  "bugs": {
+    "url": "https://github.com/remcostoeten/fync/issues"
+  },
+  "license": "MIT",
   "dependencies": {
     "@fync/core": "*"
   },
@@ -51,7 +70,6 @@
     "@types/node": "^24.0.13",
     "@vitest/coverage-v8": "^3.2.4",
     "typescript": "^5.8.3",
-    "vite": "^7.0.4",
     "vitest": "^3.2.4"
   }
 }

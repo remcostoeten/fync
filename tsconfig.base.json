@@ -13,9 +13,8 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@deify/core": ["./core/src"],
-      "@deify/core/*": ["./core/src/*"],
-      "@deify/packages/*": ["./packages/*/src"]
+      "@fync/core": ["./core/src"],
+      "@fync/core/*": ["./core/src/*"]
     }
   },
   "exclude": [

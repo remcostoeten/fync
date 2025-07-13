@@ -1,5 +1,5 @@
 {
-  "name": "deify",
+  "name": "fync",
   "version": "1.0.0",
   "description": "A unified platform for fetching data from popular APIs (GitHub, Spotify, GitLab, etc.)",
   "private": true,

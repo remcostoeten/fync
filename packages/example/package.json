@@ -1,7 +1,7 @@
 {
-  "name": "@deify/example",
+  "name": "@fync/example",
   "version": "1.0.0",
-  "description": "Example package for the deify monorepo",
+  "description": "Example package for the fync monorepo",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -21,7 +21,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@deify/core": "*"
+    "@fync/core": "*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",

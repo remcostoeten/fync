@@ -1,11 +1,11 @@
-import { createCore } from "@deify/core";
+import { createCore } from "@fync/core";
 
 export function createExample() {
 	const core = createCore();
-	
+
 	return {
 		...core,
-		package: "@deify/example",
+		package: "@fync/example",
 		features: ["example", "demo", "workspace"],
 	};
 }

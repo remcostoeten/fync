@@ -1,7 +1,7 @@
 {
-  "name": "@deify/core",
+  "name": "@fync/core",
   "version": "1.0.0",
-  "description": "Core functionality for the deify monorepo",
+  "description": "Core functionality for the fync monorepo",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
