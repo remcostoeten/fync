@@ -1,8 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "./dist"
-  },
+  "compilerOptions": {},
   "include": [],
   "references": [
     {
@@ -10,6 +8,12 @@
     },
     {
       "path": "./packages/example"
+    },
+    {
+      "path": "./packages/github"
+    },
+    {
+      "path": "./packages/deify"
     }
   ]
 }

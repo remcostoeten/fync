@@ -7,7 +7,7 @@ import {
   buildErrorResponse,
   buildSingleItemResponse,
   paginateData
-} from '../../src/builders/response-builder'
+} from '../../packages/deify/src/builders/response-builder'
 
 const mockUser = {
   id: 1,

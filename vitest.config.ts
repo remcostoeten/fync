@@ -20,7 +20,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
+      '@deify/core': resolve(__dirname, 'core/src'),
+      '@deify/deify': resolve(__dirname, 'packages/deify/src')
     }
   }
 })

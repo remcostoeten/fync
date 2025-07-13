@@ -7,6 +7,8 @@ import type {
 import type { TBaseEntity } from '../types';
 import { createHttpClient } from '../http';
 import { createMemoryCache } from '../cache';
+import type { TFilterOptions } from '../filters/types';
+import { applyFilterOptions, createOperatorFilter } from '../filters/utils';
 
 export function createApiClient<T extends TBaseEntity>(
   resourceConfig: TResourceConfig<T>
