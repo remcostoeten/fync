@@ -1,3 +1,4 @@
+// @ts-ignore
 import { NextRequest, NextResponse } from "next/server";
 import { createOAuth2Flow } from "../core/flow";
 import { GITHUB_OAUTH2_PROVIDER } from "../providers/github";

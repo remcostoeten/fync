@@ -1,7 +1,7 @@
 {
   "name": "fync",
   "version": "1.0.0",
-  "description": "A unified platform for fetching data from popular APIs (GitHub, Spotify, GitLab, etc.)",
+  "description": "A unified platform for fetching data from popular APIs (GitHub, GitLab, etc.)",
   "private": true,
   "packageManager": "pnpm@8.0.0",
   "workspaces": [

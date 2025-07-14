@@ -1,4 +1,5 @@
 import { createGitHubOAuth2Flow, GITHUB_OAUTH2_SCOPES, createNextJSAPIHandler } from './src/oauth';
+@ts-ignore
 import type { NextRequest } from 'next/server';
 
 // Example 1: Basic OAuth2 flow

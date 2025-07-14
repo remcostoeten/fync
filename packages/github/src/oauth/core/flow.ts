@@ -64,13 +64,16 @@ function createOAuth2Flow(
 	): Promise<TOAuth2TokenResponse> {
 		validateRequiredParams(options, ["code"]);
 
-		const params = {
+		const params: Record<string, string> = {
 			client_id: config.clientId,
 			client_secret: config.clientSecret,
 			code: options.code,
 			redirect_uri: options.redirectUri || config.redirectUri,
-			state: options.state,
 		};
+
+		if (options.state) {
+			params.state = options.state;
+		}
 
 		try {
 			const response = await fetch(provider.tokenUrl, {

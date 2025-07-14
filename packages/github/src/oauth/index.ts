@@ -51,12 +51,9 @@ export {
 } from "./utils";
 
 // Convenience function for GitHub OAuth2
+import type { TOAuth2Config } from "./types";
 export function createGitHubOAuth2Flow(config: TOAuth2Config) {
 	const { createOAuth2Flow } = require("./core/flow");
 	const { GITHUB_OAUTH2_PROVIDER } = require("./providers/github");
 	return createOAuth2Flow(config, GITHUB_OAUTH2_PROVIDER);
 }
-
-// Re-export types for convenience
-import type { TOAuth2Config, TOAuth2Flow } from "./types";
-export { TOAuth2Config, TOAuth2Flow };

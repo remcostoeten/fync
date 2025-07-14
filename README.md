@@ -5,7 +5,7 @@
 
 _A unified platform for fetching data from popular APIs_
 
-Fync is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, Spotify, GitLab, and more. Built with TypeScript and designed for developer productivity.
+Fync is a modern monorepo that provides easy-to-use, chainable API clients for popular services like GitHub, GitLab, and more. Built with TypeScript and designed for developer productivity.
 
 ## Packages
 
