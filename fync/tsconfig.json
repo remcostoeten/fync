@@ -15,12 +15,12 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@remcostoeten/fync/core": ["./src/core"],
-      "@remcostoeten/fync/core/*": ["./src/core/*"],
-      "@remcostoeten/fync/github": ["./src/github"],
-      "@remcostoeten/fync/github/*": ["./src/github/*"],
-      "@remcostoeten/fync/spotify": ["./src/spotify"],
-      "@remcostoeten/fync/spotify/*": ["./src/spotify/*"]
+      "remcostoeten/fync/core": ["./src/core"],
+      "remcostoeten/fync/core/*": ["./src/core/*"],
+      "remcostoeten/fync/github": ["./src/github"],
+      "remcostoeten/fync/github/*": ["./src/github/*"],
+      "remcostoeten/fync/spotify": ["./src/spotify"],
+      "remcostoeten/fync/spotify/*": ["./src/spotify/*"]
     }
   },
   "exclude": [
