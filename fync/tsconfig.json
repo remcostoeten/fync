@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "remcostoeten/fync/core": ["./src/core"],
+      "remcostoeten/fync/core/*": ["./src/core/*"],
+      "remcostoeten/fync/github": ["./src/github"],
+      "remcostoeten/fync/github/*": ["./src/github/*"],
+      "remcostoeten/fync/spotify": ["./src/spotify"],
+      "remcostoeten/fync/spotify/*": ["./src/spotify/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage"
+  ]
+}

@@ -1,6 +1,0 @@
-node_modules/
-dist/
-*.json
-.husky/
-pnpm-lock.yaml
-*.lock
