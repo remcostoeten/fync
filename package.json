@@ -1,5 +1,5 @@
 {
-	"name": "@remcostoeten/fync",
+	"name": "remcostoeten/fync",
 	"version": "3.0.0",
 	"description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
 	"main": "dist/src/index.js",
