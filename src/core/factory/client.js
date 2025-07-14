@@ -1,0 +1,81 @@
+import { createMemoryCache } from "../cache";
+import { applyFilterOptions, createOperatorFilter } from "../filters";
+import { createHttpClient } from "../http";
+export function createApiClient(resourceConfig) {
+	return function (config) {
+		const httpClient = createHttpClient(config);
+		const cache = config.cache || createMemoryCache();
+		async function create(data) {
+			const serialized = resourceConfig.serializer
+				? resourceConfig.serializer(data)
+				: data;
+			const response = await httpClient.post(
+				resourceConfig.endpoint,
+				serialized,
+			);
+			return response.data;
+		}
+		async function read(id) {
+			const cached = await cache.get(id.toString());
+			if (cached) return cached;
+			const response = await httpClient.get(`${resourceConfig.endpoint}/${id}`);
+			const entity = response.data;
+			await cache.set(id.toString(), entity, config.defaultCacheTTL);
+			return entity;
+		}
+		async function update(id, data) {
+			const serialized = resourceConfig.serializer
+				? resourceConfig.serializer(data)
+				: data;
+			const response = await httpClient.put(
+				`${resourceConfig.endpoint}/${id}`,
+				serialized,
+			);
+			const entity = response.data;
+			await cache.set(id.toString(), entity, config.defaultCacheTTL);
+			return entity;
+		}
+		async function destroy(id) {
+			await cache.delete(id.toString());
+			const response = await httpClient.delete(
+				`${resourceConfig.endpoint}/${id}`,
+			);
+			return response.ok;
+		}
+		async function list(options) {
+			const response = await httpClient.get(resourceConfig.endpoint);
+			return applyFilterOptions(response.data, options || {});
+		}
+		async function findBy(field, value) {
+			const filter = createOperatorFilter(field, "eq", value);
+			const [result] = await list({ filters: [filter] });
+			return result || null;
+		}
+		async function findManyBy(field, value) {
+			const filter = createOperatorFilter(field, "eq", value);
+			return list({ filters: [filter] });
+		}
+		async function count(options) {
+			const entities = await list(options);
+			return entities.length;
+		}
+		async function exists(id) {
+			const entity = await read(id);
+			return Boolean(entity);
+		}
+		return {
+			config,
+			cache,
+			create,
+			read,
+			update,
+			destroy,
+			list,
+			findBy,
+			findManyBy,
+			count,
+			exists,
+		};
+	};
+}
+//# sourceMappingURL=client.js.map

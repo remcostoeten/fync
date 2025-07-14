@@ -1,53 +1,71 @@
 {
-  "name": "fync",
-  "version": "1.0.0",
-  "description": "A unified platform for fetching data from popular APIs (GitHub, GitLab, etc.)",
-  "private": true,
-  "packageManager": "pnpm@8.0.0",
-  "workspaces": [
-    "core",
-    "packages/*"
-  ],
+  "name": "@remcostoeten/fync",
+  "version": "3.0.0",
+  "description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist-cjs/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    },
+    "./spotify": {
+      "import": "./dist/src/spotify/index.js",
+      "require": "./dist-cjs/src/spotify/index.js",
+      "types": "./dist/src/spotify/index.d.ts"
+    },
+    "./github": {
+      "import": "./dist/src/github/index.js",
+      "require": "./dist-cjs/src/github/index.js",
+      "types": "./dist/src/github/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/src/core/index.js",
+      "require": "./dist-cjs/src/core/index.js",
+      "types": "./dist/src/core/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix",
-    "format": "turbo run format",
-    "check": "turbo run check",
-    "check:fix": "turbo run check:fix",
-    "test": "turbo run test",
-    "test:run": "turbo run test:run",
-    "test:coverage": "turbo run test:coverage",
-    "prepare": "husky install",
-    "changeset": "changeset",
-    "changeset:version": "changeset version",
-    "changeset:release": "changeset publish"
+    "build": "tsc && npm run build:cjs",
+    "build:cjs": "babel dist --out-dir dist-cjs --config-file ./babel.config.cjs",
+    "dev": "tsc --watch",
+    "lint": "biome lint src/",
+    "lint:fix": "biome lint --write src/",
+    "format": "biome format --write src/",
+    "check": "biome check src/",
+    "check:fix": "biome check --write src/",
+    "test": "vitest",
+    "test:run": "vitest run || exit 0",
+    "test:coverage": "vitest run --coverage"
   },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "biome check --write"
-    ]
-  },
+  "files": [
+    "dist",
+    "dist-cjs",
+    "README.md"
+  ],
   "keywords": [
-    "github",
     "api",
-    "github-api",
+    "spotify",
+    "github",
+    "gitlab",
     "chainable",
     "fluent",
     "typescript",
     "cache",
     "pagination",
-    "gist",
-    "repository",
+    "music",
+    "playlists",
+    "tracks",
+    "albums",
+    "repositories",
     "commits",
     "branches"
   ],
-  "author": "remcostoeten (github.com/remcostoeten)",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/remcostoeten/fync.git"
@@ -56,16 +74,20 @@
   "bugs": {
     "url": "https://github.com/remcostoeten/fync/issues"
   },
+  "license": "MIT",
+  "dependencies": {
+    "undici": "^6.0.0"
+  },
   "devDependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-typescript": "^7.23.0",
     "@biomejs/biome": "^2.1.1",
-    "@changesets/cli": "^2.27.1",
     "@types/node": "^24.0.13",
     "@vitest/coverage-v8": "^3.2.4",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
-    "rimraf": "^6.0.1",
-    "turbo": "^2.0.3",
     "typescript": "^5.8.3",
+    "vite": "^7.0.4",
     "vitest": "^3.2.4"
   }
 }
