@@ -1,11 +1,15 @@
-# remcostoeten/fync
+# @remcostoeten/fync
+
+[![npm version](https://badge.fury.io/js/@remcostoeten%2Ffync.svg)](https://badge.fury.io/js/@remcostoeten%2Ffync)
+[![npm downloads](https://img.shields.io/npm/dm/@remcostoeten/fync.svg)](https://www.npmjs.com/package/@remcostoeten/fync)
+[![GitHub license](https://img.shields.io/github/license/remcostoeten/fync.svg)](https://github.com/remcostoeten/fync/blob/main/LICENSE)
 
 A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)
 
 ## Installation
 
 ```bash
-npm install remcostoeten/fync
+npm install @remcostoeten/fync
 ```
 
 ## Usage
@@ -13,7 +17,7 @@ npm install remcostoeten/fync
 ### Core API Access
 
 ```typescript
-import { createCore } from 'remcostoeten/fync'
+import { createCore } from '@remcostoeten/fync'
 
 const core = createCore()
 ```
@@ -21,7 +25,7 @@ const core = createCore()
 ### Spotify API
 
 ```typescript
-import { Spotify } from 'remcostoeten/fync/spotify'
+import { Spotify } from '@remcostoeten/fync/spotify'
 
 const spotify = Spotify({
   token: 'your-spotify-token'
@@ -40,7 +44,7 @@ const playlists = await spotify.me.playlists.get()
 ### GitHub API
 
 ```typescript
-import { GitHub } from 'remcostoeten/fync/github'
+import { GitHub } from '@remcostoeten/fync/github'
 
 const github = GitHub({
   token: 'your-github-token'
