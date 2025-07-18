@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.createGitHubClient = createGitHubClient;
-var _cacheService = require("./cache-service");
+var _memoize = require("../../core/http/memoize");
 var _httpClient = require("./http-client");
 function createChainableClient(config, pathSegments = []) {
   const defaultHeaders = {
@@ -57,7 +57,9 @@ function createChainableClient(config, pathSegments = []) {
     };
     if (cache && method === "GET") {
       const cacheKey = `${path}:${JSON.stringify(params || {})}`;
-      const memoizedFn = (0, _cacheService.memoize)(requestFn, () => cacheKey, options?.cacheTTL ?? config.cacheTTL ?? 300000);
+      const memoizedFn = (0, _memoize.memoize)(requestFn, () => cacheKey, {
+        ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000
+      });
       return memoizedFn();
     }
     return requestFn();

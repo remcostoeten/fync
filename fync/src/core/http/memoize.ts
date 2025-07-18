@@ -1,40 +1,38 @@
-import { createHttpClient } from "./client";
-import type { THttpConfig, TRequestOptions } from "./types";
+// Simple memoization utility
+type MemoizeOptions = {
+	ttl?: number;
+	key?: string;
+};
 
-export function memoizeRequest(
-	fetchFn: typeof fetch,
-	options: TRequestOptions,
-) {
-	const cache: Record<string, Response> = {};
+export function memoize<T extends (...args: any[]) => any>(
+	fn: T,
+	getKey?: (...args: Parameters<T>) => string,
+	options: MemoizeOptions = {}
+): T {
+	const cache = new Map<string, { value: ReturnType<T>; timestamp: number }>();
 
-	return async function (
-		url: string,
-		config: RequestInit = {},
-	): Promise<Response> {
-		const cacheKey = options.cacheKey || url;
+	return ((...args: Parameters<T>): ReturnType<T> => {
+		const key = getKey ? getKey(...args) : JSON.stringify(args);
+		const now = Date.now();
+		const cached = cache.get(key);
 
-		if (options.cache && cache[cacheKey]) {
-			return cache[cacheKey];
+		if (cached && (!options.ttl || now - cached.timestamp < options.ttl)) {
+			return cached.value;
 		}
 
-		const response = await fetchFn(url, config);
+		const result = fn(...args);
+		cache.set(key, { value: result, timestamp: now });
 
-		if (options.cache) {
-			cache[cacheKey] = response.clone();
-			if (options.cacheTTL) {
-				setTimeout(() => {
-					delete cache[cacheKey];
-				}, options.cacheTTL);
-			}
+		// Auto-cleanup expired entries
+		if (options.ttl) {
+			setTimeout(() => {
+				const entry = cache.get(key);
+				if (entry && now - entry.timestamp >= options.ttl!) {
+					cache.delete(key);
+				}
+			}, options.ttl);
 		}
 
-		return response;
-	};
+		return result;
+	}) as T;
 }
-
-export const client = createHttpClient({
-	baseURL: "https://api.example.com",
-	timeout: 10000,
-	retries: 3,
-	retryDelay: 1000,
-});

@@ -7,6 +7,16 @@ build/
 .next/
 .turbo/
 
+# Compiled TypeScript files in src (should only be in dist)
+**/*.js
+**/*.d.ts
+**/*.js.map
+**/*.d.ts.map
+!babel.config.cjs
+!jest.config.js
+!vitest.config.js
+!*.config.js
+
 # Test coverage
 coverage/
 

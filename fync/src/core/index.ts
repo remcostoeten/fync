@@ -2,8 +2,6 @@
 export * from './http';
 export * from './cache';
 export * from './response';
-export * from './factory';
-export * from './filters';
 
 // Core types
 export * from './types';

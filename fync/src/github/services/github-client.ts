@@ -1,4 +1,4 @@
-import { memoize } from "./cache-service";
+import { memoize } from "../../core/http/memoize";
 import type { THttpResponse, TPaginatedResponse } from "./http-client";
 import { createHttpClient } from "./http-client";
 
@@ -105,7 +105,7 @@ function createChainableClient(
 			const memoizedFn = memoize(
 				requestFn,
 				() => cacheKey,
-				options?.cacheTTL ?? config.cacheTTL ?? 300000,
+				{ ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000 }
 			);
 			return memoizedFn() as Promise<T>;
 		}

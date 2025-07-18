@@ -3,31 +3,30 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.client = void 0;
-exports.memoizeRequest = memoizeRequest;
-var _client = require("./client");
-function memoizeRequest(fetchFn, options) {
-  const cache = {};
-  return async function (url, config = {}) {
-    const cacheKey = options.cacheKey || url;
-    if (options.cache && cache[cacheKey]) {
-      return cache[cacheKey];
+exports.memoize = memoize;
+function memoize(fn, getKey, options = {}) {
+  const cache = new Map();
+  return (...args) => {
+    const key = getKey ? getKey(...args) : JSON.stringify(args);
+    const now = Date.now();
+    const cached = cache.get(key);
+    if (cached && (!options.ttl || now - cached.timestamp < options.ttl)) {
+      return cached.value;
     }
-    const response = await fetchFn(url, config);
-    if (options.cache) {
-      cache[cacheKey] = response.clone();
-      if (options.cacheTTL) {
-        setTimeout(() => {
-          delete cache[cacheKey];
-        }, options.cacheTTL);
-      }
+    const result = fn(...args);
+    cache.set(key, {
+      value: result,
+      timestamp: now
+    });
+    // Auto-cleanup expired entries
+    if (options.ttl) {
+      setTimeout(() => {
+        const entry = cache.get(key);
+        if (entry && now - entry.timestamp >= options.ttl) {
+          cache.delete(key);
+        }
+      }, options.ttl);
     }
-    return response;
+    return result;
   };
 }
-const client = exports.client = (0, _client.createHttpClient)({
-  baseURL: "https://api.example.com",
-  timeout: 10000,
-  retries: 3,
-  retryDelay: 1000
-});
