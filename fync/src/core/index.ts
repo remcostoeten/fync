@@ -1,13 +1,21 @@
-export function createCore() {
-	return {
-		name: "../../core",
-		version: "1.0.0",
-		description: "Core functionality for the fync monorepo",
-	};
-}
+// Core HTTP client and utilities
+export * from './http';
+export * from './cache';
+export * from './response';
+export * from './factory';
+export * from './filters';
 
+// Core types
+export * from './types';
+
+// Utility functions
+export const version = '3.0.2';
+export const userAgent = `@remcostoeten/fync/${version}`;
+
+// Core configuration type
 export type TCoreConfig = {
-	name: string;
-	version: string;
-	description: string;
+	baseURL?: string;
+	timeout?: number;
+	headers?: Record<string, string>;
+	cache?: boolean;
 };

@@ -14,14 +14,6 @@ npm install @remcostoeten/fync
 
 ## Usage
 
-### Core API Access
-
-```typescript
-import { createCore } from '@remcostoeten/fync'
-
-const core = createCore()
-```
-
 ### Spotify API
 
 ```typescript
@@ -31,14 +23,29 @@ const spotify = Spotify({
   token: 'your-spotify-token'
 })
 
-// Get current user
+// Get current user profile
 const user = await spotify.me.get()
 
 // Search for tracks
-const results = await spotify.search.tracks('your query')
+const trackResults = await spotify.search.tracks('bohemian rhapsody')
 
-// Get playlists
+// Get user's playlists
 const playlists = await spotify.me.playlists.get()
+
+// Get user's saved tracks
+const savedTracks = await spotify.me.tracks.get()
+
+// Control playback
+await spotify.player.play({ uris: ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'] })
+await spotify.player.pause()
+await spotify.player.next()
+
+// Get currently playing track
+const nowPlaying = await spotify.player.currentlyPlaying()
+
+// Add tracks to a playlist
+const playlist = spotify.playlist('playlist-id')
+await playlist.tracks.add(['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'])
 ```
 
 ### GitHub API
@@ -51,13 +58,35 @@ const github = GitHub({
 })
 
 // Get user info
-const user = await github.user('username').get()
+const user = await github.user('octocat').get()
 
-// Get repository
-const repo = await github.repo('owner', 'repo').get()
+// Get current authenticated user
+const me = await github.me.get()
+
+// Get repository details
+const repo = await github.repo('facebook', 'react').get()
+
+// Get repository issues
+const issues = await github.repo('facebook', 'react').getIssues()
+
+// Get a specific issue
+const issue = await github.repo('facebook', 'react').getIssue(1)
+
+// Get releases
+const releases = await github.repo('facebook', 'react').getReleases()
+const latestRelease = await github.repo('facebook', 'react').getLatestRelease()
 
 // Search repositories
-const repos = await github.search.repositories('query')
+const searchResults = await github.search.repositories('react')
+
+// Search users
+const users = await github.search.users('octocat')
+
+// Get rate limit info
+const rateLimit = await github.rateLimit.get()
+
+// Get notifications
+const notifications = await github.notifications.get()
 ```
 
 ## API Reference
@@ -65,28 +94,24 @@ const repos = await github.search.repositories('query')
 ### Spotify
 
 The Spotify client provides access to:
-- User profile and library
-- Player controls
-- Playlists management
-- Search functionality
-- Album and track information
+- **User profile and library** - Get user info, saved tracks, albums, playlists
+- **Player controls** - Play, pause, skip, queue tracks
+- **Playlists management** - Create, modify, and manage playlists
+- **Search functionality** - Search tracks, artists, albums, playlists
+- **Recently played** - Get listening history
+- **Audio features** - Get detailed audio analysis
 
 ### GitHub
 
 The GitHub client provides access to:
-- User and organization information
-- Repository management
-- Issues and pull requests
-- Search functionality
-- Actions and workflows
-
-### Core
-
-Shared utilities for:
-- HTTP client
-- Caching
-- Response handling
-- Pagination
+- **User and organization information** - Get profiles, followers, following
+- **Repository management** - Get repos, branches, commits, contributors
+- **Issues and pull requests** - Create, read, update issues and PRs
+- **Search functionality** - Search repositories, users, issues, code
+- **Actions and workflows** - Get workflow runs, jobs, secrets
+- **Releases and tags** - Manage releases and version tags
+- **Notifications** - Get and manage notifications
+- **Rate limiting** - Check API rate limit status
 
 ## Configuration
 
