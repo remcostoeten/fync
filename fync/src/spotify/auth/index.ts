@@ -1,5 +1,10 @@
 import type { TSpotifyConfig, TSpotifyTokenResponse } from "../types";
 
+type TSpotifyErrorResponse = {
+	error: string;
+	error_description?: string;
+};
+
 export const SPOTIFY_SCOPES = {
 	PLAYLIST_READ_PRIVATE: "playlist-read-private",
 	PLAYLIST_READ_COLLABORATIVE: "playlist-read-collaborative",
@@ -60,7 +65,7 @@ export function createSpotifyAuth(config: TSpotifyConfig) {
 		});
 
 		if (!response.ok) {
-			const error = (await response.json()) as any;
+			const error = (await response.json()) as TSpotifyErrorResponse;
 			throw new Error(
 				`Spotify OAuth error: ${error.error_description || error.error}`,
 			);
@@ -93,7 +98,7 @@ export function createSpotifyAuth(config: TSpotifyConfig) {
 		});
 
 		if (!response.ok) {
-			const error = (await response.json()) as any;
+			const error = (await response.json()) as TSpotifyErrorResponse;
 			throw new Error(
 				`Spotify token refresh error: ${error.error_description || error.error}`,
 			);

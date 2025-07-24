@@ -58,12 +58,7 @@ function createChainableClient(
 		options?: TRequestOptions,
 	): Promise<T> {
 		const path = buildPath();
-		const {
-			params,
-			cache = config.cache !== false,
-			cacheTTL = config.cacheTTL,
-		} = options || {};
-		const _cacheTTL = cacheTTL; // Keep for future use
+		const { params, cache = config.cache !== false } = options || {};
 
 		const requestFn = async () => {
 			switch (method) {
@@ -102,11 +97,9 @@ function createChainableClient(
 
 		if (cache && method === "GET") {
 			const cacheKey = `${path}:${JSON.stringify(params || {})}`;
-			const memoizedFn = memoize(
-				requestFn,
-				() => cacheKey,
-				{ ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000 }
-			);
+			const memoizedFn = memoize(requestFn, () => cacheKey, {
+				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
+			});
 			return memoizedFn() as Promise<T>;
 		}
 

@@ -99,7 +99,7 @@ export type TSpotifyClient = {
 	search: {
 		get: (
 			query: string,
-			types: Array<"track" | "artist" | "album" | "playlist">,
+			types: readonly ("track" | "artist" | "album" | "playlist")[],
 			options?: TSpotifyRequestOptions,
 		) => Promise<import("./spotify-search").TSpotifySearchResult>;
 	};

@@ -1,13 +1,14 @@
 // Simple memoization utility
-type MemoizeOptions = {
+type TMemoizeOptions = {
 	ttl?: number;
 	key?: string;
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: Generic function signature requires any types
 export function memoize<T extends (...args: any[]) => any>(
 	fn: T,
 	getKey?: (...args: Parameters<T>) => string,
-	options: MemoizeOptions = {}
+	options: TMemoizeOptions = {},
 ): T {
 	const cache = new Map<string, { value: ReturnType<T>; timestamp: number }>();
 
@@ -27,7 +28,7 @@ export function memoize<T extends (...args: any[]) => any>(
 		if (options.ttl) {
 			setTimeout(() => {
 				const entry = cache.get(key);
-				if (entry && now - entry.timestamp >= options.ttl!) {
+				if (entry && options.ttl && now - entry.timestamp >= options.ttl) {
 					cache.delete(key);
 				}
 			}, options.ttl);

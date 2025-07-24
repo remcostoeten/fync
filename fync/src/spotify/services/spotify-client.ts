@@ -94,11 +94,7 @@ function createChainableClient(
 		options?: TRequestOptions,
 	): Promise<T> {
 		const path = buildPath();
-		const {
-			params,
-			cache = config.cache !== false,
-			cacheTTL = config.cacheTTL,
-		} = options || {};
+		const { params, cache = config.cache !== false } = options || {};
 
 		const requestFn = async () => {
 			let url = `${config.baseUrl || "https://api.spotify.com/v1"}${path}`;

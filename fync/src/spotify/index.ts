@@ -149,10 +149,10 @@ type TLibraryClient = {
 		): Promise<TSpotifyPagingObject<TSpotifyAlbum>>;
 	};
 	savedShows: {
-		get(options?: TRequestOptions): Promise<TSpotifyPagingObject<any>>;
+		get(options?: TRequestOptions): Promise<TSpotifyPagingObject<unknown>>;
 	};
 	savedEpisodes: {
-		get(options?: TRequestOptions): Promise<TSpotifyPagingObject<any>>;
+		get(options?: TRequestOptions): Promise<TSpotifyPagingObject<unknown>>;
 	};
 	chain: TChainableClient;
 };
@@ -270,7 +270,7 @@ function createPlaylistClient(
 			remove: (uris: string[]) =>
 				api.playlists[playlistId].tracks.delete<{ snapshot_id: string }>({
 					tracks: uris.map((uri) => ({ uri })),
-				} as any),
+				}),
 		},
 		chain: api.playlists[playlistId],
 	};
@@ -324,11 +324,11 @@ function createLibraryClient(api: TChainableClient): TLibraryClient {
 		},
 		savedShows: {
 			get: (options?: TRequestOptions) =>
-				api.me.shows.get<TSpotifyPagingObject<any>>(options),
+				api.me.shows.get<TSpotifyPagingObject<unknown>>(options),
 		},
 		savedEpisodes: {
 			get: (options?: TRequestOptions) =>
-				api.me.episodes.get<TSpotifyPagingObject<any>>(options),
+				api.me.episodes.get<TSpotifyPagingObject<unknown>>(options),
 		},
 		chain: api.me,
 	};

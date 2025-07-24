@@ -8,15 +8,19 @@ type THttpOptions = {
 
 type THttpClient = {
 	get: <T>(url: string, options?: THttpOptions) => Promise<T>;
-	post: <T>(url: string, data?: any, options?: THttpOptions) => Promise<T>;
-	put: <T>(url: string, data?: any, options?: THttpOptions) => Promise<T>;
-	delete: <T>(url: string, data?: any, options?: THttpOptions) => Promise<T>;
+	post: <T>(url: string, data?: unknown, options?: THttpOptions) => Promise<T>;
+	put: <T>(url: string, data?: unknown, options?: THttpOptions) => Promise<T>;
+	delete: <T>(
+		url: string,
+		data?: unknown,
+		options?: THttpOptions,
+	) => Promise<T>;
 };
 
 export function createHttpClient(config: TSpotifyConfig): THttpClient {
 	const cache = new Map<
 		string,
-		{ data: any; timestamp: number; ttl: number }
+		{ data: unknown; timestamp: number; ttl: number }
 	>();
 
 	function getCacheKey(url: string, options: THttpOptions = {}): string {
@@ -50,7 +54,7 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 	async function makeRequest<T>(
 		url: string,
 		method: "GET" | "POST" | "PUT" | "DELETE",
-		data?: any,
+		data?: unknown,
 		options: THttpOptions = {},
 	): Promise<T> {
 		const shouldCache = options.cache !== false && config.cache !== false;
@@ -83,9 +87,15 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 			let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
 
 			try {
-				const errorData = (await response.json()) as any;
+				const errorData = (await response.json()) as {
+					error?: { message?: string } | string;
+				};
 				if (errorData.error) {
-					errorMessage = errorData.error.message || errorData.error;
+					if (typeof errorData.error === "string") {
+						errorMessage = errorData.error;
+					} else {
+						errorMessage = errorData.error.message || "Unknown error";
+					}
 				}
 			} catch {
 				// If we can't parse the error response, use the default message
@@ -112,11 +122,11 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 	return {
 		get: <T>(url: string, options?: THttpOptions) =>
 			makeRequest<T>(url, "GET", undefined, options),
-		post: <T>(url: string, data?: any, options?: THttpOptions) =>
+		post: <T>(url: string, data?: unknown, options?: THttpOptions) =>
 			makeRequest<T>(url, "POST", data, options),
-		put: <T>(url: string, data?: any, options?: THttpOptions) =>
+		put: <T>(url: string, data?: unknown, options?: THttpOptions) =>
 			makeRequest<T>(url, "PUT", data, options),
-		delete: <T>(url: string, data?: any, options?: THttpOptions) =>
+		delete: <T>(url: string, data?: unknown, options?: THttpOptions) =>
 			makeRequest<T>(url, "DELETE", data, options),
 	};
 }
