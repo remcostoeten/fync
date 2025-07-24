@@ -23,10 +23,8 @@ function createChainableClient(config, pathSegments = []) {
     const path = buildPath();
     const {
       params,
-      cache = config.cache !== false,
-      cacheTTL = config.cacheTTL
+      cache = config.cache !== false
     } = options || {};
-    const _cacheTTL = cacheTTL; // Keep for future use
     const requestFn = async () => {
       switch (method) {
         case "GET":

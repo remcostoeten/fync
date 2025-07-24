@@ -52,7 +52,11 @@ function createHttpClient(config) {
       try {
         const errorData = await response.json();
         if (errorData.error) {
-          errorMessage = errorData.error.message || errorData.error;
+          if (typeof errorData.error === "string") {
+            errorMessage = errorData.error;
+          } else {
+            errorMessage = errorData.error.message || "Unknown error";
+          }
         }
       } catch {
         // If we can't parse the error response, use the default message

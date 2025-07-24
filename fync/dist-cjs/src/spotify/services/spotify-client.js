@@ -46,8 +46,7 @@ function createChainableClient(config, pathSegments = []) {
     const path = buildPath();
     const {
       params,
-      cache = config.cache !== false,
-      cacheTTL = config.cacheTTL
+      cache = config.cache !== false
     } = options || {};
     const requestFn = async () => {
       let url = `${config.baseUrl || "https://api.spotify.com/v1"}${path}`;
@@ -154,7 +153,7 @@ function createChainableClient(config, pathSegments = []) {
         return (data, options) => executeRequest("PATCH", data, options);
       }
       if (prop === "delete") {
-        return options => executeRequest("DELETE", undefined, options);
+        return (data, options) => executeRequest("DELETE", data, options);
       }
       if (prop === "paginate") {
         return options => executeRequest("GET", undefined, {

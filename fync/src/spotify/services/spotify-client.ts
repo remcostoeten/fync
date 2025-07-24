@@ -55,7 +55,7 @@ type TChainableClient = {
 	post<T = unknown>(data: unknown, options?: TRequestOptions): Promise<T>;
 	put<T = unknown>(data: unknown, options?: TRequestOptions): Promise<T>;
 	patch<T = unknown>(data: unknown, options?: TRequestOptions): Promise<T>;
-	delete<T = unknown>(options?: TRequestOptions): Promise<T>;
+	delete<T = unknown>(data?: unknown, options?: TRequestOptions): Promise<T>;
 	paginate<T = unknown>(options?: TRequestOptions): Promise<T[]>;
 	stream<T = unknown>(
 		options?: TRequestOptions,
@@ -238,8 +238,8 @@ function createChainableClient(
 			}
 
 			if (prop === "delete") {
-				return <T = unknown>(options?: TRequestOptions) =>
-					executeRequest<T>("DELETE", undefined, options);
+				return <T = unknown>(data?: unknown, options?: TRequestOptions) =>
+					executeRequest<T>("DELETE", data, options);
 			}
 
 			if (prop === "paginate") {

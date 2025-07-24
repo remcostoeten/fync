@@ -40,7 +40,7 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 			return null;
 		}
 
-		return cached.data;
+		return cached.data as T;
 	}
 
 	function setCache<T>(key: string, data: T, ttl: number): void {

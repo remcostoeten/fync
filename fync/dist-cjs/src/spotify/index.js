@@ -133,11 +133,14 @@ function createPlaylistClient(api, playlistId) {
           position
         })
       }),
-      remove: uris => api.playlists[playlistId].tracks.delete({
-        tracks: uris.map(uri => ({
-          uri
-        }))
-      })
+      remove: uris => {
+        const deleteData = {
+          tracks: uris.map(uri => ({
+            uri
+          }))
+        };
+        return api.playlists[playlistId].tracks.delete(deleteData);
+      }
     },
     chain: api.playlists[playlistId]
   };

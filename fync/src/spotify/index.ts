@@ -267,10 +267,12 @@ function createPlaylistClient(
 					uris,
 					...(position !== undefined && { position }),
 				}),
-			remove: (uris: string[]) =>
-				api.playlists[playlistId].tracks.delete<{ snapshot_id: string }>({
+			remove: (uris: string[]) => {
+				const deleteData = {
 					tracks: uris.map((uri) => ({ uri })),
-				}),
+				};
+				return api.playlists[playlistId].tracks.delete<{ snapshot_id: string }>(deleteData);
+			},
 		},
 		chain: api.playlists[playlistId],
 	};

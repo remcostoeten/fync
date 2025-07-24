@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.memoize = memoize;
+// biome-ignore lint/suspicious/noExplicitAny: Generic function signature requires any types
 function memoize(fn, getKey, options = {}) {
   const cache = new Map();
   return (...args) => {
@@ -22,7 +23,7 @@ function memoize(fn, getKey, options = {}) {
     if (options.ttl) {
       setTimeout(() => {
         const entry = cache.get(key);
-        if (entry && now - entry.timestamp >= options.ttl) {
+        if (entry && options.ttl && now - entry.timestamp >= options.ttl) {
           cache.delete(key);
         }
       }, options.ttl);
