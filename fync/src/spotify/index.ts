@@ -271,7 +271,9 @@ function createPlaylistClient(
 				const deleteData = {
 					tracks: uris.map((uri) => ({ uri })),
 				};
-				return api.playlists[playlistId].tracks.delete<{ snapshot_id: string }>(deleteData);
+				return api.playlists[playlistId].tracks.delete<{ snapshot_id: string }>(
+					deleteData,
+				);
 			},
 		},
 		chain: api.playlists[playlistId],
