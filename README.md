@@ -4,7 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@remcostoeten/fync.svg)](https://www.npmjs.com/package/@remcostoeten/fync)
 [![GitHub license](https://img.shields.io/github/license/remcostoeten/fync.svg)](https://github.com/remcostoeten/fync/blob/main/LICENSE)
 
-A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)
+A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, NPM, Google Calendar, etc.)
 
 ## Installation
 
@@ -132,6 +132,51 @@ const downloadTrend = await npm.downloads.range('react', '2024-01-01', '2024-01-
 const customQuery = await npm.api['@types']['node'].get()
 ```
 
+### Google Calendar API
+
+```typescript
+import { createCalendarService } from '@remcostoeten/fync/google-calendar'
+
+// Use environment variables for security
+const calendar = createCalendarService({
+  accessToken: process.env.GOOGLE_ACCESS_TOKEN // Get from Google OAuth 2.0 flow
+})
+
+// Get user's calendars
+const calendars = await calendar.getCalendars()
+
+// Get today's events
+const todaysEvents = await calendar.getTodaysEvents('primary')
+
+// Get upcoming events
+const upcomingEvents = await calendar.getUpcomingEvents('primary', 10)
+
+// Get events in date range
+const startDate = new Date('2024-01-01')
+const endDate = new Date('2024-01-31')
+const eventsInRange = await calendar.getEventsInDateRange('primary', startDate, endDate)
+
+// Search for events
+const meetingEvents = await calendar.searchEvents('meeting', 'primary')
+
+// Check if time slot is busy
+const startTime = new Date('2024-01-15T10:00:00Z')
+const endTime = new Date('2024-01-15T11:00:00Z')
+const isBusy = await calendar.isTimeSlotBusy('primary', startTime, endTime)
+
+// Get events from all calendars
+const allEvents = await calendar.getAllCalendarEvents(100)
+
+// Get calendar colors
+const colors = await calendar.getColors()
+```
+
+## 📚 Complete Documentation
+
+For comprehensive API documentation with all methods and usage examples, see:
+- [**📋 Complete API Reference**](./API_METHODS.md) - All 115+ methods in one document
+- [**📖 Detailed API Docs**](./docs/README.md) - Individual API documentation with examples
+
 ## API Reference
 
 ### Spotify
@@ -166,6 +211,17 @@ The NPM client provides access to:
 - **Trend analysis** - Compare package popularity and track download trends
 - **Registry data** - Access to full NPM registry API (no authentication required)
 
+### Google Calendar
+
+The Google Calendar client provides access to:
+- **Calendar management** - Get user calendars and calendar metadata
+- **Event operations** - Get, search, and filter calendar events
+- **Date range queries** - Get events within specific time periods
+- **Availability checking** - Check if time slots are busy or free
+- **Multi-calendar support** - Work with multiple calendars simultaneously
+- **Free/busy queries** - Check availability across calendars
+- **Color customization** - Get available calendar and event colors
+
 ## Configuration
 
 Both clients support configuration options for:
@@ -189,6 +245,7 @@ Both clients support configuration options for:
    ```env
    GITHUB_TOKEN=ghp_your_github_personal_access_token
    SPOTIFY_ACCESS_TOKEN=your_spotify_access_token
+   GOOGLE_ACCESS_TOKEN=your_google_oauth_access_token
    ```
 
 3. Load environment variables in your application:
