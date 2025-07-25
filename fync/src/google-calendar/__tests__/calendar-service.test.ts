@@ -111,7 +111,7 @@ describe('createCalendarService', () => {
     });
 
     it('fetches events with parameters', async () => {
-      const params = { maxResults: 10, orderBy: 'startTime' };
+      const params = { maxResults: 10, orderBy: 'startTime' as const };
       const mockResponse = { items: [] };
 
       mockCalendarClient.calendars.primary.events.get.mockResolvedValue(mockResponse);

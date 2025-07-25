@@ -43,7 +43,7 @@ function createCalendarService(config: TCalendarConfig) {
 		params?: TEventListParams,
 	): Promise<TCalendarEvent[]> {
 		const response = await client.calendars[calendarId].events.get<TEventListResponse>({
-			params,
+			params: params as any,
 		});
 		return response.items;
 	}
@@ -110,7 +110,7 @@ function createCalendarService(config: TCalendarConfig) {
 
 	async function getFreeBusy(params: TFreeBusyParams): Promise<TFreeBusy> {
 		return client.freebusy.query.get<TFreeBusy>({
-			params,
+			params: params as any,
 		});
 	}
 
