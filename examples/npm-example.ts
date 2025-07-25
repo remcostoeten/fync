@@ -1,4 +1,4 @@
-import { NPM } from '@remcostoeten/fync/npm';
+import { NPM } from '../fync/src/npm/index.js';
 
 // Initialize NPM client (no auth required - public API)
 const npm = NPM({
