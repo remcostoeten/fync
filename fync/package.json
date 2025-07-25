@@ -27,6 +27,11 @@
 			"require": "./dist-cjs/src/core/index.js",
 			"types": "./dist/src/core/index.d.ts"
 		},
+		"./npm": {
+			"import": "./dist/src/npm/index.js",
+			"require": "./dist-cjs/src/npm/index.js",
+			"types": "./dist/src/npm/index.d.ts"
+		},
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
@@ -56,6 +61,7 @@
 		"spotify",
 		"github",
 		"gitlab",
+		"npm",
 		"chainable",
 		"fluent",
 		"typescript",
@@ -67,7 +73,10 @@
 		"albums",
 		"repositories",
 		"commits",
-		"branches"
+		"branches",
+		"packages",
+		"registry",
+		"downloads"
 	],
 	"repository": {
 		"type": "git",

@@ -91,6 +91,47 @@ const rateLimit = await github.rateLimit.get()
 const notifications = await github.notifications.get()
 ```
 
+### NPM Registry API
+
+```typescript
+import { NPM } from '@remcostoeten/fync/npm'
+
+// No authentication required - public API
+const npm = NPM({
+  cache: true,
+  cacheTTL: 300000 // 5 minutes
+})
+
+// Get package information
+const packageInfo = await npm.package('react').get()
+
+// Get latest version details
+const latestVersion = await npm.package('react').latest()
+
+// Get specific version
+const specificVersion = await npm.package('react').version('18.0.0').get()
+
+// Search packages
+const searchResults = await npm.search.packages('typescript', {
+  size: 10,
+  quality: 0.8
+})
+
+// Get download statistics
+const weeklyDownloads = await npm.downloads.package('react', 'last-week')
+
+// Compare multiple packages
+const frameworkStats = await npm.downloads.packages([
+  'react', 'vue', 'angular', 'svelte'
+], 'last-month')
+
+// Get download trends over time
+const downloadTrend = await npm.downloads.range('react', '2024-01-01', '2024-01-31')
+
+// Direct chainable API access
+const customQuery = await npm.api['@types']['node'].get()
+```
+
 ## API Reference
 
 ### Spotify
@@ -114,6 +155,16 @@ The GitHub client provides access to:
 - **Releases and tags** - Manage releases and version tags
 - **Notifications** - Get and manage notifications
 - **Rate limiting** - Check API rate limit status
+
+### NPM Registry
+
+The NPM client provides access to:
+- **Package information** - Get package metadata, versions, dependencies
+- **Version details** - Get specific version info, latest version, all versions
+- **Search functionality** - Search packages with quality, popularity, and maintenance scores
+- **Download statistics** - Get download counts for packages over different time periods
+- **Trend analysis** - Compare package popularity and track download trends
+- **Registry data** - Access to full NPM registry API (no authentication required)
 
 ## Configuration
 
