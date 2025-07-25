@@ -126,7 +126,7 @@ export function createChainableClient<TConfig extends TBaseConfig>(
       while (nextUrl) {
         const nextResponse = await httpClient.getPaginated<T>(nextUrl);
         allData.push(...nextResponse.data);
-        nextUrl = nextResponse.nextUrl || undefined;
+        nextUrl = nextResponse.nextUrl || null;
       }
 
 			return allData as T;
