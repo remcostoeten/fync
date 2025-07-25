@@ -1,31 +1,13 @@
-import { memoize } from "../../core/http/memoize";
-import type { TNpmConfig } from "../types/npm-common";
+import { createChainableClient, type TChainableClient, type TBaseConfig } from "../../core/chainable";
 import { createHttpClient } from "./http-client";
 
-type TNpmClientConfig = {
-	baseUrl?: string;
-	cache?: boolean;
-	cacheTTL?: number;
+type TNpmClientConfig = TBaseConfig & {
 	userAgent?: string;
 	timeout?: number;
 };
 
-type TRequestOptions = {
-	params?: Record<string, string | number>;
-	cache?: boolean;
-	cacheTTL?: number;
-};
-
-type TChainableClient = {
-	[key: string]: TChainableClient;
-} & {
-	get<T = unknown>(options?: TRequestOptions): Promise<T>;
-	path(): string;
-};
-
-function createChainableClient(
+function createNpmChainableClient(
 	config: TNpmClientConfig,
-	pathSegments: string[] = [],
 ): TChainableClient {
 	const httpClient = createHttpClient({
 		baseUrl: config.baseUrl || "https://registry.npmjs.org",
@@ -35,54 +17,19 @@ function createChainableClient(
 		timeout: config.timeout || 30000,
 	});
 
-	function buildPath() {
-		return "/" + pathSegments.join("/");
-	}
-
-	async function executeRequest<T = unknown>(
-		options?: TRequestOptions,
-	): Promise<T> {
-		const path = buildPath();
-		const { params, cache = config.cache !== false } = options || {};
-
-		async function requestFn() {
-			const response = await httpClient.get<T>(path, params);
-			return response.data;
-		}
-
-		if (cache) {
-			const cacheKey = `npm:${path}:${JSON.stringify(params || {})}`;
-			function getCacheKey() {
-				return cacheKey;
-			}
-			const memoizedFn = memoize(requestFn, getCacheKey, {
-				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
-			});
-			return memoizedFn();
-		}
-
-		return requestFn();
-	}
-
-	return new Proxy({} as TChainableClient, {
-		get(target, prop: string | symbol) {
-			if (prop === "get") {
-				return <T = unknown>(options?: TRequestOptions) =>
-					executeRequest<T>(options);
-			}
-
-			if (prop === "path") {
-				return () => buildPath();
-			}
-
-			return createChainableClient(config, [...pathSegments, String(prop)]);
+	return createChainableClient(
+		config,
+		httpClient,
+		{
+			cacheKeyPrefix: "npm",
+			supportsPagination: false,
 		},
-	});
+	);
 }
 
 function createNpmClient(config: TNpmClientConfig = {}): TChainableClient {
-	return createChainableClient(config);
+	return createNpmChainableClient(config);
 }
 
 export { createNpmClient };
-export type { TNpmClientConfig, TRequestOptions, TChainableClient };
+export type { TNpmClientConfig, TChainableClient };

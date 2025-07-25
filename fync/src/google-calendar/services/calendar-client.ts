@@ -1,31 +1,13 @@
-import { memoize } from "../../core/http/memoize";
+import { createChainableClient, type TChainableClient, type TBaseConfig } from "../../core/chainable";
 import { createHttpClient } from "./http-client";
-import type { THttpResponse } from "../../core/http/types";
 
-type TCalendarClientConfig = {
+type TCalendarClientConfig = TBaseConfig & {
 	accessToken: string;
-	baseUrl?: string;
-	cache?: boolean;
-	cacheTTL?: number;
 };
 
-type TRequestOptions = {
-	params?: Record<string, string | number | boolean>;
-	cache?: boolean;
-	cacheTTL?: number;
-};
-
-type TChainableCalendarClient = {
-	[key: string]: TChainableCalendarClient;
-} & {
-	get<T = unknown>(options?: TRequestOptions): Promise<T>;
-	path(): string;
-};
-
-function createChainableCalendarClient(
+function createCalendarChainableClient(
 	config: TCalendarClientConfig,
-	pathSegments: string[] = [],
-): TChainableCalendarClient {
+): TChainableClient {
 	const defaultHeaders: Record<string, string> = {
 		Authorization: `Bearer ${config.accessToken}`,
 		"Content-Type": "application/json",
@@ -37,57 +19,21 @@ function createChainableCalendarClient(
 		defaultHeaders,
 	});
 
-	function buildPath() {
-		return "/" + pathSegments.join("/");
-	}
-
-	async function executeRequest<T = unknown>(
-		method: "GET",
-		options?: TRequestOptions,
-	): Promise<T> {
-		const path = buildPath();
-		const { params, cache = config.cache !== false } = options || {};
-
-		async function requestFn() {
-			const response = await httpClient.get(path, params);
-			return response.data;
-		}
-
-		if (cache && method === "GET") {
-			const cacheKey = `calendar:${path}:${JSON.stringify(params || {})}`;
-			function getCacheKey() {
-				return cacheKey;
-			}
-			const memoizedFn = memoize(requestFn, getCacheKey, {
-				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
-			});
-			return memoizedFn() as Promise<T>;
-		}
-
-		return requestFn() as Promise<T>;
-	}
-
-	return new Proxy({} as TChainableCalendarClient, {
-		get(target, prop: string | symbol) {
-			if (prop === "get") {
-				return <T = unknown>(options?: TRequestOptions) =>
-					executeRequest<T>("GET", options);
-			}
-
-			if (prop === "path") {
-				return () => buildPath();
-			}
-
-			return createChainableCalendarClient(config, [...pathSegments, String(prop)]);
+	return createChainableClient(
+		config,
+		httpClient,
+		{
+			cacheKeyPrefix: "calendar",
+			supportsPagination: false,
 		},
-	});
+	);
 }
 
 function createCalendarClient(
 	config: TCalendarClientConfig,
-): TChainableCalendarClient {
-	return createChainableCalendarClient(config);
+): TChainableClient {
+	return createCalendarChainableClient(config);
 }
 
 export { createCalendarClient };
-export type { TCalendarClientConfig, TRequestOptions, TChainableCalendarClient };
+export type { TCalendarClientConfig, TChainableClient };
