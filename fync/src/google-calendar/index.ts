@@ -43,10 +43,21 @@ function createCalendarService(config: TCalendarConfig) {
 		calendarId: string = "primary",
 		params?: TEventListParams,
 	): Promise<TCalendarEvent[]> {
+		// Transform params to be compatible with query parameters
+		const transformedParams = params
+			? {
+					...params,
+					// Convert eventTypes array to individual parameters if present
+					...(params.eventTypes && {
+						eventTypes: params.eventTypes.join(","),
+					}),
+				}
+			: undefined;
+
 		const response = await client.calendars[
 			calendarId
 		].events.get<TEventListResponse>({
-			params,
+			params: transformedParams as Record<string, string | number | boolean>,
 		});
 		return response.items;
 	}
@@ -120,8 +131,15 @@ function createCalendarService(config: TCalendarConfig) {
 	}
 
 	async function getFreeBusy(params: TFreeBusyParams): Promise<TFreeBusy> {
+		// Transform params to be compatible with query parameters
+		const transformedParams = {
+			...params,
+			// Convert items array to JSON string for API
+			items: JSON.stringify(params.items),
+		} as Record<string, string | number | boolean>;
+
 		return client.freebusy.query.get<TFreeBusy>({
-			params,
+			params: transformedParams,
 		});
 	}
 

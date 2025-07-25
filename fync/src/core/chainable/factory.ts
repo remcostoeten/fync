@@ -71,23 +71,23 @@ export function createChainableClient<TConfig extends TBaseConfig>(
 
 		async function requestFn(): Promise<T> {
 			switch (method) {
-        case "GET":
-          if (mergedOptions.paginate || mergedOptions.allPages) {
-            return handlePagination<T>(path, params, mergedOptions);
-          }
-          return (await httpClient.get<T>(path, params)).data;
+				case "GET":
+					if (mergedOptions.paginate || mergedOptions.allPages) {
+						return handlePagination<T>(path, params, mergedOptions);
+					}
+					return (await httpClient.get<T>(path, params)).data;
 
-        case "POST":
-          return (await httpClient.post<T>(path, data)).data;
+				case "POST":
+					return (await httpClient.post<T>(path, data)).data;
 
-        case "PUT":
-          return (await httpClient.put<T>(path, data)).data;
+				case "PUT":
+					return (await httpClient.put<T>(path, data)).data;
 
-        case "PATCH":
-          return (await httpClient.patch<T>(path, data)).data;
+				case "PATCH":
+					return (await httpClient.patch<T>(path, data)).data;
 
-        case "DELETE":
-          return (await httpClient.delete<T>(path, data)).data;
+				case "DELETE":
+					return (await httpClient.delete<T>(path, data)).data;
 
 				default:
 					throw new Error(`Unsupported method: ${method}`);
@@ -121,13 +121,14 @@ export function createChainableClient<TConfig extends TBaseConfig>(
 
 		if (options?.allPages && response.nextUrl) {
 			const allData = [...response.data];
-			let nextUrl = response.nextUrl;
+			let nextUrl: string | undefined = response.nextUrl;
 
-      while (nextUrl) {
-        const nextResponse = await httpClient.getPaginated<T>(nextUrl);
-        allData.push(...nextResponse.data);
-        nextUrl = nextResponse.nextUrl || null;
-      }
+			while (nextUrl) {
+				const nextResponse: { data: T[]; nextUrl?: string } =
+					await httpClient.getPaginated<T>(nextUrl);
+				allData.push(...nextResponse.data);
+				nextUrl = nextResponse.nextUrl;
+			}
 
 			return allData as T;
 		}

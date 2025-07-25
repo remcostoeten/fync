@@ -62,10 +62,13 @@ function createSpotifyChainableClient(
 		cacheKeyPrefix: "spotify",
 		supportsPagination: false,
 		defaultOptions: {
-			limit: config.limit,
-			after: config.after,
-			before: config.before,
-			immediate: config.immediate,
+			// Only include valid TRequestOptions properties
+			params: {
+				...(config.limit && { limit: config.limit }),
+				...(config.after && { after: config.after }),
+				...(config.before && { before: config.before }),
+				...(config.immediate && { immediate: config.immediate }),
+			},
 		},
 	});
 }

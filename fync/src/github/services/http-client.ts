@@ -182,9 +182,126 @@ function createHttpClient(config: THttpClientConfig = {}) {
 		return httpRequestWithPagination<T>(url, query, signal, _defaultHeaders);
 	}
 
+	async function post<T = unknown>(
+		endpoint: string,
+		data?: unknown,
+	): Promise<THttpResponse<T>> {
+		const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
+		const headers = { ..._defaultHeaders, "Content-Type": "application/json" };
+
+		const response = await fetch(url, {
+			method: "POST",
+			headers,
+			body: data ? JSON.stringify(data) : undefined,
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+		}
+
+		const responseData = await response.json();
+
+		return {
+			data: responseData,
+			status: response.status,
+			statusText: response.statusText,
+			headers: Object.fromEntries(response.headers.entries()),
+		};
+	}
+
+	async function put<T = unknown>(
+		endpoint: string,
+		data?: unknown,
+	): Promise<THttpResponse<T>> {
+		const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
+		const headers = { ..._defaultHeaders, "Content-Type": "application/json" };
+
+		const response = await fetch(url, {
+			method: "PUT",
+			headers,
+			body: data ? JSON.stringify(data) : undefined,
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+		}
+
+		const responseData = await response.json();
+
+		return {
+			data: responseData,
+			status: response.status,
+			statusText: response.statusText,
+			headers: Object.fromEntries(response.headers.entries()),
+		};
+	}
+
+	async function patch<T = unknown>(
+		endpoint: string,
+		data?: unknown,
+	): Promise<THttpResponse<T>> {
+		const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
+		const headers = { ..._defaultHeaders, "Content-Type": "application/json" };
+
+		const response = await fetch(url, {
+			method: "PATCH",
+			headers,
+			body: data ? JSON.stringify(data) : undefined,
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+		}
+
+		const responseData = await response.json();
+
+		return {
+			data: responseData,
+			status: response.status,
+			statusText: response.statusText,
+			headers: Object.fromEntries(response.headers.entries()),
+		};
+	}
+
+	async function deleteRequest<T = unknown>(
+		endpoint: string,
+		data?: unknown,
+	): Promise<THttpResponse<T>> {
+		const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
+		const headers = { ..._defaultHeaders };
+
+		const response = await fetch(url, {
+			method: "DELETE",
+			headers,
+			body: data ? JSON.stringify(data) : undefined,
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+		}
+
+		let responseData;
+		try {
+			responseData = await response.json();
+		} catch {
+			responseData = null;
+		}
+
+		return {
+			data: responseData,
+			status: response.status,
+			statusText: response.statusText,
+			headers: Object.fromEntries(response.headers.entries()),
+		};
+	}
+
 	return {
 		get,
 		getPaginated,
+		post,
+		put,
+		patch,
+		delete: deleteRequest,
 	};
 }
 

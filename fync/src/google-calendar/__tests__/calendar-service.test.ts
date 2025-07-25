@@ -275,7 +275,10 @@ describe("createCalendarService", () => {
 			const freeBusy = await service.getFreeBusy(params);
 
 			expect(mockCalendarClient.freebusy.query.get).toHaveBeenCalledWith({
-				params,
+				params: {
+					...params,
+					items: JSON.stringify(params.items),
+				},
 			});
 			expect(freeBusy).toEqual(mockResponse);
 		});

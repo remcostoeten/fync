@@ -31,3 +31,4 @@ function createNpmClient(config: TNpmClientConfig = {}): TChainableClient {
 
 export { createNpmClient };
 export type { TNpmClientConfig, TChainableClient };
+export type { TRequestOptions } from "../../core/chainable";

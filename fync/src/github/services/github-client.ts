@@ -40,3 +40,4 @@ function createGitHubClient(
 
 export { createGitHubClient };
 export type { TGitHubClientConfig, TChainableClient };
+export type { TRequestOptions } from "../../core/chainable";

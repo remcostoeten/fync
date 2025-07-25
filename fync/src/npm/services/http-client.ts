@@ -95,9 +95,44 @@ function createHttpClient(config: THttpClientConfig = {}) {
 		return request<T>(endpoint, { method: "GET", params });
 	}
 
+	function post<T = unknown>(endpoint: string, data?: unknown) {
+		return request<T>(endpoint, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			// Note: NPM registry is read-only, but we provide the method for completeness
+		});
+	}
+
+	function put<T = unknown>(endpoint: string, data?: unknown) {
+		return request<T>(endpoint, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			// Note: NPM registry is read-only, but we provide the method for completeness
+		});
+	}
+
+	function patch<T = unknown>(endpoint: string, data?: unknown) {
+		return request<T>(endpoint, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			// Note: NPM registry is read-only, but we provide the method for completeness
+		});
+	}
+
+	function deleteRequest<T = unknown>(endpoint: string, data?: unknown) {
+		return request<T>(endpoint, {
+			method: "DELETE",
+			// Note: NPM registry is read-only, but we provide the method for completeness
+		});
+	}
+
 	return {
 		get,
 		request,
+		post,
+		put,
+		patch,
+		delete: deleteRequest,
 	};
 }
 

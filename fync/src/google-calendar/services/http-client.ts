@@ -11,6 +11,10 @@ type THttpClient = {
 		path: string,
 		params?: Record<string, string | number | boolean>,
 	): Promise<THttpResponse<T>>;
+	post<T = unknown>(path: string, data?: unknown): Promise<THttpResponse<T>>;
+	put<T = unknown>(path: string, data?: unknown): Promise<THttpResponse<T>>;
+	patch<T = unknown>(path: string, data?: unknown): Promise<THttpResponse<T>>;
+	delete<T = unknown>(path: string, data?: unknown): Promise<THttpResponse<T>>;
 };
 
 function createHttpClient(config: THttpClientConfig): THttpClient {
@@ -88,6 +92,46 @@ function createHttpClient(config: THttpClientConfig): THttpClient {
 			params?: Record<string, string | number | boolean>,
 		): Promise<THttpResponse<T>> {
 			return makeRequest<T>(path, { method: "GET" }, params);
+		},
+		async post<T = unknown>(
+			path: string,
+			data?: unknown,
+		): Promise<THttpResponse<T>> {
+			return makeRequest<T>(path, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: data ? JSON.stringify(data) : undefined,
+			});
+		},
+		async put<T = unknown>(
+			path: string,
+			data?: unknown,
+		): Promise<THttpResponse<T>> {
+			return makeRequest<T>(path, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: data ? JSON.stringify(data) : undefined,
+			});
+		},
+		async patch<T = unknown>(
+			path: string,
+			data?: unknown,
+		): Promise<THttpResponse<T>> {
+			return makeRequest<T>(path, {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: data ? JSON.stringify(data) : undefined,
+			});
+		},
+		async delete<T = unknown>(
+			path: string,
+			data?: unknown,
+		): Promise<THttpResponse<T>> {
+			return makeRequest<T>(path, {
+				method: "DELETE",
+				headers: data ? { "Content-Type": "application/json" } : {},
+				body: data ? JSON.stringify(data) : undefined,
+			});
 		},
 	};
 }
