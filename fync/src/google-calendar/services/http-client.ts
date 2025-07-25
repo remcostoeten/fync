@@ -1,4 +1,4 @@
-import type { THttpResponse, THttpHeaders } from "../../core/http/types";
+import type { THttpHeaders, THttpResponse } from "../../core/http/types";
 
 type THttpClientConfig = {
 	baseUrl: string;
@@ -22,7 +22,7 @@ function createHttpClient(config: THttpClientConfig): THttpClient {
 		params?: Record<string, string | number | boolean>,
 	): Promise<THttpResponse<T>> {
 		const url = new URL(path, baseUrl);
-		
+
 		if (params) {
 			for (const [key, value] of Object.entries(params)) {
 				url.searchParams.set(key, String(value));
@@ -55,7 +55,7 @@ function createHttpClient(config: THttpClientConfig): THttpClient {
 
 			let data: T;
 			const contentType = response.headers.get("content-type");
-			
+
 			if (contentType?.includes("application/json")) {
 				data = await response.json();
 			} else {

@@ -1,6 +1,11 @@
-import { createChainableClient, type TChainableClient, type TBaseConfig, type TRequestOptions } from "../../core/chainable";
-import { createHttpClient } from "../utils/http";
+import {
+	createChainableClient,
+	type TBaseConfig,
+	type TChainableClient,
+	type TRequestOptions,
+} from "../../core/chainable";
 import type { TSpotifyConfig } from "../types/spotify-common";
+import { createHttpClient } from "../utils/http";
 
 type TSpotifyClientConfig = TBaseConfig & {
 	token?: string;
@@ -22,7 +27,10 @@ function createSpotifyChainableClient(
 		cacheTTL: config.cacheTTL,
 	});
 
-	async function getMethod<T>(path: string, params?: Record<string, any>) {
+	async function getMethod<T>(
+		path: string,
+		params?: Record<string, string | number | boolean>,
+	) {
 		return { data: await spotifyHttpClient.get<T>(path) };
 	}
 
@@ -50,20 +58,16 @@ function createSpotifyChainableClient(
 		delete: deleteMethod,
 	};
 
-	return createChainableClient(
-		config,
-		adaptedHttpClient,
-		{
-			cacheKeyPrefix: "spotify",
-			supportsPagination: false,
-			defaultOptions: {
-				limit: config.limit,
-				after: config.after,
-				before: config.before,
-				immediate: config.immediate,
-			},
+	return createChainableClient(config, adaptedHttpClient, {
+		cacheKeyPrefix: "spotify",
+		supportsPagination: false,
+		defaultOptions: {
+			limit: config.limit,
+			after: config.after,
+			before: config.before,
+			immediate: config.immediate,
 		},
-	);
+	});
 }
 
 function createSpotifyClient(

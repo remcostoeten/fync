@@ -1,13 +1,13 @@
 import { createCalendarClient } from "./services/calendar-client";
 import type {
+	TCalendarColors,
 	TCalendarEvent,
-	TEventListParams,
-	TEventListResponse,
 	TCalendarListEntry,
 	TCalendarListParams,
 	TCalendarListResponse,
 	TCalendarMetadata,
-	TCalendarColors,
+	TEventListParams,
+	TEventListResponse,
 	TFreeBusy,
 	TFreeBusyParams,
 } from "./types";
@@ -28,9 +28,10 @@ function createCalendarService(config: TCalendarConfig) {
 	async function getCalendars(
 		params?: TCalendarListParams,
 	): Promise<TCalendarListEntry[]> {
-		const response = await client.users.me.calendarList.get<TCalendarListResponse>({
-			params,
-		});
+		const response =
+			await client.users.me.calendarList.get<TCalendarListResponse>({
+				params,
+			});
 		return response.items;
 	}
 
@@ -42,8 +43,10 @@ function createCalendarService(config: TCalendarConfig) {
 		calendarId: string = "primary",
 		params?: TEventListParams,
 	): Promise<TCalendarEvent[]> {
-		const response = await client.calendars[calendarId].events.get<TEventListResponse>({
-			params: params as any,
+		const response = await client.calendars[
+			calendarId
+		].events.get<TEventListResponse>({
+			params,
 		});
 		return response.items;
 	}
@@ -85,9 +88,17 @@ function createCalendarService(config: TCalendarConfig) {
 		calendarId: string = "primary",
 	): Promise<TCalendarEvent[]> {
 		const today = new Date();
-		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-		
+		const startOfDay = new Date(
+			today.getFullYear(),
+			today.getMonth(),
+			today.getDate(),
+		);
+		const endOfDay = new Date(
+			today.getFullYear(),
+			today.getMonth(),
+			today.getDate() + 1,
+		);
+
 		return getEventsInDateRange(calendarId, startOfDay, endOfDay);
 	}
 
@@ -110,7 +121,7 @@ function createCalendarService(config: TCalendarConfig) {
 
 	async function getFreeBusy(params: TFreeBusyParams): Promise<TFreeBusy> {
 		return client.freebusy.query.get<TFreeBusy>({
-			params: params as any,
+			params,
 		});
 	}
 
@@ -131,12 +142,16 @@ function createCalendarService(config: TCalendarConfig) {
 
 	async function getAllCalendarEvents(
 		maxResults?: number,
-	): Promise<Array<{ calendar: TCalendarListEntry; events: TCalendarEvent[] }>> {
+	): Promise<{ calendar: TCalendarListEntry; events: TCalendarEvent[] }[]> {
 		const calendars = await getCalendars();
 		const results = [];
 
 		for (const calendar of calendars) {
-			if (calendar.accessRole === "reader" || calendar.accessRole === "writer" || calendar.accessRole === "owner") {
+			if (
+				calendar.accessRole === "reader" ||
+				calendar.accessRole === "writer" ||
+				calendar.accessRole === "owner"
+			) {
 				try {
 					const events = await getEvents(calendar.id, {
 						maxResults,
@@ -144,8 +159,8 @@ function createCalendarService(config: TCalendarConfig) {
 						orderBy: "startTime",
 					});
 					results.push({ calendar, events });
-				} catch (error) {
-					console.warn(`Failed to fetch events for calendar ${calendar.id}:`, error);
+				} catch {
+					// Silently skip calendars that fail to fetch events
 				}
 			}
 		}

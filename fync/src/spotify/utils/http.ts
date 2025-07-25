@@ -98,6 +98,7 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 					}
 				}
 			} catch {
+				// Error parsing response body, use generic error message
 			}
 
 			throw new Error(errorMessage);
@@ -130,7 +131,11 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 		return makeRequest<T>(url, "PUT", data, options);
 	}
 
-	function deleteRequest<T>(url: string, data?: unknown, options?: THttpOptions) {
+	function deleteRequest<T>(
+		url: string,
+		data?: unknown,
+		options?: THttpOptions,
+	) {
 		return makeRequest<T>(url, "DELETE", data, options);
 	}
 

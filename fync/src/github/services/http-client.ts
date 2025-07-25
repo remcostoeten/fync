@@ -142,7 +142,7 @@ async function httpRequestWithPagination<T = unknown>(
 		data: isArrayLike(data) ? data : [data],
 		hasNext,
 		nextUrl,
-		totalCount: (() => {
+		totalCount: (function getTotalCount() {
 			const totalCountHeader = response.headers.get("x-total-count");
 			return totalCountHeader ? parseInt(totalCountHeader, 10) : undefined;
 		})(),
@@ -164,23 +164,27 @@ function createHttpClient(config: THttpClientConfig = {}) {
 	const _defaultHeaders = defaultHeaders;
 	const _timeout = timeout;
 
+	async function get<T = unknown>(
+		endpoint: string,
+		query?: Record<string, string | number>,
+		signal?: AbortSignal,
+	): Promise<THttpResponse<T>> {
+		const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
+		return httpRequest<T>(url, query, signal, _defaultHeaders);
+	}
+
+	async function getPaginated<T = unknown>(
+		endpoint: string,
+		query?: Record<string, string | number>,
+		signal?: AbortSignal,
+	): Promise<TPaginatedResponse<T>> {
+		const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
+		return httpRequestWithPagination<T>(url, query, signal, _defaultHeaders);
+	}
+
 	return {
-		get: async <T = unknown>(
-			endpoint: string,
-			query?: Record<string, string | number>,
-			signal?: AbortSignal,
-		): Promise<THttpResponse<T>> => {
-			const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
-			return httpRequest<T>(url, query, signal, _defaultHeaders);
-		},
-		getPaginated: async <T = unknown>(
-			endpoint: string,
-			query?: Record<string, string | number>,
-			signal?: AbortSignal,
-		): Promise<TPaginatedResponse<T>> => {
-			const url = endpoint.startsWith("http") ? endpoint : baseUrl + endpoint;
-			return httpRequestWithPagination<T>(url, query, signal, _defaultHeaders);
-		},
+		get,
+		getPaginated,
 	};
 }
 

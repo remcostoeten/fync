@@ -56,7 +56,7 @@ function createHttpClient(config: THttpClientConfig = {}) {
 			});
 
 			const responseHeaders: Record<string, string> = {};
-			response.headers.forEach((value, key) => {
+			response.headers.forEach(function setResponseHeader(value, key) {
 				responseHeaders[key] = value;
 			});
 
@@ -88,12 +88,15 @@ function createHttpClient(config: THttpClientConfig = {}) {
 		}
 	}
 
-	return {
-		get: <T = unknown>(
-			endpoint: string,
-			params?: Record<string, string | number>,
-		) => request<T>(endpoint, { method: "GET", params }),
+	function get<T = unknown>(
+		endpoint: string,
+		params?: Record<string, string | number>,
+	) {
+		return request<T>(endpoint, { method: "GET", params });
+	}
 
+	return {
+		get,
 		request,
 	};
 }

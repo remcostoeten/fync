@@ -1,4 +1,8 @@
-import { createChainableClient, type TChainableClient, type TBaseConfig } from "../../core/chainable";
+import {
+	createChainableClient,
+	type TBaseConfig,
+	type TChainableClient,
+} from "../../core/chainable";
 import { createHttpClient } from "./http-client";
 
 type TNpmClientConfig = TBaseConfig & {
@@ -6,9 +10,7 @@ type TNpmClientConfig = TBaseConfig & {
 	timeout?: number;
 };
 
-function createNpmChainableClient(
-	config: TNpmClientConfig,
-): TChainableClient {
+function createNpmChainableClient(config: TNpmClientConfig): TChainableClient {
 	const httpClient = createHttpClient({
 		baseUrl: config.baseUrl || "https://registry.npmjs.org",
 		defaultHeaders: {
@@ -17,14 +19,10 @@ function createNpmChainableClient(
 		timeout: config.timeout || 30000,
 	});
 
-	return createChainableClient(
-		config,
-		httpClient,
-		{
-			cacheKeyPrefix: "npm",
-			supportsPagination: false,
-		},
-	);
+	return createChainableClient(config, httpClient, {
+		cacheKeyPrefix: "npm",
+		supportsPagination: false,
+	});
 }
 
 function createNpmClient(config: TNpmClientConfig = {}): TChainableClient {

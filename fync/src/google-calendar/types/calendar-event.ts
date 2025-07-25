@@ -1,11 +1,11 @@
 import type {
-	TCalendarDateTime,
 	TCalendarAttendee,
-	TCalendarReminderOverrides,
-	TCalendarRecurrence,
+	TCalendarDateTime,
 	TCalendarEventStatus,
-	TCalendarEventVisibility,
 	TCalendarEventTransparency,
+	TCalendarEventVisibility,
+	TCalendarRecurrence,
+	TCalendarReminderOverrides,
 } from "./calendar-common";
 
 export type TCalendarEvent = {
@@ -76,7 +76,7 @@ export type TConferenceData = {
 			statusCode: string;
 		};
 	};
-	entryPoints?: Array<{
+	entryPoints?: {
 		entryPointType: string;
 		uri: string;
 		label?: string;
@@ -85,7 +85,7 @@ export type TConferenceData = {
 		meetingCode?: string;
 		passcode?: string;
 		password?: string;
-	}>;
+	}[];
 	conferenceSolution?: {
 		key: {
 			type: string;
@@ -125,12 +125,16 @@ export type TWorkingLocationProperties = {
 };
 
 export type TOutOfOfficeProperties = {
-	autoDeclineMode?: "declineOnlyIfSingleAllDayEvent" | "declineAllConflictingInvitations";
+	autoDeclineMode?:
+		| "declineOnlyIfSingleAllDayEvent"
+		| "declineAllConflictingInvitations";
 	declineMessage?: string;
 };
 
 export type TFocusTimeProperties = {
-	autoDeclineMode?: "declineOnlyIfSingleAllDayEvent" | "declineAllConflictingInvitations";
+	autoDeclineMode?:
+		| "declineOnlyIfSingleAllDayEvent"
+		| "declineAllConflictingInvitations";
 	declineMessage?: string;
 	chatStatus?: "available" | "busy" | "doNotDisturb";
 };
@@ -138,7 +142,7 @@ export type TFocusTimeProperties = {
 export type TEventListParams = {
 	calendarId?: string;
 	alwaysIncludeEmail?: boolean;
-	eventTypes?: Array<"default" | "focusTime" | "outOfOffice">;
+	eventTypes?: ("default" | "focusTime" | "outOfOffice")[];
 	iCalUID?: string;
 	maxAttendees?: number;
 	maxResults?: number;
@@ -165,10 +169,10 @@ export type TEventListResponse = {
 	updated: string;
 	timeZone: string;
 	accessRole: string;
-	defaultReminders: Array<{
+	defaultReminders: {
 		method: string;
 		minutes: number;
-	}>;
+	}[];
 	nextPageToken?: string;
 	nextSyncToken?: string;
 	items: TCalendarEvent[];

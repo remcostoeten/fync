@@ -24,7 +24,9 @@ export function createMemoryCache<T = unknown>(
 		if (!maxSize || cache.size <= maxSize) return;
 
 		const entries = globalThis.Array.from(cache.entries());
-		entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+		entries.sort(function compareTimestamps(a, b) {
+			return a[1].timestamp - b[1].timestamp;
+		});
 
 		const toDelete = entries.slice(0, cache.size - maxSize);
 		for (const [key] of toDelete) {

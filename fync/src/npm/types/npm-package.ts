@@ -1,12 +1,12 @@
 import type {
-	TNpmDistInfo,
-	TNpmRepository,
 	TNpmBugs,
-	TNpmPerson,
 	TNpmDependencies,
+	TNpmDistInfo,
 	TNpmEngines,
-	TNpmScripts,
 	TNpmMaintainer,
+	TNpmPerson,
+	TNpmRepository,
+	TNpmScripts,
 } from "./npm-common";
 
 type TNpmPackageVersion = {
@@ -24,7 +24,7 @@ type TNpmPackageVersion = {
 	main?: string;
 	module?: string;
 	types?: string;
-	exports?: Record<string, any>;
+	exports?: Record<string, unknown>;
 	scripts?: TNpmScripts;
 	dependencies?: TNpmDependencies;
 	devDependencies?: TNpmDependencies;
@@ -36,7 +36,7 @@ type TNpmPackageVersion = {
 	files?: string[];
 	bin?: Record<string, string> | string;
 	directories?: Record<string, string>;
-	publishConfig?: Record<string, any>;
+	publishConfig?: Record<string, unknown>;
 	dist: TNpmDistInfo;
 	_id: string;
 	_nodeVersion: string;
@@ -169,13 +169,13 @@ type TNpmVulnerability = {
 };
 
 type TNpmAuditResponse = {
-	actions: Array<{
+	actions: {
 		action: string;
 		module: string;
 		target: string;
 		isMajor?: boolean;
 		resolves: TNpmVulnerability[];
-	}>;
+	}[];
 	advisories: Record<string, TNpmVulnerability>;
 	metas: {
 		vulnerabilities: {
@@ -216,7 +216,7 @@ type TNpmDistTags = Record<string, string> & {
 type TNpmCollaborator = {
 	name: string;
 	email: string;
-	access: 'read' | 'write' | 'admin';
+	access: "read" | "write" | "admin";
 };
 
 export type {

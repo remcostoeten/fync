@@ -15,15 +15,15 @@ export type TCalendarListEntry = {
 	hidden?: boolean;
 	selected?: boolean;
 	accessRole: TCalendarAccessRole;
-	defaultReminders: Array<{
+	defaultReminders: {
 		method: string;
 		minutes: number;
-	}>;
+	}[];
 	notificationSettings?: {
-		notifications: Array<{
+		notifications: {
 			type: string;
 			method: string;
-		}>;
+		}[];
 	};
 	primary?: boolean;
 	deleted?: boolean;
@@ -73,16 +73,19 @@ export type TFreeBusy = {
 	kind: "calendar#freeBusy";
 	timeMin: string;
 	timeMax: string;
-	calendars: Record<string, {
-		errors?: Array<{
-			domain: string;
-			reason: string;
-		}>;
-		busy: Array<{
-			start: string;
-			end: string;
-		}>;
-	}>;
+	calendars: Record<
+		string,
+		{
+			errors?: {
+				domain: string;
+				reason: string;
+			}[];
+			busy: {
+				start: string;
+				end: string;
+			}[];
+		}
+	>;
 };
 
 export type TFreeBusyParams = {
@@ -91,7 +94,7 @@ export type TFreeBusyParams = {
 	timeZone?: string;
 	groupExpansionMax?: number;
 	calendarExpansionMax?: number;
-	items: Array<{
+	items: {
 		id: string;
-	}>;
+	}[];
 };

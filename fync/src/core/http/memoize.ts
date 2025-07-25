@@ -12,7 +12,7 @@ export function memoize<T extends (...args: any[]) => any>(
 ): T {
 	const cache = new Map<string, { value: ReturnType<T>; timestamp: number }>();
 
-	return ((...args: Parameters<T>): ReturnType<T> => {
+	function memoizedFunction(...args: Parameters<T>): ReturnType<T> {
 		const key = getKey ? getKey(...args) : JSON.stringify(args);
 		const now = Date.now();
 		const cached = cache.get(key);
@@ -24,9 +24,8 @@ export function memoize<T extends (...args: any[]) => any>(
 		const result = fn(...args);
 		cache.set(key, { value: result, timestamp: now });
 
-		// Auto-cleanup expired entries
 		if (options.ttl) {
-			setTimeout(() => {
+			setTimeout(function cleanupExpiredEntry() {
 				const entry = cache.get(key);
 				if (entry && options.ttl && now - entry.timestamp >= options.ttl) {
 					cache.delete(key);
@@ -35,5 +34,7 @@ export function memoize<T extends (...args: any[]) => any>(
 		}
 
 		return result;
-	}) as T;
+	}
+
+	return memoizedFunction as T;
 }

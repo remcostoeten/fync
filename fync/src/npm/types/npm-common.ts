@@ -14,10 +14,10 @@ type TNpmDistInfo = {
 	shasum: string;
 	tarball: string;
 	integrity?: string;
-	signatures?: Array<{
+	signatures?: {
 		keyid: string;
 		sig: string;
-	}>;
+	}[];
 };
 
 type TNpmRepository = {

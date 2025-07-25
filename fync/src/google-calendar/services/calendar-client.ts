@@ -1,4 +1,8 @@
-import { createChainableClient, type TChainableClient, type TBaseConfig } from "../../core/chainable";
+import {
+	createChainableClient,
+	type TBaseConfig,
+	type TChainableClient,
+} from "../../core/chainable";
 import { createHttpClient } from "./http-client";
 
 type TCalendarClientConfig = TBaseConfig & {
@@ -19,19 +23,13 @@ function createCalendarChainableClient(
 		defaultHeaders,
 	});
 
-	return createChainableClient(
-		config,
-		httpClient,
-		{
-			cacheKeyPrefix: "calendar",
-			supportsPagination: false,
-		},
-	);
+	return createChainableClient(config, httpClient, {
+		cacheKeyPrefix: "calendar",
+		supportsPagination: false,
+	});
 }
 
-function createCalendarClient(
-	config: TCalendarClientConfig,
-): TChainableClient {
+function createCalendarClient(config: TCalendarClientConfig): TChainableClient {
 	return createCalendarChainableClient(config);
 }
 

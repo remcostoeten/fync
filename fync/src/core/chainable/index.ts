@@ -1,2 +1,7 @@
+export type {
+	TBaseConfig,
+	TChainableClient,
+	TRequestOptions,
+	TServiceConfig,
+} from "./factory";
 export { createChainableClient } from "./factory";
-export type { TChainableClient, TRequestOptions, TBaseConfig, TServiceConfig } from "./factory";

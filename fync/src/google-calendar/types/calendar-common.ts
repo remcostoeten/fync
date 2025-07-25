@@ -29,26 +29,21 @@ export type TCalendarReminderOverrides = {
 
 export type TCalendarRecurrence = string[];
 
-export type TCalendarAccessRole = 
+export type TCalendarAccessRole =
 	| "freeBusyReader"
 	| "reader"
 	| "writer"
 	| "owner";
 
-export type TCalendarEventStatus = 
-	| "confirmed"
-	| "tentative"
-	| "cancelled";
+export type TCalendarEventStatus = "confirmed" | "tentative" | "cancelled";
 
-export type TCalendarEventVisibility = 
+export type TCalendarEventVisibility =
 	| "default"
 	| "public"
 	| "private"
 	| "confidential";
 
-export type TCalendarEventTransparency = 
-	| "opaque"
-	| "transparent";
+export type TCalendarEventTransparency = "opaque" | "transparent";
 
 export type TTimeZone = string;
 

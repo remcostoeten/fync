@@ -256,32 +256,32 @@ type TAuthenticatedUserClient = {
 
 /**
  * Creates a new GitHub API client
- * 
+ *
  * @param config - Configuration for the GitHub client
  * @param config.token - GitHub personal access token or OAuth token (required)
  * @param config.baseUrl - Custom GitHub API URL (default: https://api.github.com)
  * @param config.cache - Enable response caching (default: false)
  * @param config.cacheTTL - Cache time-to-live in milliseconds (default: 300000)
  * @param config.timeout - Request timeout in milliseconds (default: 30000)
- * 
+ *
  * @returns GitHub client instance with access to users, repositories, organizations, and more
- * 
+ *
  * @example
  * ```typescript
- * const github = GitHub({ 
+ * const github = GitHub({
  *   token: process.env.GITHUB_TOKEN,
- *   cache: true 
+ *   cache: true
  * });
- * 
+ *
  * // Get user information
  * const user = await github.user('octocat').get();
- * 
+ *
  * // Get repository details
  * const repo = await github.repo('facebook', 'react').get();
- * 
+ *
  * // Search repositories
  * const results = await github.search.repositories('typescript');
- * 
+ *
  * // Get current user's notifications
  * const notifications = await github.notifications.get();
  * ```

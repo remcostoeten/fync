@@ -1,4 +1,8 @@
-import { createChainableClient, type TChainableClient, type TBaseConfig } from "../../core/chainable";
+import {
+	createChainableClient,
+	type TBaseConfig,
+	type TChainableClient,
+} from "../../core/chainable";
 import { createHttpClient } from "./http-client";
 
 type TGitHubClientConfig = TBaseConfig & {
@@ -22,14 +26,10 @@ function createGitHubChainableClient(
 		defaultHeaders,
 	});
 
-	return createChainableClient(
-		config,
-		httpClient,
-		{
-			cacheKeyPrefix: "github",
-			supportsPagination: true,
-		},
-	);
+	return createChainableClient(config, httpClient, {
+		cacheKeyPrefix: "github",
+		supportsPagination: true,
+	});
 }
 
 function createGitHubClient(
