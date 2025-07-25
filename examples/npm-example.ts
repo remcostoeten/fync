@@ -74,6 +74,65 @@ async function exampleUsage() {
     const customQuery = await npm.api['@types']['node'].get();
     console.log(`- @types/node latest: ${customQuery['dist-tags'].latest}`);
 
+    // 9. User and organization data
+    console.log('\n👤 Getting user information...');
+    try {
+      const user = await npm.user('sindresorhus').get();
+      console.log(`- User: ${user.name} (${user.email})`);
+      
+      const userPackages = await npm.user('sindresorhus').packages({ size: 5 });
+      console.log(`- User has ${userPackages.length} packages (showing first 5)`);
+    } catch (error) {
+      console.log('- User data not available (API limitations)');
+    }
+
+    // 10. Organization packages
+    console.log('\n🏢 Getting organization packages...');
+    try {
+      const orgPackages = await npm.org('microsoft').packages({ size: 5 });
+      console.log(`- Microsoft org has ${orgPackages.length} packages (showing first 5)`);
+    } catch (error) {
+      console.log('- Org data not available (API limitations)');
+    }
+
+    // 11. Tag-based package discovery
+    console.log('\n🏷️ Finding packages by tag...');
+    const reactPackages = await npm.tag('react').packages({ size: 3 });
+    console.log(`- Found ${reactPackages.length} React-related packages`);
+    reactPackages.forEach((pkg, i) => {
+      console.log(`  ${i + 1}. ${pkg.name} - ${pkg.description?.slice(0, 40)}...`);
+    });
+
+    // 12. Advanced package analysis
+    console.log('\n🔍 Advanced package analysis for "lodash"...');
+    const lodashPackage = npm.package('lodash');
+    
+    // Check deprecation status
+    const isDeprecated = await lodashPackage.isDeprecated();
+    console.log(`- Is deprecated: ${isDeprecated}`);
+    
+    // Get distribution tags
+    const distTags = await lodashPackage.distTags();
+    console.log(`- Available tags: ${Object.keys(distTags).join(', ')}`);
+    
+    // Get collaborators
+    const collaborators = await lodashPackage.collaborators();
+    console.log(`- Collaborators: ${collaborators.length}`);
+    
+    // Bundle analysis
+    const bundleInfo = await lodashPackage.bundleAnalysis();
+    console.log(`- Dependencies: ${bundleInfo.dependencies.length}`);
+    console.log(`- Main dependencies: ${bundleInfo.dependencies.slice(0, 3).join(', ')}`);
+
+    // 13. Security analysis (if available)
+    console.log('\n🛡️ Security analysis...');
+    try {
+      const vulnerabilities = await lodashPackage.vulnerabilities();
+      console.log(`- Known vulnerabilities: ${vulnerabilities.length}`);
+    } catch (error) {
+      console.log('- Security data not available (requires audit endpoints)');
+    }
+
   } catch (error) {
     console.error('❌ Error:', error instanceof Error ? error.message : error);
   }
