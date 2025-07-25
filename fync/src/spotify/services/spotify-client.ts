@@ -1,32 +1,6 @@
 import type { TSpotifyConfig } from "../types/spotify-common";
 import { createHttpClient } from "../utils/http";
-
-type TFetcher<T> = (...args: unknown[]) => Promise<T>;
-
-const cache = new Map<string, { data: unknown; timeoutId: NodeJS.Timeout }>();
-
-function memoize<T>(
-	fetcher: TFetcher<T>,
-	keyGenerator: (...args: unknown[]) => string,
-	ttlMs: number = 300000,
-): TFetcher<T> {
-	return async (...args: unknown[]): Promise<T> => {
-		const key = keyGenerator(...args);
-		const cachedEntry = cache.get(key);
-
-		if (cachedEntry) {
-			return cachedEntry.data as T;
-		}
-
-		const result = await fetcher(...args);
-		const timeoutId = setTimeout(() => {
-			cache.delete(key);
-		}, ttlMs);
-
-		cache.set(key, { data: result, timeoutId });
-		return result;
-	};
-}
+import { memoize } from "../../core/http/memoize";
 
 type TSpotifyClientConfig = {
 	token?: string;
@@ -86,7 +60,9 @@ function createChainableClient(
 		cacheTTL: config.cacheTTL,
 	});
 
-	const buildPath = () => "/" + pathSegments.join("/");
+	function buildPath() {
+		return "/" + pathSegments.join("/");
+	}
 
 	async function executeRequest<T = unknown>(
 		method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
@@ -96,7 +72,7 @@ function createChainableClient(
 		const path = buildPath();
 		const { params, cache = config.cache !== false } = options || {};
 
-		const requestFn = async () => {
+		async function requestFn() {
 			let url = `${config.baseUrl || "https://api.spotify.com/v1"}${path}`;
 
 			if (params) {
@@ -135,11 +111,12 @@ function createChainableClient(
 
 		if (cache && method === "GET") {
 			const cacheKey = `${path}:${JSON.stringify(params || {})}`;
-			const memoizedFn = memoize(
-				requestFn,
-				() => cacheKey,
-				options?.cacheTTL ?? config.cacheTTL ?? 300000,
-			);
+			function getCacheKey() {
+				return cacheKey;
+			}
+			const memoizedFn = memoize(requestFn, getCacheKey, {
+				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
+			});
 			return memoizedFn() as Promise<T>;
 		}
 

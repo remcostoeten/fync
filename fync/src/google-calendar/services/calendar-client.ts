@@ -37,7 +37,9 @@ function createChainableCalendarClient(
 		defaultHeaders,
 	});
 
-	const buildPath = () => "/" + pathSegments.join("/");
+	function buildPath() {
+		return "/" + pathSegments.join("/");
+	}
 
 	async function executeRequest<T = unknown>(
 		method: "GET",
@@ -46,14 +48,17 @@ function createChainableCalendarClient(
 		const path = buildPath();
 		const { params, cache = config.cache !== false } = options || {};
 
-		const requestFn = async () => {
+		async function requestFn() {
 			const response = await httpClient.get(path, params);
 			return response.data;
-		};
+		}
 
 		if (cache && method === "GET") {
 			const cacheKey = `calendar:${path}:${JSON.stringify(params || {})}`;
-			const memoizedFn = memoize(requestFn, () => cacheKey, {
+			function getCacheKey() {
+				return cacheKey;
+			}
+			const memoizedFn = memoize(requestFn, getCacheKey, {
 				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
 			});
 			return memoizedFn() as Promise<T>;

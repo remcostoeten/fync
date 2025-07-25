@@ -98,7 +98,6 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 					}
 				}
 			} catch {
-				// If we can't parse the error response, use the default message
 			}
 
 			throw new Error(errorMessage);
@@ -119,14 +118,26 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 		return result;
 	}
 
+	function get<T>(url: string, options?: THttpOptions) {
+		return makeRequest<T>(url, "GET", undefined, options);
+	}
+
+	function post<T>(url: string, data?: unknown, options?: THttpOptions) {
+		return makeRequest<T>(url, "POST", data, options);
+	}
+
+	function put<T>(url: string, data?: unknown, options?: THttpOptions) {
+		return makeRequest<T>(url, "PUT", data, options);
+	}
+
+	function deleteRequest<T>(url: string, data?: unknown, options?: THttpOptions) {
+		return makeRequest<T>(url, "DELETE", data, options);
+	}
+
 	return {
-		get: <T>(url: string, options?: THttpOptions) =>
-			makeRequest<T>(url, "GET", undefined, options),
-		post: <T>(url: string, data?: unknown, options?: THttpOptions) =>
-			makeRequest<T>(url, "POST", data, options),
-		put: <T>(url: string, data?: unknown, options?: THttpOptions) =>
-			makeRequest<T>(url, "PUT", data, options),
-		delete: <T>(url: string, data?: unknown, options?: THttpOptions) =>
-			makeRequest<T>(url, "DELETE", data, options),
+		get,
+		post,
+		put,
+		delete: deleteRequest,
 	};
 }

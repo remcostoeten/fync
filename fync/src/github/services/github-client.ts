@@ -50,7 +50,9 @@ function createChainableClient(
 		defaultHeaders,
 	});
 
-	const buildPath = () => "/" + pathSegments.join("/");
+	function buildPath() {
+		return "/" + pathSegments.join("/");
+	}
 
 	async function executeRequest<T = unknown>(
 		method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
@@ -60,7 +62,7 @@ function createChainableClient(
 		const path = buildPath();
 		const { params, cache = config.cache !== false } = options || {};
 
-		const requestFn = async () => {
+		async function requestFn() {
 			switch (method) {
 				case "GET":
 					if (options?.paginate || options?.allPages) {
@@ -97,7 +99,10 @@ function createChainableClient(
 
 		if (cache && method === "GET") {
 			const cacheKey = `${path}:${JSON.stringify(params || {})}`;
-			const memoizedFn = memoize(requestFn, () => cacheKey, {
+			function getCacheKey() {
+				return cacheKey;
+			}
+			const memoizedFn = memoize(requestFn, getCacheKey, {
 				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
 			});
 			return memoizedFn() as Promise<T>;

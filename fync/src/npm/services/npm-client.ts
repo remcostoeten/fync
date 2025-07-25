@@ -35,7 +35,9 @@ function createChainableClient(
 		timeout: config.timeout || 30000,
 	});
 
-	const buildPath = () => "/" + pathSegments.join("/");
+	function buildPath() {
+		return "/" + pathSegments.join("/");
+	}
 
 	async function executeRequest<T = unknown>(
 		options?: TRequestOptions,
@@ -43,14 +45,17 @@ function createChainableClient(
 		const path = buildPath();
 		const { params, cache = config.cache !== false } = options || {};
 
-		const requestFn = async () => {
+		async function requestFn() {
 			const response = await httpClient.get<T>(path, params);
 			return response.data;
-		};
+		}
 
 		if (cache) {
 			const cacheKey = `npm:${path}:${JSON.stringify(params || {})}`;
-			const memoizedFn = memoize(requestFn, () => cacheKey, {
+			function getCacheKey() {
+				return cacheKey;
+			}
+			const memoizedFn = memoize(requestFn, getCacheKey, {
 				ttl: options?.cacheTTL ?? config.cacheTTL ?? 300000,
 			});
 			return memoizedFn();
@@ -70,7 +75,6 @@ function createChainableClient(
 				return () => buildPath();
 			}
 
-			// For any other property, create a new chainable client with the added path segment
 			return createChainableClient(config, [...pathSegments, String(prop)]);
 		},
 	});

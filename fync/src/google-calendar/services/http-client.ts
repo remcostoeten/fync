@@ -30,7 +30,10 @@ function createHttpClient(config: THttpClientConfig): THttpClient {
 		}
 
 		const controller = new AbortController();
-		const timeoutId = setTimeout(() => controller.abort(), timeout);
+		function abortRequest() {
+			controller.abort();
+		}
+		const timeoutId = setTimeout(abortRequest, timeout);
 
 		try {
 			const response = await fetch(url.toString(), {
@@ -45,9 +48,10 @@ function createHttpClient(config: THttpClientConfig): THttpClient {
 			clearTimeout(timeoutId);
 
 			const responseHeaders: THttpHeaders = {};
-			response.headers.forEach((value, key) => {
+			function collectHeaders(value: string, key: string) {
 				responseHeaders[key] = value;
-			});
+			}
+			response.headers.forEach(collectHeaders);
 
 			let data: T;
 			const contentType = response.headers.get("content-type");
