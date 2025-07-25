@@ -159,6 +159,31 @@ type TAdvancedPackageClient = TPackageClient & {
 	}>;
 };
 
+/**
+ * Creates a new NPM Registry API client
+ * 
+ * @param config - Optional configuration for the NPM client
+ * @param config.cache - Enable response caching (default: false)
+ * @param config.cacheTTL - Cache time-to-live in milliseconds (default: 300000)
+ * @param config.baseUrl - Custom NPM registry URL (default: https://registry.npmjs.org)
+ * @param config.timeout - Request timeout in milliseconds (default: 30000)
+ * 
+ * @returns NPM client instance with access to packages, search, downloads, users, orgs, and tags
+ * 
+ * @example
+ * ```typescript
+ * const npm = NPM({ cache: true, cacheTTL: 600000 });
+ * 
+ * // Get package information
+ * const reactInfo = await npm.package('react').get();
+ * 
+ * // Search for packages
+ * const results = await npm.search.packages('typescript');
+ * 
+ * // Get download statistics
+ * const downloads = await npm.downloads.package('react', 'last-week');
+ * ```
+ */
 function NPM(config?: TNpmClientConfig): TNpm {
 	const client = createNpmClient(config);
 

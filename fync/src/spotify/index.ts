@@ -338,7 +338,39 @@ function createLibraryClient(api: TChainableClient): TLibraryClient {
 	};
 }
 
-function Spotify(config?: TSpotifyClientConfig): TSpotify {
+/**
+ * Creates a new Spotify Web API client
+ * 
+ * @param config - Configuration for the Spotify client
+ * @param config.token - Spotify access token from OAuth 2.0 flow (required)
+ * @param config.baseUrl - Custom Spotify API URL (default: https://api.spotify.com/v1)
+ * @param config.cache - Enable response caching (default: false)
+ * @param config.cacheTTL - Cache time-to-live in milliseconds (default: 300000)
+ * @param config.timeout - Request timeout in milliseconds (default: 30000)
+ * 
+ * @returns Spotify client instance with access to user data, playlists, player controls, and search
+ * 
+ * @example
+ * ```typescript
+ * const spotify = Spotify({ 
+ *   token: process.env.SPOTIFY_ACCESS_TOKEN,
+ *   cache: true 
+ * });
+ * 
+ * // Get current user profile
+ * const user = await spotify.me.get();
+ * 
+ * // Search for tracks
+ * const tracks = await spotify.search.tracks('bohemian rhapsody');
+ * 
+ * // Control playback
+ * await spotify.player.play({ uris: ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'] });
+ * 
+ * // Get user's playlists
+ * const playlists = await spotify.me.playlists.get();
+ * ```
+ */
+function Spotify(config: TSpotifyClientConfig): TSpotify {
 	const api = createSpotifyChainableClient(config);
 
 	return {
