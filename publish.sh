@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # Default values
 VERSION_TYPE=${1:-patch}
 COMMIT_MSG=${2:-"chore: release new version"}
-BRANCH="meester😩"
+BRANCH="master"
 
 echo -e "${BLUE}🚀 Starting unified publish process...${NC}"
 

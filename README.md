@@ -19,8 +19,9 @@ npm install @remcostoeten/fync
 ```typescript
 import { Spotify } from '@remcostoeten/fync/spotify'
 
+// Use environment variables for security
 const spotify = Spotify({
-  token: 'your-spotify-token'
+  token: process.env.SPOTIFY_ACCESS_TOKEN // Get from Spotify OAuth 2.0 flow
 })
 
 // Get current user profile
@@ -53,8 +54,9 @@ await playlist.tracks.add(['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'])
 ```typescript
 import { GitHub } from '@remcostoeten/fync/github'
 
+// Use environment variables for security
 const github = GitHub({
-  token: 'your-github-token'
+  token: process.env.GITHUB_TOKEN // Get from GitHub settings > Developer settings > Personal access tokens
 })
 
 // Get user info
@@ -120,6 +122,30 @@ Both clients support configuration options for:
 - Base URLs
 - Caching settings
 - Request timeouts
+
+## Security
+
+⚠️ **Important**: Never hardcode API tokens in your source code or commit them to version control.
+
+### Setup Environment Variables
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Add your API tokens to `.env`:
+   ```env
+   GITHUB_TOKEN=ghp_your_github_personal_access_token
+   SPOTIFY_ACCESS_TOKEN=your_spotify_access_token
+   ```
+
+3. Load environment variables in your application:
+   ```typescript
+   import 'dotenv/config' // Add this at the top of your main file
+   ```
+
+For detailed security guidelines, see [SECURITY.md](./SECURITY.md).
 
 ## License
 
