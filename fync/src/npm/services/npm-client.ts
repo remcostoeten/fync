@@ -14,7 +14,7 @@ function createNpmChainableClient(config: TNpmClientConfig): TChainableClient {
 	const httpClient = createHttpClient({
 		baseUrl: config.baseUrl || "https://registry.npmjs.org",
 		defaultHeaders: {
-			"User-Agent": config.userAgent || "@remcostoeten/fync npm-client",
+			"User-Agent": config.userAgent || "npm-http-client",
 		},
 		timeout: config.timeout || 30000,
 	});

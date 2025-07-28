@@ -41,6 +41,8 @@
 	},
 	"sideEffects": false,
 	"scripts": {
+		"sync-version": "node scripts/sync-version.js",
+		"prebuild": "npm run sync-version",
 		"build": "tsc && npm run build:cjs",
 		"build:cjs": "babel dist --out-dir dist-cjs --config-file ./babel.config.cjs",
 		"dev": "tsc --watch",
@@ -52,6 +54,7 @@
 		"test": "vitest",
 		"test:run": "vitest run || exit 0",
 		"test:coverage": "vitest run --coverage",
+		"version": "npm run sync-version",
 		"publish:patch": "../publish.sh patch",
 		"publish:minor": "../publish.sh minor",
 		"publish:major": "../publish.sh major"

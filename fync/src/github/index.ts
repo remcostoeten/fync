@@ -42,6 +42,7 @@ import type {
 	TGitHubSearchUsersResponse,
 } from "./types/github-search";
 import type { TGitHubUser } from "./types/github-user";
+import type { TGitHubConfig } from "./types/github-common";
 
 type TGitHub = {
 	// Direct access to chainable API
@@ -520,4 +521,6 @@ export type {
 	TGitHubRepository,
 	TGitHubOrganization,
 	TGitHubGist,
+	// Config types
+	TGitHubConfig,
 };

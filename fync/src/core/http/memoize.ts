@@ -1,10 +1,8 @@
-// Simple memoization utility
 type TMemoizeOptions = {
 	ttl?: number;
 	key?: string;
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: Generic function signature requires any types
 export function memoize<T extends (...args: any[]) => any>(
 	fn: T,
 	getKey?: (...args: Parameters<T>) => string,

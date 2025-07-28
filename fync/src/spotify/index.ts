@@ -40,10 +40,10 @@ import type {
 
 type TSpotify = {
 	api: TChainableClient;
-	user: (userId: string) => TUserClient;
+	user(userId: string): TUserClient;
 	me: TAuthenticatedUserClient;
 	player: TPlayerClient;
-	playlist: (playlistId: string) => TPlaylistClient;
+	playlist(playlistId: string): TPlaylistClient;
 	search: TSearchClient;
 	library: TLibraryClient;
 };
@@ -268,11 +268,6 @@ function createPlaylistClient(
 					...(position !== undefined && { position }),
 				}),
 			remove: (uris: string[]) => {
-				// For Spotify playlist track removal, we need to send the data in the request body,
-				// not as query parameters. The delete method signature expects TRequestOptions.
-				// Since we can't pass complex objects as params, we'll use a different approach
-				// This is a limitation of the current chainable client design for complex DELETE requests
-				// The actual implementation would need to be handled in the HTTP layer
 				return api.playlists[playlistId].tracks.delete<{
 					snapshot_id: string;
 				}>();
@@ -401,11 +396,9 @@ export type {
 	TPlaylistClient,
 	TSearchClient,
 	TLibraryClient,
-	// Client types
 	TChainableClient,
 	TRequestOptions,
 	TSpotifyClientConfig,
-	// Core types
 	TSpotifyUser,
 	TSpotifyPagingObject,
 	TSpotifyPlaylist,
@@ -430,6 +423,5 @@ export type {
 	TSpotifySegment,
 	TSpotifyRecentlyPlayedResponse,
 	TSpotifyRecentlyPlayedItem,
-	// Config types
 	TSpotifyConfig,
 };

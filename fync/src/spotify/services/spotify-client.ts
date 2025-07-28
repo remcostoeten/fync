@@ -19,7 +19,7 @@ function createSpotifyChainableClient(
 	config: TSpotifyClientConfig,
 ): TChainableClient {
 	const spotifyHttpClient = createHttpClient({
-		clientId: "",
+        clientId: "",
 		clientSecret: "",
 		accessToken: config.token,
 		baseUrl: config.baseUrl || "https://api.spotify.com/v1",
@@ -62,7 +62,6 @@ function createSpotifyChainableClient(
 		cacheKeyPrefix: "spotify",
 		supportsPagination: false,
 		defaultOptions: {
-			// Only include valid TRequestOptions properties
 			params: {
 				...(config.limit && { limit: config.limit }),
 				...(config.after && { after: config.after }),

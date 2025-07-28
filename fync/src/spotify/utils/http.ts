@@ -7,14 +7,14 @@ type THttpOptions = {
 };
 
 type THttpClient = {
-	get: <T>(url: string, options?: THttpOptions) => Promise<T>;
-	post: <T>(url: string, data?: unknown, options?: THttpOptions) => Promise<T>;
-	put: <T>(url: string, data?: unknown, options?: THttpOptions) => Promise<T>;
-	delete: <T>(
+	get<T>(url: string, options?: THttpOptions): Promise<T>;
+	post<T>(url: string, data?: unknown, options?: THttpOptions): Promise<T>;
+	put<T>(url: string, data?: unknown, options?: THttpOptions): Promise<T>;
+	delete<T>(
 		url: string,
 		data?: unknown,
 		options?: THttpOptions,
-	) => Promise<T>;
+	): Promise<T>;
 };
 
 export function createHttpClient(config: TSpotifyConfig): THttpClient {
@@ -98,13 +98,11 @@ export function createHttpClient(config: TSpotifyConfig): THttpClient {
 					}
 				}
 			} catch {
-				// Error parsing response body, use generic error message
 			}
 
 			throw new Error(errorMessage);
 		}
 
-		// Handle empty responses (204 No Content)
 		if (response.status === 204) {
 			return undefined as T;
 		}

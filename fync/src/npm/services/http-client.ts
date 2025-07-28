@@ -23,7 +23,7 @@ function createHttpClient(config: THttpClientConfig = {}) {
 		endpoint: string,
 		options: {
 			method?: string;
-			params?: Record<string, string | number>;
+			params?: Record<string, string | number | boolean>;
 			headers?: Record<string, string>;
 		} = {},
 	): Promise<THttpResponse<T>> {
@@ -43,7 +43,7 @@ function createHttpClient(config: THttpClientConfig = {}) {
 
 		const requestHeaders = {
 			Accept: "application/json",
-			"User-Agent": "@remcostoeten/fync npm-client",
+			"User-Agent": "npm-http-client",
 			...defaultHeaders,
 			...headers,
 		};
@@ -90,49 +90,34 @@ function createHttpClient(config: THttpClientConfig = {}) {
 
 	function get<T = unknown>(
 		endpoint: string,
-		params?: Record<string, string | number>,
+		params?: Record<string, string | number | boolean>,
 	) {
 		return request<T>(endpoint, { method: "GET", params });
 	}
 
 	function post<T = unknown>(endpoint: string, data?: unknown) {
-		return request<T>(endpoint, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			// Note: NPM registry is read-only, but we provide the method for completeness
-		});
+		return request<T>(endpoint, { method: "POST" });
 	}
 
 	function put<T = unknown>(endpoint: string, data?: unknown) {
-		return request<T>(endpoint, {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			// Note: NPM registry is read-only, but we provide the method for completeness
-		});
+		return request<T>(endpoint, { method: "PUT" });
 	}
 
 	function patch<T = unknown>(endpoint: string, data?: unknown) {
-		return request<T>(endpoint, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			// Note: NPM registry is read-only, but we provide the method for completeness
-		});
+		return request<T>(endpoint, { method: "PATCH" });
 	}
 
-	function deleteRequest<T = unknown>(endpoint: string, data?: unknown) {
-		return request<T>(endpoint, {
-			method: "DELETE",
-			// Note: NPM registry is read-only, but we provide the method for completeness
-		});
+	function deleteMethod<T = unknown>(endpoint: string, data?: unknown) {
+		return request<T>(endpoint, { method: "DELETE" });
 	}
 
 	return {
 		get,
-		request,
 		post,
 		put,
 		patch,
-		delete: deleteRequest,
+		delete: deleteMethod,
+		request,
 	};
 }
 

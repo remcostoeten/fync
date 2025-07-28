@@ -35,7 +35,6 @@ export function createLruCache<T = unknown>(
 			return undefined;
 		}
 
-		// Move accessed item to the end to mark it as most recently used
 		cache.delete(key);
 		cache.set(key, entry);
 
