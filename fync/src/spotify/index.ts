@@ -87,11 +87,6 @@ type TAuthenticatedUserClient = {
 };
 
 type TPlayerClient = {
-	play(options?: { device_id?: string; uris?: string[] }): Promise<void>;
-	pause(options?: { device_id?: string }): Promise<void>;
-	next(options?: { device_id?: string }): Promise<void>;
-	previous(options?: { device_id?: string }): Promise<void>;
-	queue(uri: string, options?: { device_id?: string }): Promise<void>;
 	devices(): Promise<{ devices: TSpotifyPlayerDevice[] }>;
 	currentlyPlaying(): Promise<TSpotifyPlaybackState>;
 	chain: TChainableClient;
@@ -103,8 +98,6 @@ type TPlaylistClient = {
 		get(
 			options?: TRequestOptions,
 		): Promise<TSpotifyPagingObject<TSpotifyPlaylistTrack>>;
-		add(uris: string[], position?: number): Promise<{ snapshot_id: string }>;
-		remove(uris: string[]): Promise<{ snapshot_id: string }>;
 	};
 	chain: TChainableClient;
 };
@@ -206,44 +199,6 @@ function createAuthenticatedUserClient(
 
 function createPlayerClient(api: TChainableClient): TPlayerClient {
 	return {
-		play: (options?: { device_id?: string; uris?: string[] }) => {
-			const requestOptions: TRequestOptions = {};
-			if (options?.device_id) {
-				requestOptions.params = { device_id: options.device_id };
-			}
-			return api.me.player.play.put<void>(
-				options?.uris ? { uris: options.uris } : undefined,
-				requestOptions,
-			);
-		},
-		pause: (options?: { device_id?: string }) => {
-			const requestOptions: TRequestOptions = {};
-			if (options?.device_id) {
-				requestOptions.params = { device_id: options.device_id };
-			}
-			return api.me.player.pause.put<void>(undefined, requestOptions);
-		},
-		next: (options?: { device_id?: string }) => {
-			const requestOptions: TRequestOptions = {};
-			if (options?.device_id) {
-				requestOptions.params = { device_id: options.device_id };
-			}
-			return api.me.player.next.post<void>(undefined, requestOptions);
-		},
-		previous: (options?: { device_id?: string }) => {
-			const requestOptions: TRequestOptions = {};
-			if (options?.device_id) {
-				requestOptions.params = { device_id: options.device_id };
-			}
-			return api.me.player.previous.post<void>(undefined, requestOptions);
-		},
-		queue: (uri: string, options?: { device_id?: string }) => {
-			const params: { uri: string; device_id?: string } = { uri };
-			if (options?.device_id) {
-				params.device_id = options.device_id;
-			}
-			return api.me.player.queue.post<void>(undefined, { params });
-		},
 		devices: () =>
 			api.me.player.devices.get<{ devices: TSpotifyPlayerDevice[] }>(),
 		currentlyPlaying: () => api.me.player.get<TSpotifyPlaybackState>(),
@@ -262,16 +217,6 @@ function createPlaylistClient(
 				api.playlists[playlistId].tracks.get<
 					TSpotifyPagingObject<TSpotifyPlaylistTrack>
 				>(options),
-			add: (uris: string[], position?: number) =>
-				api.playlists[playlistId].tracks.post<{ snapshot_id: string }>({
-					uris,
-					...(position !== undefined && { position }),
-				}),
-			remove: (uris: string[]) => {
-				return api.playlists[playlistId].tracks.delete<{
-					snapshot_id: string;
-				}>();
-			},
 		},
 		chain: api.playlists[playlistId],
 	};

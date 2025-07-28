@@ -5,10 +5,6 @@ type THttpClient = {
 		path: string,
 		params?: Record<string, string | number | boolean>,
 	): Promise<{ data: T }>;
-	post<T>(path: string, data?: unknown): Promise<{ data: T }>;
-	put<T>(path: string, data?: unknown): Promise<{ data: T }>;
-	patch<T>(path: string, data?: unknown): Promise<{ data: T }>;
-	delete<T>(path: string, data?: unknown): Promise<{ data: T }>;
 	getPaginated?<T>(
 		path: string,
 		params?: Record<string, string | number | boolean>,
@@ -33,10 +29,6 @@ type TChainableClient = {
 	[key: string]: TChainableClient;
 } & {
 	get<T = unknown>(options?: TRequestOptions): Promise<T>;
-	post<T = unknown>(data: unknown, options?: TRequestOptions): Promise<T>;
-	put<T = unknown>(data: unknown, options?: TRequestOptions): Promise<T>;
-	patch<T = unknown>(data: unknown, options?: TRequestOptions): Promise<T>;
-	delete<T = unknown>(options?: TRequestOptions): Promise<T>;
 	paginate<T = unknown>(options?: TRequestOptions): Promise<T[]>;
 	stream<T = unknown>(
 		options?: TRequestOptions,
@@ -61,7 +53,7 @@ export function createChainableClient<TConfig extends TBaseConfig>(
 	}
 
 	async function executeRequest<T = unknown>(
-		method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+		method: "GET",
 		data?: unknown,
 		options?: TRequestOptions,
 	): Promise<T> {
@@ -70,31 +62,13 @@ export function createChainableClient<TConfig extends TBaseConfig>(
 		const { params, cache = config.cache !== false } = mergedOptions;
 
 		async function requestFn(): Promise<T> {
-			switch (method) {
-				case "GET":
-					if (mergedOptions.paginate || mergedOptions.allPages) {
-						return handlePagination<T>(path, params, mergedOptions);
-					}
-					return (await httpClient.get<T>(path, params)).data;
-
-				case "POST":
-					return (await httpClient.post<T>(path, data)).data;
-
-				case "PUT":
-					return (await httpClient.put<T>(path, data)).data;
-
-				case "PATCH":
-					return (await httpClient.patch<T>(path, data)).data;
-
-				case "DELETE":
-					return (await httpClient.delete<T>(path, data)).data;
-
-				default:
-					throw new Error(`Unsupported method: ${method}`);
+			if (mergedOptions.paginate || mergedOptions.allPages) {
+				return handlePagination<T>(path, params, mergedOptions);
 			}
+			return (await httpClient.get<T>(path, params)).data;
 		}
 
-		if (cache && method === "GET") {
+		if (cache) {
 			const cacheKey = `${serviceConfig.cacheKeyPrefix}:${path}:${JSON.stringify(params || {})}`;
 			function getCacheKey() {
 				return cacheKey;
@@ -156,40 +130,18 @@ export function createChainableClient<TConfig extends TBaseConfig>(
 	}
 
 	function createMethodHandler<T = unknown>(
-		method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+		method: "GET",
 	) {
-		if (method === "GET" || method === "DELETE") {
-			function getOrDeleteHandler(options?: TRequestOptions) {
-				return executeRequest<T>(method, undefined, options);
-			}
-			return getOrDeleteHandler;
+		function getHandler(options?: TRequestOptions) {
+			return executeRequest<T>(method, undefined, options);
 		}
-		function postPutPatchHandler(data: unknown, options?: TRequestOptions) {
-			return executeRequest<T>(method, data, options);
-		}
-		return postPutPatchHandler;
+		return getHandler;
 	}
 
 	return new Proxy({} as TChainableClient, {
 		get(target, prop: string | symbol) {
 			if (prop === "get") {
 				return createMethodHandler("GET");
-			}
-
-			if (prop === "post") {
-				return createMethodHandler("POST");
-			}
-
-			if (prop === "put") {
-				return createMethodHandler("PUT");
-			}
-
-			if (prop === "patch") {
-				return createMethodHandler("PATCH");
-			}
-
-			if (prop === "delete") {
-				return createMethodHandler("DELETE");
 			}
 
 			if (prop === "paginate") {

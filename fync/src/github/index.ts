@@ -68,12 +68,6 @@ type TGitHub = {
 	// Notifications
 	notifications: {
 		get(options?: TRequestOptions): Promise<TGitHubNotification[]>;
-		markAsRead(options?: TRequestOptions): Promise<void>;
-		markRepoAsRead(
-			owner: string,
-			repo: string,
-			options?: TRequestOptions,
-		): Promise<void>;
 	};
 };
 
@@ -467,10 +461,6 @@ function GitHub(config: TGitHubClientConfig): TGitHub {
 	const notificationsClient = {
 		get: (options?: TRequestOptions) =>
 			client.notifications.get(options) as Promise<TGitHubNotification[]>,
-		markAsRead: (options?: TRequestOptions) =>
-			client.notifications.put({}, options) as Promise<void>,
-		markRepoAsRead: (owner: string, repo: string, options?: TRequestOptions) =>
-			client.repos[owner][repo].notifications.put({}, options) as Promise<void>,
 	};
 
 	return {
