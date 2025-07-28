@@ -21,7 +21,7 @@ import { Spotify } from '@remcostoeten/fync/spotify'
 
 // Use environment variables for security
 const spotify = Spotify({
-  token: process.env.SPOTIFY_ACCESS_TOKEN // Get from Spotify OAuth 2.0 flow
+  accessToken: process.env.SPOTIFY_ACCESS_TOKEN // Get from Spotify OAuth 2.0 flow
 })
 
 // Get current user profile
@@ -166,13 +166,72 @@ The NPM client provides access to:
 - **Trend analysis** - Compare package popularity and track download trends
 - **Registry data** - Access to full NPM registry API (no authentication required)
 
+## Error Handling
+
+Fync provides a comprehensive error handling system with structured error information:
+
+```typescript
+import { initializeErrorHandling, BaseError, HttpErrorHandler } from '@remcostoeten/fync/core'
+
+// Initialize error handling system
+initializeErrorHandling()
+
+// Use HTTP error handler with retry logic
+const errorHandler = new HttpErrorHandler({
+  maxAttempts: 3,
+  baseDelay: 1000,
+  backoffMultiplier: 2
+})
+
+try {
+  const result = await errorHandler.execute(
+    async () => {
+      // Your API call here
+      return await api.getData()
+    },
+    {
+      service: 'github',
+      endpoint: '/user',
+      method: 'GET'
+    }
+  )
+} catch (error) {
+  if (error instanceof BaseError) {
+    console.log('Error code:', error.info.code)
+    console.log('Service:', error.info.service)
+    console.log('Category:', error.info.category)
+    console.log('User message:', error.info.userMessage)
+    console.log('Suggested action:', error.info.suggestedAction)
+    console.log('Is retryable:', error.info.isRetryable)
+  }
+}
+```
+
+### Error Categories
+
+- **Authentication**: Invalid tokens, expired auth, permission denied
+- **Network**: Connection issues, timeouts, DNS failures  
+- **Rate Limit**: API rate limiting exceeded
+- **Validation**: Invalid input parameters or data
+- **API**: API-specific errors (404, 422, etc.)
+- **Configuration**: Missing or invalid config
+- **Unknown**: Unexpected errors
+
+### Service-Specific Errors
+
+- **Spotify**: Token expiration, premium requirements, rate limits
+- **GitHub**: Rate limits, repository access, insufficient scopes
+- **NPM**: Package not found, registry unavailable
+- **Google Calendar**: Quota exceeded, access denied
+
 ## Configuration
 
-Both clients support configuration options for:
+All clients support configuration options for:
 - API tokens
 - Base URLs
 - Caching settings
 - Request timeouts
+- Error handling and retry logic
 
 ## Security
 
