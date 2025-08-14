@@ -1,5 +1,7 @@
 # Fync API Methods Reference
 
+This document has moved. See docs/API_METHODS.md for the complete, up-to-date reference.
+
 This document lists all API methods and endpoints available in the Fync library for GitHub, Spotify, NPM, and Google Calendar integrations.
 
 ## GitHub API Methods
