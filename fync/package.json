@@ -1,6 +1,6 @@
 {
 	"name": "@remcostoeten/fync",
-	"version": "3.3.0",
+	"version": "3.4.0",
 	"description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
 	"main": "dist/src/index.js",
 	"types": "dist/src/index.d.ts",
@@ -27,17 +27,17 @@
 			"require": "./dist-cjs/src/core/index.js",
 			"types": "./dist/src/core/index.d.ts"
 		},
-	"./npm": {
-		"import": "./dist/src/npm/index.js",
-		"require": "./dist-cjs/src/npm/index.js",
-		"types": "./dist/src/npm/index.d.ts"
-	},
-	"./google-calendar": {
-		"import": "./dist/src/google-calendar/index.js",
-		"require": "./dist-cjs/src/google-calendar/index.js",
-		"types": "./dist/src/google-calendar/index.d.ts"
-	},
-	"./package.json": "./package.json"
+		"./npm": {
+			"import": "./dist/src/npm/index.js",
+			"require": "./dist-cjs/src/npm/index.js",
+			"types": "./dist/src/npm/index.d.ts"
+		},
+		"./google-calendar": {
+			"import": "./dist/src/google-calendar/index.js",
+			"require": "./dist-cjs/src/google-calendar/index.js",
+			"types": "./dist/src/google-calendar/index.d.ts"
+		},
+		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
 	"scripts": {
