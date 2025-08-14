@@ -259,6 +259,69 @@ This document lists **every single method** available across all APIs in the Fyn
 
 ---
 
+## 📁 Google Drive API
+
+### Core
+- `createGoogleDriveAuth(config)` - OAuth helper and token state
+- `getAuthorizationUrl(auth)` - Build consent URL
+- `exchangeCodeForTokens(auth, code)` - Obtain access/refresh tokens
+- `refreshAccessToken(auth, refreshToken)` - Refresh access token
+- `createGoogleDriveClient(config)` - Chainable low-level client (files, permissions, about, etc.)
+- `createGoogleDriveService(config)` - High-level service with common operations
+
+### High-level Service Methods
+- `listFiles(params?)` - List files with Drive/Shared Drives support
+- `getFile(fileId, fields?)` - Retrieve file metadata
+- `searchFiles(query, params?)` - Search with Drive query language
+- `createFolder(request)` - Create folder
+- `uploadFile({ metadata, content, uploadType?, onProgress? })` - Upload media/multipart/resumable
+- `updateFile(fileId, updates)` - Patch metadata and parents
+- `deleteFile(fileId)` - Permanently delete
+- `trashFile(fileId)` / `untrashFile(fileId)` - Soft delete / restore
+- `downloadFile({ fileId, ... })` - Download content
+- `exportFile({ fileId, mimeType })` - Export Google Workspace files
+- `copyFile({ fileId, ... })` - Duplicate file
+- `moveFile({ fileId, addParents?, removeParents? })` - Move between folders
+- `shareFile({ fileId, permission, ... })` - Add permission
+- `getPermissions(fileId)` / `deletePermission(fileId, permissionId)`
+- `emptyTrash()` - Empty user trash
+- `getStorageQuota()` - Storage usage and limits
+- `generateIds(count?)` - Pre-generate file IDs
+- `createFolderPath(path, parentId?)` - Create nested folders
+- `listFolderContents(folderId, params?)`
+- `findFileByName(name, parentId?)` / `findFolderByName(name, parentId?)`
+
+### Chainable Client Methods (Drive)
+- `.get<T>(options?)`, `.post<T>(body?, options?)`, `.patch<T>(body?, options?)`, `.delete<T>(options?)`
+- `.path()` - Current path for debugging
+
+---
+
+## 🔧 Core Utilities
+
+### Core Methods
+- `createCalendarService(config)` - Create Calendar service instance
+
+### Calendar Management Methods
+- `.getCalendars(params?)` - Get all user calendars
+- `.getCalendar(calendarId)` - Get specific calendar metadata
+
+### Event Retrieval Methods
+- `.getEvents(calendarId?, params?)` - Get events with filters
+- `.getEvent(calendarId, eventId)` - Get specific event
+- `.getUpcomingEvents(calendarId?, maxResults?)` - Get upcoming events
+- `.getEventsInDateRange(calendarId?, startDate, endDate)` - Get events in date range
+- `.getTodaysEvents(calendarId?)` - Get today's events only
+- `.searchEvents(query, calendarId?, maxResults?)` - Search events by text
+
+### Utility Methods
+- `.getColors()` - Get available calendar colors
+- `.getFreeBusy(params)` - Check free/busy status for calendars
+- `.isTimeSlotBusy(calendarId, startTime, endTime)` - Check if specific time slot is busy
+- `.getAllCalendarEvents(maxResults?)` - Get events from all accessible calendars
+
+---
+
 ## 🔧 Core Utilities
 
 ### HTTP Client Methods

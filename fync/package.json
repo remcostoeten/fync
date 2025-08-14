@@ -37,6 +37,11 @@
 			"require": "./dist-cjs/src/google-calendar/index.js",
 			"types": "./dist/src/google-calendar/index.d.ts"
 		},
+		"./google-drive": {
+			"import": "./dist/src/google-drive/index.js",
+			"require": "./dist-cjs/src/google-drive/index.js",
+			"types": "./dist/src/google-drive/index.d.ts"
+		},
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
@@ -104,6 +109,7 @@
 		"node": ">=18"
 	},
 	"dependencies": {
+		"glob": "^11.0.3",
 		"undici": "^6.0.0"
 	},
 	"devDependencies": {
