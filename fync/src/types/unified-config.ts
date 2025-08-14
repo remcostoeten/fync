@@ -1,7 +1,3 @@
-import type { TGitHubClientConfig } from "../github/services/github-client";
-import type { TSpotifyClientConfig } from "../spotify/services/spotify-client";
-import type { TNpmClientConfig } from "../npm/services/npm-client";
-import type { TCalendarClientConfig } from "../google-calendar/services/calendar-client";
 import type { TSpotifyConfig } from "../spotify/types/spotify-common";
 import type { TNpmConfig } from "../npm/types/npm-common";
 import type { TGitHubConfig } from "../github/types/github-common";

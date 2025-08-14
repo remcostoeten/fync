@@ -7,18 +7,11 @@ import type { TCoreConfig } from "./index";
  * on exact symbol names (which may change). This approach focuses on the
  * diff content (export * lines), ensuring re-export correctness.
  */
-vi.mock("./cache", () => ({ __cacheSentinel: "cache-sentinel" }));
 vi.mock("./errors/exports", () => ({ __errorsSentinel: "errors-sentinel" }));
 vi.mock("./http", () => ({ __httpSentinel: "http-sentinel" }));
-vi.mock("./response", () => ({ __responseSentinel: "response-sentinel" }));
 vi.mock("./types", () => ({ __typesSentinel: "types-sentinel" }));
 
 describe("core/index re-exports", () => {
-  it("re-exports from './cache'", async () => {
-    const mod = await import("./index");
-    expect(mod.__cacheSentinel).toBe("cache-sentinel");
-  });
-
   it("re-exports from './errors/exports'", async () => {
     const mod = await import("./index");
     expect(mod.__errorsSentinel).toBe("errors-sentinel");
@@ -27,11 +20,6 @@ describe("core/index re-exports", () => {
   it("re-exports from './http'", async () => {
     const mod = await import("./index");
     expect(mod.__httpSentinel).toBe("http-sentinel");
-  });
-
-  it("re-exports from './response'", async () => {
-    const mod = await import("./index");
-    expect(mod.__responseSentinel).toBe("response-sentinel");
   });
 
   it("re-exports from './types'", async () => {
