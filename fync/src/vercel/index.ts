@@ -1,4 +1,5 @@
 export type TVercelEnv = 'production' | 'preview' | 'development';
+export * from './api';
 
 export type TVercelGit = {
   commitSha?: string;
