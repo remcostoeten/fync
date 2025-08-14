@@ -2,6 +2,7 @@ export type TVercelClientConfig = {
   token: string;
   teamId?: string;
   baseURL?: string;
+  signal?: AbortSignal;
 };
 
 export type TVercelProject = {
@@ -114,6 +115,18 @@ function headers(token: string): Record<string, string> {
   };
 }
 
+function fetchOptions(args: TVercelClientConfig, method: string = 'GET', body?: any): RequestInit {
+  const options: RequestInit = {
+    method,
+    headers: headers(args.token),
+    signal: args.signal,
+  };
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
+  return options;
+}
+
 function qs(params: Record<string, string | number | undefined>): string {
   const pairs = Object.entries(params).filter(([, v]) => v !== undefined);
   if (pairs.length === 0) return '';
@@ -127,7 +140,7 @@ function base(config: TVercelClientConfig): string {
 
 export async function getProjects(args: TGetProjectsArgs): Promise<ReadonlyArray<TVercelProject>> {
   const u = `${base(args)}/v9/projects${qs({ teamId: args.teamId, limit: args.limit })}`;
-  const res = await fetch(u, { method: 'GET', headers: headers(args.token) });
+  const res = await fetch(u, fetchOptions(args));
   if (!res.ok) throw new Error(`vercel.getProjects ${res.status}`);
   const data = await res.json();
   const items = Array.isArray((data as any).projects) ? (data as any).projects : (Array.isArray(data) ? data : []);
@@ -136,7 +149,7 @@ export async function getProjects(args: TGetProjectsArgs): Promise<ReadonlyArray
 
 export async function getProject(args: TGetProjectArgs): Promise<TVercelProject> {
   const u = `${base(args)}/v9/projects/${encodeURIComponent(args.project)}${qs({ teamId: args.teamId })}`;
-  const res = await fetch(u, { method: 'GET', headers: headers(args.token) });
+  const res = await fetch(u, fetchOptions(args));
   if (!res.ok) throw new Error(`vercel.getProject ${res.status}`);
   const data = await res.json();
   return data as TVercelProject;
@@ -343,12 +356,20 @@ export async function removeAlias(args: TRemoveAliasArgs): Promise<{ removed: tr
   return { removed: true };
 }
 
-export async function getLogs(args: TGetLogsArgs): Promise<unknown> {
+export type TVercelLogEntry = {
+  message: string;
+  timestamp: number;
+  level?: string;
+  source?: string;
+};
+
+export async function getLogs(args: TGetLogsArgs): Promise<ReadonlyArray<TVercelLogEntry>> {
   const u = `${base(args)}/v2/deployments/${encodeURIComponent(args.deploymentId)}/logs${qs({ teamId: args.teamId, limit: args.limit, since: args.since, until: args.until, q: args.query })}`;
-  const res = await fetch(u, { method: 'GET', headers: headers(args.token) });
+  const res = await fetch(u, { method: 'GET', headers: headers(args.token), signal: args.signal });
   if (!res.ok) throw new Error(`vercel.getLogs ${res.status}`);
   const data = await res.json();
-  return data as unknown;
+  const logs = Array.isArray((data as any).logs) ? (data as any).logs : (Array.isArray(data) ? data : []);
+  return logs as ReadonlyArray<TVercelLogEntry>;
 }
 
 export async function getUsage(args: TGetUsageArgs): Promise<TVercelUsage> {
