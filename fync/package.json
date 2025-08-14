@@ -42,6 +42,11 @@
 			"require": "./dist-cjs/src/google-drive/index.js",
 			"types": "./dist/src/google-drive/index.d.ts"
 		},
+		"./vercel": {
+			"import": "./dist/src/vercel/index.js",
+			"require": "./dist-cjs/src/vercel/index.js",
+			"types": "./dist/src/vercel/index.d.ts"
+		},
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
