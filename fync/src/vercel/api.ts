@@ -114,13 +114,12 @@ function headers(token: string): Record<string, string> {
   };
 }
 
-function qs(params: Record<string, string | number | undefined>): string {
-  const pairs = Object.entries(params).filter(([, v]) => v !== undefined);
-  if (pairs.length === 0) return '';
-  const search = new URLSearchParams(pairs as [string, string][]);
+function qs(params: Record<string, string | number | boolean | null | undefined>): string {
+  const entries = Object.entries(params).filter(([, v]) => v !== undefined && v !== null);
+  if (entries.length === 0) return '';
+  const search = new URLSearchParams(entries.map(([k, v]) => [k, String(v)]));
   return `?${search.toString()}`;
 }
-
 function base(config: TVercelClientConfig): string {
   return config.baseURL ?? 'https://api.vercel.com';
 }
