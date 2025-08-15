@@ -228,7 +228,12 @@ export type TDeploymentTimestamps = {
 
 export function getDeploymentTimestamps(deployment: TVercelDeployment): TDeploymentTimestamps {
   const createdAt = typeof deployment.createdAt === 'number' ? new Date(deployment.createdAt).toISOString() : undefined;
-  const readyAt = typeof deployment.ready === 'number' ? new Date(deployment.ready).toISOString() : undefined;
+  const readyAt =
+    typeof (deployment as any).readyAt === 'number'
+      ? new Date((deployment as any).readyAt).toISOString()
+      : typeof (deployment as any).ready === 'number'
+        ? new Date((deployment as any).ready).toISOString()
+        : undefined;
   return { createdAt, readyAt };
 }
 
