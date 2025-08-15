@@ -9,6 +9,7 @@ Complete API reference with usage examples for all Fync library methods.
 - [🎵 Spotify API](./spotify-api.md) - Spotify Web API methods  
 - [📦 NPM API](./npm-api.md) - NPM Registry API methods
 - [📅 Google Calendar API](./google-calendar-api.md) - Google Calendar integration
+- [▲ Vercel API](./vercel-api.md) - Vercel projects, deployments, domains, env vars
 
 ## API Overview
 

@@ -132,6 +132,19 @@ const downloadTrend = await npm.downloads.range('react', '2024-01-01', '2024-01-
 const customQuery = await npm.api['@types']['node'].get()
 ```
 
+## Vercel utilities
+
+```ts
+import { getVercelMetadata, getVercelHealth, withVercelContext } from '@remcostoeten/fync/vercel'
+
+const metadata = getVercelMetadata()
+const health = getVercelHealth()
+
+const result = await withVercelContext(async function run(ctx) {
+  return ctx.env
+})
+```
+
 ## API Reference
 
 ### Spotify

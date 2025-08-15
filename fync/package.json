@@ -1,6 +1,6 @@
 {
 	"name": "@remcostoeten/fync",
-	"version": "3.4.2",
+	"version": "3.4.3",
 	"description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
 	"main": "dist/src/index.js",
 	"types": "dist/src/index.d.ts",
@@ -42,13 +42,20 @@
 			"require": "./dist-cjs/src/google-drive/index.js",
 			"types": "./dist/src/google-drive/index.d.ts"
 		},
+		"./vercel": {
+			"import": "./dist/src/vercel/index.js",
+			"require": "./dist-cjs/src/vercel/index.js",
+			"types": "./dist/src/vercel/index.d.ts"
+		},
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
 	"scripts": {
-		"sync-version": "node scripts/sync-version.js",
-		"prebuild": "npm run sync-version",
-		"build": "tsc && npm run build:cjs",
+		"build": "tsc && (bun run build:cjs 2>/dev/null || pnpm run build:cjs)",
 		"build:cjs": "babel dist --out-dir dist-cjs --config-file ./babel.config.cjs",
 		"dev": "tsc --watch",
 		"lint": "biome lint src/",
@@ -59,10 +66,10 @@
 		"test": "vitest",
 		"test:run": "vitest run || exit 0",
 		"test:coverage": "vitest run --coverage",
-		"version": "npm run sync-version",
-		"publish:patch": "../publish.sh patch",
-		"publish:minor": "../publish.sh minor",
-		"publish:major": "../publish.sh major"
+		"prepublishOnly": "(bun run build 2>/dev/null || pnpm run build) && (bun run test:run 2>/dev/null || pnpm run test:run)",
+		"release:patch": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release patch' || true && npm version patch && (bun publish 2>/dev/null || pnpm publish)",
+		"release:minor": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release minor' || true && npm version minor && (bun publish 2>/dev/null || pnpm publish)",
+		"release:major": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release major' || true && npm version major && (bun publish 2>/dev/null || pnpm publish)"
 	},
 	"files": [
 		"dist",
