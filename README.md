@@ -14,6 +14,8 @@ npm install @remcostoeten/fync
 
 ## Usage
 
+Which allows us to use the methods like so:
+
 ### Spotify API
 
 ```typescript
