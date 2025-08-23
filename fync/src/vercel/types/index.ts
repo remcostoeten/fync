@@ -1,10 +1,9 @@
 // Vercel API types
-export type TVercelProject = {
-	id: string;
+import type { TBaseEntity, TTimestamps } from "../../core/types";
+
+export type TVercelProject = TBaseEntity<string> & {
 	name: string;
 	accountId: string;
-	createdAt: number;
-	updatedAt: number;
 	env?: Array<{
 		key: string;
 		value: string;
@@ -12,25 +11,22 @@ export type TVercelProject = {
 	}>;
 };
 
-export type TVercelDeployment = {
-	id: string;
+export type TVercelDeployment = TBaseEntity<string> & {
 	url: string;
 	name: string;
 	state: string;
 	ready: boolean;
-	createdAt: number;
 	gitSource?: any;
 };
 
-export type TVercelDomain = {
+export type TVercelDomain = TBaseEntity<string> & {
 	name: string;
 	verified: boolean;
 	configured: boolean;
 	expiresAt?: number;
 };
 
-export type TVercelTeam = {
-	id: string;
+export type TVercelTeam = TBaseEntity<string> & {
 	name: string;
 	slug: string;
 	projectsCount?: number;
