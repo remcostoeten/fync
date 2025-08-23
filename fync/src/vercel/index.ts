@@ -1,93 +1,186 @@
-export type TVercelEnv = 'production' | 'preview' | 'development';
-export * from './api';
+import {
+	createApiBuilder,
+	defineResource,
+	type TModule,
+} from "../core";
 
-export type TVercelGit = {
-  commitSha?: string;
-  commitMessage?: string;
-  repo?: string;
-  owner?: string;
-  branch?: string;
+const VERCEL_API_BASE = "https://api.vercel.com";
+
+const projectResource = defineResource({
+	name: "projects",
+	basePath: "/v9/projects",
+	methods: {
+		listProjects: { path: "" },
+		getProject: { path: "/{projectId}" },
+		createProject: { path: "", method: "POST" },
+		updateProject: { path: "/{projectId}", method: "PATCH" },
+		deleteProject: { path: "/{projectId}", method: "DELETE" },
+		getProjectDomains: { path: "/{projectId}/domains" },
+		getProjectEnvVars: { path: "/{projectId}/env" },
+		createProjectEnvVar: { path: "/{projectId}/env", method: "POST" },
+	},
+});
+
+const deploymentResource = defineResource({
+	name: "deployments",
+	basePath: "/v13/deployments",
+	methods: {
+		listDeployments: { path: "" },
+		getDeployment: { path: "/{deploymentId}" },
+		deleteDeployment: { path: "/{deploymentId}", method: "DELETE" },
+		getDeploymentEvents: { path: "/{deploymentId}/events" },
+		getDeploymentFiles: { path: "/{deploymentId}/files" },
+		cancelDeployment: { path: "/{deploymentId}/cancel", method: "PATCH" },
+	},
+});
+
+const domainResource = defineResource({
+	name: "domains",
+	basePath: "/v5/domains",
+	methods: {
+		listDomains: { path: "" },
+		getDomain: { path: "/{domain}" },
+		addDomain: { path: "", method: "POST" },
+		removeDomain: { path: "/{domain}", method: "DELETE" },
+		verifyDomain: { path: "/{domain}/verify", method: "POST" },
+		getDomainConfig: { path: "/{domain}/config" },
+	},
+});
+
+const teamResource = defineResource({
+	name: "teams",
+	basePath: "/v2/teams",
+	methods: {
+		listTeams: { path: "" },
+		getTeam: { path: "/{teamId}" },
+		createTeam: { path: "", method: "POST" },
+		updateTeam: { path: "/{teamId}", method: "PATCH" },
+		deleteTeam: { path: "/{teamId}", method: "DELETE" },
+		getTeamMembers: { path: "/{teamId}/members" },
+		inviteTeamMember: { path: "/{teamId}/members", method: "POST" },
+	},
+});
+
+const userResource = defineResource({
+	name: "user",
+	basePath: "/v2/user",
+	methods: {
+		getUser: { path: "" },
+		updateUser: { path: "", method: "PATCH" },
+		deleteUser: { path: "", method: "DELETE" },
+		getUserEvents: { path: "/events" },
+		getUserTokens: { path: "/tokens" },
+	},
+});
+
+const resources = {
+	projects: projectResource,
+	deployments: deploymentResource,
+	domains: domainResource,
+	teams: teamResource,
+	user: userResource,
 };
 
-export type TVercelMetadata = {
-  env: TVercelEnv;
-  isVercel: boolean;
-  url?: string;
-  region?: string;
-  git: TVercelGit;
-  deploymentId?: string;
-  buildId?: string;
-  timestamp: string;
-  version?: string;
+const buildVercel = createApiBuilder({
+	baseUrl: VERCEL_API_BASE,
+	auth: { type: "bearer" as const },
+	headers: {
+		"Content-Type": "application/json",
+	},
+});
+
+type TVercelModule = TModule<typeof resources> & {
+	getProject: (projectId: string) => Promise<any>;
+	listProjects: (teamId?: string) => Promise<any>;
+	getLatestDeployment: (projectId: string) => Promise<any>;
+	getDeploymentStatus: (deploymentId: string) => Promise<any>;
+	redeployProject: (projectId: string) => Promise<any>;
+	getProjectAnalytics: (projectId: string, options?: any) => Promise<any>;
+	getDomainStatus: (domain: string) => Promise<any>;
+	getTeamUsage: (teamId: string) => Promise<any>;
 };
 
-function value(v: string | undefined): string | undefined {
-  if (typeof v !== 'string') return undefined;
-  const trimmed = v.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}
+export function Vercel(config: { token: string; teamId?: string }): TVercelModule {
+	const apiConfig = { 
+		token: config.token,
+		headers: config.teamId ? { "x-vercel-team-id": config.teamId } : {}
+	};
+	
+	const base = buildVercel(apiConfig, resources);
+	const vercel = base as TVercelModule;
 
-function vercelEnv(): TVercelEnv {
-  const env = value(process.env.VERCEL_ENV) as TVercelEnv | undefined;
-  if (env === 'production' || env === 'preview' || env === 'development') return env;
-  if (process.env.NODE_ENV === 'production') return 'production';
-  return 'development';
-}
+	vercel.getProject = function (projectId: string) {
+		return base.projects.getProject({ projectId });
+	};
 
-export function getVercelMetadata(now?: Date): TVercelMetadata {
-  const timestamp = (now ?? new Date()).toISOString();
-  const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
-  const env = vercelEnv();
-  const url = value(process.env.VERCEL_URL) ?? value(process.env.NEXT_PUBLIC_VERCEL_URL);
-  const region = value((process.env as any).VERCEL_REGION);
-  const deploymentId = value((process.env as any).VERCEL_DEPLOYMENT_ID);
-  const buildId = value((process.env as any).VERCEL_BUILD_ID);
-  const git: TVercelGit = {
-    commitSha: value((process.env as any).VERCEL_GIT_COMMIT_SHA) ?? value(process.env.GIT_COMMIT_SHA),
-    commitMessage: value((process.env as any).VERCEL_GIT_COMMIT_MESSAGE),
-    repo: value((process.env as any).VERCEL_GIT_REPO_SLUG),
-    owner: value((process.env as any).VERCEL_GIT_REPO_OWNER) ?? value((process.env as any).VERCEL_GIT_OWNER),
-    branch: value((process.env as any).VERCEL_GIT_COMMIT_REF) ?? value((process.env as any).VERCEL_GIT_BRANCH)
-  };
+	vercel.listProjects = function (teamId?: string) {
+		const params: any = {};
+		if (teamId) params.teamId = teamId;
+		return base.projects.listProjects(params);
+	};
 
-  let version: string | undefined;
-  try {
-    // Import lazily to avoid circular deps when not needed
-    const core = require('../core/index.js');
-    version = typeof core.version === 'string' ? core.version : undefined;
-  } catch {}
+	vercel.getLatestDeployment = async function (projectId: string) {
+		const deployments = await base.deployments.listDeployments({
+			projectId,
+			limit: 1,
+		});
+		return deployments[0] || null;
+	};
 
-  return {
-    env,
-    isVercel,
-    url,
-    region,
-    git,
-    deploymentId,
-    buildId,
-    timestamp,
-    version
-  };
-}
+	vercel.getDeploymentStatus = async function (deploymentId: string) {
+		const deployment = await base.deployments.getDeployment({ deploymentId });
+		return {
+			id: deployment.id,
+			state: deployment.state,
+			ready: deployment.ready,
+			url: deployment.url,
+			createdAt: deployment.createdAt,
+		};
+	};
 
-export type TVercelHealth = {
-  status: 'ok';
-  timestamp: string;
-  env: TVercelEnv;
-};
+	vercel.redeployProject = async function (projectId: string) {
+		const latest = await vercel.getLatestDeployment(projectId);
+		if (!latest) throw new Error("No deployments found");
+		
+		return base.deployments.createDeployment({
+			name: latest.name,
+			project: projectId,
+			gitSource: latest.gitSource,
+		});
+	};
 
-export function getVercelHealth(now?: Date): TVercelHealth {
-  const timestamp = (now ?? new Date()).toISOString();
-  return { status: 'ok', timestamp, env: vercelEnv() };
-}
+	vercel.getProjectAnalytics = async function (projectId: string, options?: any) {
+		const project = await base.projects.getProject({ projectId });
+		return {
+			project,
+			analytics: {
+				period: options?.period || "7d",
+				visits: 0,
+				uniqueVisitors: 0,
+			},
+		};
+	};
 
-export type TVercelContextResult<T> = {
-  result: T;
-  context: TVercelMetadata;
-};
+	vercel.getDomainStatus = async function (domain: string) {
+		const domainInfo = await base.domains.getDomain({ domain });
+		return {
+			domain: domainInfo.name,
+			verified: domainInfo.verified,
+			configured: domainInfo.configured,
+			expires: domainInfo.expiresAt,
+		};
+	};
 
-export async function withVercelContext<T>(fn: (context: TVercelMetadata) => Promise<T> | T, now?: Date): Promise<TVercelContextResult<T>> {
-  const context = getVercelMetadata(now);
-  const result = await fn(context);
-  return { result, context };
+	vercel.getTeamUsage = async function (teamId: string) {
+		const team = await base.teams.getTeam({ teamId });
+		return {
+			team: team.name,
+			usage: {
+				projects: team.projectsCount || 0,
+				members: team.membersCount || 0,
+			},
+		};
+	};
+
+	return vercel;
 }

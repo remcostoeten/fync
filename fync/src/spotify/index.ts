@@ -1,372 +1,311 @@
 import {
-	createSpotifyAuth,
-	isTokenExpired,
-	SPOTIFY_SCOPES,
-	shouldRefreshToken,
-} from "./auth";
-import type {
-	TChainableClient,
-	TRequestOptions,
-	TSpotifyClientConfig,
-} from "./services/spotify-client";
-import { createSpotifyClient as createSpotifyChainableClient } from "./services/spotify-client";
-import type {
-	TSpotifyAlbum,
-	TSpotifyArtist,
-	TSpotifyAudioAnalysis,
-	TSpotifyAudioFeatures,
-	TSpotifyAuthenticationError,
-	TSpotifyConfig,
-	TSpotifyContext,
-	TSpotifyExternalUrls,
-	TSpotifyFollowers,
-	TSpotifyImage,
-	TSpotifyPagingObject,
-	TSpotifyPlaybackState,
-	TSpotifyPlayerDevice,
-	TSpotifyPlaylist,
-	TSpotifyPlaylistTrack,
-	TSpotifyRecentlyPlayedItem,
-	TSpotifyRecentlyPlayedResponse,
-	TSpotifyScope,
-	TSpotifySearchResult,
-	TSpotifySection,
-	TSpotifySegment,
-	TSpotifyTimeInterval,
-	TSpotifyTokenResponse,
-	TSpotifyTrack,
-	TSpotifyUser,
-} from "./types";
+	createApiBuilder,
+	defineResource,
+	type TModule,
+} from "../core";
 
-type TSpotify = {
-	api: TChainableClient;
-	user(userId: string): TUserClient;
-	me: TAuthenticatedUserClient;
-	player: TPlayerClient;
-	playlist(playlistId: string): TPlaylistClient;
-	search: TSearchClient;
-	library: TLibraryClient;
+const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
+
+const trackResource = defineResource({
+	name: "tracks",
+	basePath: "/tracks",
+	methods: {
+		getTrack: { path: "/{id}" },
+		getTracks: { path: "" },
+		getTrackAudioFeatures: { path: "/{id}/audio-features" },
+		getTrackAudioAnalysis: { path: "/{id}/audio-analysis" },
+	},
+});
+
+const artistResource = defineResource({
+	name: "artists",
+	basePath: "/artists",
+	methods: {
+		getArtist: { path: "/{id}" },
+		getArtists: { path: "" },
+		getArtistAlbums: { path: "/{id}/albums" },
+		getArtistTopTracks: { path: "/{id}/top-tracks" },
+		getArtistRelatedArtists: { path: "/{id}/related-artists" },
+	},
+});
+
+const albumResource = defineResource({
+	name: "albums",
+	basePath: "/albums",
+	methods: {
+		getAlbum: { path: "/{id}" },
+		getAlbums: { path: "" },
+		getAlbumTracks: { path: "/{id}/tracks" },
+	},
+});
+
+const playlistResource = defineResource({
+	name: "playlists",
+	basePath: "/playlists",
+	methods: {
+		getPlaylist: { path: "/{playlist_id}" },
+		getPlaylistTracks: { path: "/{playlist_id}/tracks" },
+		createPlaylist: { path: "/{user_id}/playlists", method: "POST" },
+		updatePlaylist: { path: "/{playlist_id}", method: "PUT" },
+		addTracksToPlaylist: { path: "/{playlist_id}/tracks", method: "POST" },
+		removeTracksFromPlaylist: { path: "/{playlist_id}/tracks", method: "DELETE" },
+		getFeaturedPlaylists: { path: "/browse/featured-playlists" },
+		getCategoryPlaylists: { path: "/browse/categories/{category_id}/playlists" },
+	},
+});
+
+const searchResource = defineResource({
+	name: "search",
+	basePath: "/search",
+	methods: {
+		search: { path: "" },
+	},
+});
+
+const userResource = defineResource({
+	name: "users",
+	basePath: "/users",
+	methods: {
+		getUser: { path: "/{user_id}" },
+		getUserPlaylists: { path: "/{user_id}/playlists" },
+	},
+});
+
+const meResource = defineResource({
+	name: "me",
+	basePath: "/me",
+	methods: {
+		getCurrentUser: { path: "" },
+		getMyTopArtists: { path: "/top/artists" },
+		getMyTopTracks: { path: "/top/tracks" },
+		getMyPlaylists: { path: "/playlists" },
+		getMySavedTracks: { path: "/tracks" },
+		getMySavedAlbums: { path: "/albums" },
+		getMySavedShows: { path: "/shows" },
+		getMyRecentlyPlayed: { path: "/player/recently-played" },
+		getFollowedArtists: { path: "/following" },
+		saveTracks: { path: "/tracks", method: "PUT" },
+		removeSavedTracks: { path: "/tracks", method: "DELETE" },
+		saveAlbums: { path: "/albums", method: "PUT" },
+		removeSavedAlbums: { path: "/albums", method: "DELETE" },
+		followArtists: { path: "/following", method: "PUT" },
+		unfollowArtists: { path: "/following", method: "DELETE" },
+		followPlaylist: { path: "/playlists/{playlist_id}/followers", method: "PUT" },
+		unfollowPlaylist: { path: "/playlists/{playlist_id}/followers", method: "DELETE" },
+	},
+});
+
+const playerResource = defineResource({
+	name: "player",
+	basePath: "/me/player",
+	methods: {
+		getPlaybackState: { path: "" },
+		getCurrentlyPlaying: { path: "/currently-playing" },
+		getDevices: { path: "/devices" },
+		play: { path: "/play", method: "PUT" },
+		pause: { path: "/pause", method: "PUT" },
+		next: { path: "/next", method: "POST" },
+		previous: { path: "/previous", method: "POST" },
+		seek: { path: "/seek", method: "PUT" },
+		setVolume: { path: "/volume", method: "PUT" },
+		setRepeat: { path: "/repeat", method: "PUT" },
+		setShuffle: { path: "/shuffle", method: "PUT" },
+		transferPlayback: { path: "", method: "PUT" },
+		addToQueue: { path: "/queue", method: "POST" },
+	},
+});
+
+const browseResource = defineResource({
+	name: "browse",
+	basePath: "/browse",
+	methods: {
+		getNewReleases: { path: "/new-releases" },
+		getFeaturedPlaylists: { path: "/featured-playlists" },
+		getCategories: { path: "/categories" },
+		getCategory: { path: "/categories/{category_id}" },
+		getCategoryPlaylists: { path: "/categories/{category_id}/playlists" },
+		getRecommendations: { path: "/recommendations" },
+		getAvailableGenreSeeds: { path: "/recommendations/available-genre-seeds" },
+	},
+});
+
+const resources = {
+	tracks: trackResource,
+	artists: artistResource,
+	albums: albumResource,
+	playlists: playlistResource,
+	search: searchResource,
+	users: userResource,
+	me: meResource,
+	player: playerResource,
+	browse: browseResource,
 };
 
-type TUserClient = {
-	get(): Promise<TSpotifyUser>;
-	playlists: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyPlaylist>>;
-	};
-	chain: TChainableClient;
+const buildSpotify = createApiBuilder({
+	baseUrl: SPOTIFY_API_BASE,
+	auth: { type: "bearer" as const },
+	headers: {
+		"Content-Type": "application/json",
+	},
+});
+
+type TSpotifyModule = TModule<typeof resources> & {
+	getTrack: (trackId: string) => Promise<any>;
+	getArtist: (artistId: string) => Promise<any>;
+	getAlbum: (albumId: string) => Promise<any>;
+	getPlaylist: (playlistId: string) => Promise<any>;
+	search: (query: string, types: string[], options?: any) => Promise<any>;
+	getMyTopTracks: (options?: any) => Promise<any>;
+	getMyTopArtists: (options?: any) => Promise<any>;
+	getRecentlyPlayed: (options?: any) => Promise<any>;
+	getCurrentlyPlaying: () => Promise<any>;
+	getRecommendations: (options: any) => Promise<any>;
+	createPlaylist: (userId: string, name: string, options?: any) => Promise<any>;
+	addTracksToPlaylist: (playlistId: string, trackUris: string[]) => Promise<any>;
+	playTrack: (trackUri: string, deviceId?: string) => Promise<any>;
+	pausePlayback: () => Promise<any>;
+	skipToNext: () => Promise<any>;
+	skipToPrevious: () => Promise<any>;
+	getUserPlaylists: (userId?: string) => Promise<any>;
+	getAudioFeatures: (trackId: string) => Promise<any>;
+	searchTracks: (query: string, options?: any) => Promise<any>;
+	searchArtists: (query: string, options?: any) => Promise<any>;
+	searchAlbums: (query: string, options?: any) => Promise<any>;
+	searchPlaylists: (query: string, options?: any) => Promise<any>;
 };
 
-type TAuthenticatedUserClient = {
-	get(): Promise<TSpotifyUser>;
-	playlists: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyPlaylist>>;
-	};
-	tracks: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyTrack>>;
-	};
-	albums: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyAlbum>>;
-	};
-	artists: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyArtist>>;
-	};
-	recentlyPlayed: {
-		get(options?: TRequestOptions): Promise<TSpotifyRecentlyPlayedResponse>;
-	};
-	chain: TChainableClient;
-};
+export function Spotify(config: { token: string }): TSpotifyModule {
+	const base = buildSpotify(config, resources);
+	const spotify = base as TSpotifyModule;
 
-type TPlayerClient = {
-	devices(): Promise<{ devices: TSpotifyPlayerDevice[] }>;
-	currentlyPlaying(): Promise<TSpotifyPlaybackState>;
-	chain: TChainableClient;
-};
+	spotify.getTrack = function (trackId: string) {
+		return base.tracks.getTrack({ id: trackId });
+	};
 
-type TPlaylistClient = {
-	get(): Promise<TSpotifyPlaylist>;
-	tracks: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyPlaylistTrack>>;
+	spotify.getArtist = function (artistId: string) {
+		return base.artists.getArtist({ id: artistId });
 	};
-	chain: TChainableClient;
-};
 
-type TSearchClient = {
-	tracks(
-		query: string,
-		options?: TRequestOptions,
-	): Promise<TSpotifySearchResult>;
-	artists(
-		query: string,
-		options?: TRequestOptions,
-	): Promise<TSpotifySearchResult>;
-	albums(
-		query: string,
-		options?: TRequestOptions,
-	): Promise<TSpotifySearchResult>;
-	playlists(
-		query: string,
-		options?: TRequestOptions,
-	): Promise<TSpotifySearchResult>;
-	shows(
-		query: string,
-		options?: TRequestOptions,
-	): Promise<TSpotifySearchResult>;
-	episodes(
-		query: string,
-		options?: TRequestOptions,
-	): Promise<TSpotifySearchResult>;
-	chain: TChainableClient;
-};
+	spotify.getAlbum = function (albumId: string) {
+		return base.albums.getAlbum({ id: albumId });
+	};
 
-type TLibraryClient = {
-	savedTracks: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyTrack>>;
+	spotify.getPlaylist = function (playlistId: string) {
+		return base.playlists.getPlaylist({ playlist_id: playlistId });
 	};
-	savedAlbums: {
-		get(
-			options?: TRequestOptions,
-		): Promise<TSpotifyPagingObject<TSpotifyAlbum>>;
-	};
-	savedShows: {
-		get(options?: TRequestOptions): Promise<TSpotifyPagingObject<unknown>>;
-	};
-	savedEpisodes: {
-		get(options?: TRequestOptions): Promise<TSpotifyPagingObject<unknown>>;
-	};
-	chain: TChainableClient;
-};
 
-function createUserClient(api: TChainableClient, userId: string): TUserClient {
-	return {
-		get: () => api.users[userId].get<TSpotifyUser>(),
-		playlists: {
-			get: (options?: TRequestOptions) =>
-				api.users[userId].playlists.get<TSpotifyPagingObject<TSpotifyPlaylist>>(
-					options,
-				),
-		},
-		chain: api.users[userId],
+	spotify.search = function (query: string, types: string[], options?: any) {
+		return base.search.search({
+			q: query,
+			type: types.join(","),
+			limit: options?.limit || 20,
+			offset: options?.offset || 0,
+			...options,
+		});
 	};
+
+	spotify.getMyTopTracks = function (options?: any) {
+		return base.me.getMyTopTracks({
+			time_range: options?.timeRange || "medium_term",
+			limit: options?.limit || 20,
+			offset: options?.offset || 0,
+		});
+	};
+
+	spotify.getMyTopArtists = function (options?: any) {
+		return base.me.getMyTopArtists({
+			time_range: options?.timeRange || "medium_term",
+			limit: options?.limit || 20,
+			offset: options?.offset || 0,
+		});
+	};
+
+	spotify.getRecentlyPlayed = function (options?: any) {
+		return base.me.getMyRecentlyPlayed({
+			limit: options?.limit || 20,
+			after: options?.after,
+			before: options?.before,
+		});
+	};
+
+	spotify.getCurrentlyPlaying = function () {
+		return base.player.getCurrentlyPlaying();
+	};
+
+	spotify.getRecommendations = function (options: any) {
+		return base.browse.getRecommendations(options);
+	};
+
+	spotify.createPlaylist = function (
+		userId: string,
+		name: string,
+		options?: any,
+	) {
+		return base.playlists.createPlaylist(
+			{
+				name,
+				description: options?.description || "",
+				public: options?.public !== false,
+				collaborative: options?.collaborative || false,
+			},
+			{ user_id: userId },
+		);
+	};
+
+	spotify.addTracksToPlaylist = function (
+		playlistId: string,
+		trackUris: string[],
+	) {
+		return base.playlists.addTracksToPlaylist(
+			{ uris: trackUris },
+			{ playlist_id: playlistId },
+		);
+	};
+
+	spotify.playTrack = function (trackUri: string, deviceId?: string) {
+		const body: any = { uris: [trackUri] };
+		if (deviceId) body.device_id = deviceId;
+		return base.player.play(body);
+	};
+
+	spotify.pausePlayback = function () {
+		return base.player.pause();
+	};
+
+	spotify.skipToNext = function () {
+		return base.player.next();
+	};
+
+	spotify.skipToPrevious = function () {
+		return base.player.previous();
+	};
+
+	spotify.getUserPlaylists = function (userId?: string) {
+		if (userId) {
+			return base.users.getUserPlaylists({ user_id: userId });
+		}
+		return base.me.getMyPlaylists();
+	};
+
+	spotify.getAudioFeatures = function (trackId: string) {
+		return base.tracks.getTrackAudioFeatures({ id: trackId });
+	};
+
+	spotify.searchTracks = function (query: string, options?: any) {
+		return spotify.search(query, ["track"], options);
+	};
+
+	spotify.searchArtists = function (query: string, options?: any) {
+		return spotify.search(query, ["artist"], options);
+	};
+
+	spotify.searchAlbums = function (query: string, options?: any) {
+		return spotify.search(query, ["album"], options);
+	};
+
+	spotify.searchPlaylists = function (query: string, options?: any) {
+		return spotify.search(query, ["playlist"], options);
+	};
+
+	return spotify;
 }
-
-function createAuthenticatedUserClient(
-	api: TChainableClient,
-): TAuthenticatedUserClient {
-	return {
-		get: () => api.me.get<TSpotifyUser>(),
-		playlists: {
-			get: (options?: TRequestOptions) =>
-				api.me.playlists.get<TSpotifyPagingObject<TSpotifyPlaylist>>(options),
-		},
-		tracks: {
-			get: (options?: TRequestOptions) =>
-				api.me.tracks.get<TSpotifyPagingObject<TSpotifyTrack>>(options),
-		},
-		albums: {
-			get: (options?: TRequestOptions) =>
-				api.me.albums.get<TSpotifyPagingObject<TSpotifyAlbum>>(options),
-		},
-		artists: {
-			get: (options?: TRequestOptions) =>
-				api.me.following.get<TSpotifyPagingObject<TSpotifyArtist>>({
-					...options,
-					params: { type: "artist", ...options?.params },
-				}),
-		},
-		recentlyPlayed: {
-			get: (options?: TRequestOptions) =>
-				api.me.player.recently_played.get<TSpotifyRecentlyPlayedResponse>(
-					options,
-				),
-		},
-		chain: api.me,
-	};
-}
-
-function createPlayerClient(api: TChainableClient): TPlayerClient {
-	return {
-		devices: () =>
-			api.me.player.devices.get<{ devices: TSpotifyPlayerDevice[] }>(),
-		currentlyPlaying: () => api.me.player.get<TSpotifyPlaybackState>(),
-		chain: api.me.player,
-	};
-}
-
-function createPlaylistClient(
-	api: TChainableClient,
-	playlistId: string,
-): TPlaylistClient {
-	return {
-		get: () => api.playlists[playlistId].get<TSpotifyPlaylist>(),
-		tracks: {
-			get: (options?: TRequestOptions) =>
-				api.playlists[playlistId].tracks.get<
-					TSpotifyPagingObject<TSpotifyPlaylistTrack>
-				>(options),
-		},
-		chain: api.playlists[playlistId],
-	};
-}
-
-function createSearchClient(api: TChainableClient): TSearchClient {
-	return {
-		tracks: (query: string, options?: TRequestOptions) =>
-			api.search.get<TSpotifySearchResult>({
-				...options,
-				params: { q: query, type: "track", ...options?.params },
-			}),
-		artists: (query: string, options?: TRequestOptions) =>
-			api.search.get<TSpotifySearchResult>({
-				...options,
-				params: { q: query, type: "artist", ...options?.params },
-			}),
-		albums: (query: string, options?: TRequestOptions) =>
-			api.search.get<TSpotifySearchResult>({
-				...options,
-				params: { q: query, type: "album", ...options?.params },
-			}),
-		playlists: (query: string, options?: TRequestOptions) =>
-			api.search.get<TSpotifySearchResult>({
-				...options,
-				params: { q: query, type: "playlist", ...options?.params },
-			}),
-		shows: (query: string, options?: TRequestOptions) =>
-			api.search.get<TSpotifySearchResult>({
-				...options,
-				params: { q: query, type: "show", ...options?.params },
-			}),
-		episodes: (query: string, options?: TRequestOptions) =>
-			api.search.get<TSpotifySearchResult>({
-				...options,
-				params: { q: query, type: "episode", ...options?.params },
-			}),
-		chain: api.search,
-	};
-}
-
-function createLibraryClient(api: TChainableClient): TLibraryClient {
-	return {
-		savedTracks: {
-			get: (options?: TRequestOptions) =>
-				api.me.tracks.get<TSpotifyPagingObject<TSpotifyTrack>>(options),
-		},
-		savedAlbums: {
-			get: (options?: TRequestOptions) =>
-				api.me.albums.get<TSpotifyPagingObject<TSpotifyAlbum>>(options),
-		},
-		savedShows: {
-			get: (options?: TRequestOptions) =>
-				api.me.shows.get<TSpotifyPagingObject<unknown>>(options),
-		},
-		savedEpisodes: {
-			get: (options?: TRequestOptions) =>
-				api.me.episodes.get<TSpotifyPagingObject<unknown>>(options),
-		},
-		chain: api.me,
-	};
-}
-
-/**
- * Creates a new Spotify Web API client
- *
- * @param config - Configuration for the Spotify client
- * @param config.token - Spotify access token from OAuth 2.0 flow (required)
- * @param config.baseUrl - Custom Spotify API URL (default: https://api.spotify.com/v1)
- * @param config.cache - Enable response caching (default: false)
- * @param config.cacheTTL - Cache time-to-live in milliseconds (default: 300000)
- * @param config.timeout - Request timeout in milliseconds (default: 30000)
- *
- * @returns Spotify client instance with access to user data, playlists, player controls, and search
- *
- * @example
- * ```typescript
- * const spotify = Spotify({
- *   token: process.env.SPOTIFY_ACCESS_TOKEN,
- *   cache: true
- * });
- *
- * // Get current user profile
- * const user = await spotify.me.get();
- *
- * // Search for tracks
- * const tracks = await spotify.search.tracks('bohemian rhapsody');
- *
- * // Control playback
- * await spotify.player.play({ uris: ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'] });
- *
- * // Get user's playlists
- * const playlists = await spotify.me.playlists.get();
- * ```
- */
-function Spotify(config: TSpotifyClientConfig): TSpotify {
-	const api = createSpotifyChainableClient(config);
-
-	return {
-		api,
-		user: (userId: string) => createUserClient(api, userId),
-		me: createAuthenticatedUserClient(api),
-		player: createPlayerClient(api),
-		playlist: (playlistId: string) => createPlaylistClient(api, playlistId),
-		search: createSearchClient(api),
-		library: createLibraryClient(api),
-	};
-}
-
-export {
-	Spotify,
-	SPOTIFY_SCOPES,
-	createSpotifyAuth,
-	isTokenExpired,
-	shouldRefreshToken,
-};
-export type {
-	TSpotify,
-	TUserClient,
-	TAuthenticatedUserClient,
-	TPlayerClient,
-	TPlaylistClient,
-	TSearchClient,
-	TLibraryClient,
-	TChainableClient,
-	TRequestOptions,
-	TSpotifyClientConfig,
-	TSpotifyUser,
-	TSpotifyPagingObject,
-	TSpotifyPlaylist,
-	TSpotifyPlaylistTrack,
-	TSpotifyTrack,
-	TSpotifyAlbum,
-	TSpotifyArtist,
-	TSpotifyPlaybackState,
-	TSpotifyPlayerDevice,
-	TSpotifySearchResult,
-	TSpotifyAudioFeatures,
-	TSpotifyAudioAnalysis,
-	TSpotifyTokenResponse,
-	TSpotifyImage,
-	TSpotifyExternalUrls,
-	TSpotifyFollowers,
-	TSpotifyContext,
-	TSpotifyScope,
-	TSpotifyAuthenticationError,
-	TSpotifyTimeInterval,
-	TSpotifySection,
-	TSpotifySegment,
-	TSpotifyRecentlyPlayedResponse,
-	TSpotifyRecentlyPlayedItem,
-	TSpotifyConfig,
-};
