@@ -1,11 +1,14 @@
 // Core API functions
 export * from "./api-factory";
-// Error handling
-export * from "./errors";
+export * from "./method-factory";
+export { createFyncResource } from "./resource-factory-new";
 export * from "./module-factory";
-export * from "./resource-factory";
+
 // Types
 export * from "./types";
+
+// Error handling
+export * from "./errors";
 
 // Version
 export const version = "4.0.0";

@@ -1,27 +1,15 @@
 import type { TApiClient } from "./api-factory";
+import type { TMethodConfig } from "./method-factory";
+import { buildMethodFromConfig } from "./method-factory";
 
-type TMethodDefinition = {
-	path: string;
-	method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-	transform?: (data: any) => any;
-};
-
-type TResourceMethods = Record<string, TMethodDefinition>;
-
-type TResourceConfig<TMethods extends TResourceMethods> = {
+type TResourceConfig = {
 	name: string;
-	basePath?: string;
-	methods: TMethods;
+	methods: Record<string, TMethodConfig | string>;
 };
 
-type TMethodImplementation<TDef extends TMethodDefinition> = TDef extends {
-	method: "POST" | "PUT" | "PATCH";
-}
-	? (data?: any, options?: any) => Promise<any>
-	: (options?: any) => Promise<any>;
-
-type TResource<TMethods extends TResourceMethods> = {
-	[K in keyof TMethods]: TMethodImplementation<TMethods[K]>;
+type TResourceBuilder = {
+	methods: (methodsMap: Record<string, TMethodConfig | string>) => TResourceBuilder;
+	build: (apiClient: TApiClient) => any;
 };
 
 function interpolatePath(
