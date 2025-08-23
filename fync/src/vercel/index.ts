@@ -152,15 +152,96 @@ export function Vercel(config: {
 		projectId: string,
 		options?: any,
 	) {
-		const project = await base.projects.getProject({ projectId });
-		return {
-			project,
-			analytics: {
-				period: options?.period || "7d",
-				visits: 0,
-				uniqueVisitors: 0,
-			},
-		};
+		// Vercel Analytics API endpoint
+		// Note: This requires the project to have analytics enabled
+		const period = options?.period || "7d";
+		const from = options?.from || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+		const to = options?.to || new Date().toISOString();
+		
+		try {
+			// Get project details
+			const project = await base.projects.getProject({ projectId });
+			
+			// Analytics data is available through a separate endpoint
+			// The actual analytics API requires special permissions and may vary
+			const analyticsResponse = await fetch(
+				`https://api.vercel.com/v1/analytics/projects/${projectId}`,
+				{
+					headers: {
+						Authorization: `Bearer ${config.token}`,
+						"Content-Type": "application/json",
+					},
+					method: "GET",
+				}
+			);
+			
+			if (!analyticsResponse.ok) {
+				// Fallback to Web Analytics API if available
+				const webAnalyticsResponse = await fetch(
+					`https://api.vercel.com/v1/web/analytics/${projectId}?from=${from}&to=${to}&limit=100`,
+					{
+						headers: {
+							Authorization: `Bearer ${config.token}`,
+							"Content-Type": "application/json",
+						},
+						method: "GET",
+					}
+				);
+				
+				if (webAnalyticsResponse.ok) {
+					const webAnalytics = await webAnalyticsResponse.json();
+					return {
+						project,
+						analytics: {
+							period,
+							data: webAnalytics,
+							visits: webAnalytics.total?.visits || 0,
+							uniqueVisitors: webAnalytics.total?.uniqueVisitors || 0,
+							pageViews: webAnalytics.total?.pageViews || 0,
+							avgDuration: webAnalytics.total?.avgDuration || 0,
+							bounceRate: webAnalytics.total?.bounceRate || 0,
+						},
+					};
+				}
+				
+				// If analytics are not available, return basic project metrics
+				return {
+					project,
+					analytics: {
+						period,
+						message: "Analytics not available for this project. Ensure analytics is enabled.",
+						visits: null,
+						uniqueVisitors: null,
+					},
+				};
+			}
+			
+			const analyticsData = await analyticsResponse.json();
+			return {
+				project,
+				analytics: {
+					period,
+					data: analyticsData,
+					visits: analyticsData.visits || 0,
+					uniqueVisitors: analyticsData.uniqueVisitors || 0,
+					pageViews: analyticsData.pageViews || 0,
+					avgDuration: analyticsData.avgDuration || 0,
+					bounceRate: analyticsData.bounceRate || 0,
+				},
+			};
+		} catch (error) {
+			// Handle error gracefully
+			const project = await base.projects.getProject({ projectId });
+			return {
+				project,
+				analytics: {
+					period,
+					error: error instanceof Error ? error.message : "Failed to fetch analytics",
+					visits: null,
+					uniqueVisitors: null,
+				},
+			};
+		}
 	};
 
 	vercel.getDomainStatus = async function (domain: string) {
