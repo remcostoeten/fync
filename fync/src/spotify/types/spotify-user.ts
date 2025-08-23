@@ -3,9 +3,9 @@ import type {
 	TSpotifyFollowers,
 	TSpotifyImage,
 } from "./spotify-common";
+import type { TBaseEntity } from "../../core/types";
 
-export type TSpotifyUser = {
-	id: string;
+export type TSpotifyUser = TBaseEntity<string> & {
 	display_name: string;
 	email?: string;
 	country?: string;

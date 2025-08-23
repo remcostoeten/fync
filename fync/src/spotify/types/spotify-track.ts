@@ -1,7 +1,7 @@
 import type { TSpotifyExternalUrls } from "./spotify-common";
+import type { TBaseEntity } from "../../core/types";
 
-export type TSpotifyArtist = {
-	id: string;
+export type TSpotifyArtist = TBaseEntity<string> & {
 	name: string;
 	type: "artist";
 	uri: string;
@@ -15,8 +15,7 @@ export type TSpotifyArtist = {
 	popularity?: number;
 };
 
-export type TSpotifyAlbum = {
-	id: string;
+export type TSpotifyAlbum = TBaseEntity<string> & {
 	name: string;
 	type: "album";
 	uri: string;
@@ -31,8 +30,7 @@ export type TSpotifyAlbum = {
 	available_markets?: string[];
 };
 
-export type TSpotifyTrack = {
-	id: string;
+export type TSpotifyTrack = TBaseEntity<string> & {
 	name: string;
 	type: "track";
 	uri: string;

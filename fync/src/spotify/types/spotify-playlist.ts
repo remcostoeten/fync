@@ -5,9 +5,9 @@ import type {
 } from "./spotify-common";
 import type { TSpotifyTrack } from "./spotify-track";
 import type { TSpotifyUser } from "./spotify-user";
+import type { TBaseEntity } from "../../core/types";
 
-export type TSpotifyPlaylist = {
-	id: string;
+export type TSpotifyPlaylist = TBaseEntity<string> & {
 	name: string;
 	type: "playlist";
 	uri: string;
@@ -26,7 +26,7 @@ export type TSpotifyPlaylist = {
 	snapshot_id: string;
 };
 
-export type TSpotifyPlaylistTrack = {
+export type TSpotifyPlaylistTrack = TBaseEntity<string> & {
 	added_at: string;
 	added_by: TSpotifyUser;
 	is_local: boolean;

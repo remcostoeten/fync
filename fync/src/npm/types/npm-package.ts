@@ -48,7 +48,9 @@ type TNpmPackageVersion = {
 	_from?: string;
 };
 
-type TNpmPackageInfo = {
+import type { TBaseEntity } from "../../core/types";
+
+type TNpmPackageInfo = TBaseEntity<string> & {
 	_id: string;
 	_rev: string;
 	name: string;
@@ -107,26 +109,28 @@ type TNpmSearchResponse = {
 	time: string;
 };
 
-type TNpmDownloadsPoint = {
+import type { TBaseEntity } from "../../core/types";
+
+type TNpmDownloadsPoint = TBaseEntity<string> & {
 	downloads: number;
 	day: string;
 };
 
-type TNpmDownloadsResponse = {
+type TNpmDownloadsResponse = TBaseEntity<string> & {
 	downloads: TNpmDownloadsPoint[];
 	start: string;
 	end: string;
 	package: string;
 };
 
-type TNpmDownloadCount = {
+type TNpmDownloadCount = TBaseEntity<string> & {
 	downloads: number;
 	start: string;
 	end: string;
 	package: string;
 };
 
-type TNpmUser = {
+type TNpmUser = TBaseEntity<string> & {
 	_id: string;
 	_rev: string;
 	name: string;
@@ -140,7 +144,7 @@ type TNpmUser = {
 	updated: string;
 };
 
-type TNpmOrganization = {
+type TNpmOrganization = TBaseEntity<string> & {
 	_id: string;
 	_rev: string;
 	name: string;
@@ -150,7 +154,7 @@ type TNpmOrganization = {
 	updated: string;
 };
 
-type TNpmVulnerability = {
+type TNpmVulnerability = TBaseEntity<string> & {
 	id: number;
 	title: string;
 	module_name: string;
