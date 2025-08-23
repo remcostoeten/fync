@@ -1,6 +1,9 @@
 export * from "./errors/exports";
 export * from "./http";
 export * from "./types";
+export * from "./api-factory";
+export * from "./resource-factory";
+export * from "./module-factory";
 
 /**
  * Package version - should be updated via build script or CI/CD
