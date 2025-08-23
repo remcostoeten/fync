@@ -1,7 +1,7 @@
 // Core API functions
 export * from "./api-factory";
 export * from "./method-factory";
-export { createFyncResource } from "./resource-factory-new";
+export * from "./resource-factory";
 export * from "./module-factory";
 
 // Types

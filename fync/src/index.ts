@@ -19,3 +19,7 @@ export { Spotify } from "./spotify";
 export * from "./spotify/types";
 export { Vercel } from "./vercel";
 export * from "./vercel/types";
+export { GoogleCalendar } from "./google-calendar";
+export * from "./google-calendar/types";
+export { GoogleDrive } from "./google-drive";
+export * from "./google-drive/types";

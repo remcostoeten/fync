@@ -1,101 +1,193 @@
-import { createCalendarClient } from "./services/calendar-client";
-import type {
-	TCalendarColors,
-	TCalendarEvent,
-	TCalendarListEntry,
-	TCalendarListParams,
-	TCalendarListResponse,
-	TCalendarMetadata,
-	TEventListParams,
-	TEventListResponse,
-	TFreeBusy,
-	TFreeBusyParams,
-} from "./types";
+import { createApiBuilder, defineResource, type TModule } from "../core";
 
-type TGoogleCalendarConfig = {
-	accessToken: string;
-	cache?: boolean;
-	cacheTTL?: number;
+const GOOGLE_CALENDAR_API_BASE = "https://www.googleapis.com/calendar/v3";
+
+const calendarListResource = defineResource({
+	name: "calendarList",
+	basePath: "/users/me/calendarList",
+	methods: {
+		listCalendars: { path: "" },
+		getCalendarListEntry: { path: "/{calendarId}" },
+		insertCalendarListEntry: { path: "", method: "POST" },
+		updateCalendarListEntry: { path: "/{calendarId}", method: "PUT" },
+		patchCalendarListEntry: { path: "/{calendarId}", method: "PATCH" },
+		deleteCalendarListEntry: { path: "/{calendarId}", method: "DELETE" },
+	},
+});
+
+const calendarsResource = defineResource({
+	name: "calendars",
+	basePath: "/calendars",
+	methods: {
+		getCalendar: { path: "/{calendarId}" },
+		insertCalendar: { path: "", method: "POST" },
+		updateCalendar: { path: "/{calendarId}", method: "PUT" },
+		patchCalendar: { path: "/{calendarId}", method: "PATCH" },
+		deleteCalendar: { path: "/{calendarId}", method: "DELETE" },
+		clearCalendar: { path: "/{calendarId}/clear", method: "POST" },
+	},
+});
+
+const eventsResource = defineResource({
+	name: "events",
+	basePath: "/calendars/{calendarId}/events",
+	methods: {
+		listEvents: { path: "" },
+		getEvent: { path: "/{eventId}" },
+		insertEvent: { path: "", method: "POST" },
+		updateEvent: { path: "/{eventId}", method: "PUT" },
+		patchEvent: { path: "/{eventId}", method: "PATCH" },
+		deleteEvent: { path: "/{eventId}", method: "DELETE" },
+		moveEvent: { path: "/{eventId}/move", method: "POST" },
+		watchEvents: { path: "/watch", method: "POST" },
+		quickAddEvent: { path: "/quickAdd", method: "POST" },
+		getEventInstances: { path: "/{eventId}/instances" },
+	},
+});
+
+const freeBusyResource = defineResource({
+	name: "freebusy",
+	basePath: "/freeBusy",
+	methods: {
+		queryFreeBusy: { path: "", method: "POST" },
+	},
+});
+
+const colorsResource = defineResource({
+	name: "colors",
+	basePath: "/colors",
+	methods: {
+		getColors: { path: "" },
+	},
+});
+
+const aclResource = defineResource({
+	name: "acl",
+	basePath: "/calendars/{calendarId}/acl",
+	methods: {
+		listAcl: { path: "" },
+		getAclRule: { path: "/{ruleId}" },
+		insertAclRule: { path: "", method: "POST" },
+		updateAclRule: { path: "/{ruleId}", method: "PUT" },
+		patchAclRule: { path: "/{ruleId}", method: "PATCH" },
+		deleteAclRule: { path: "/{ruleId}", method: "DELETE" },
+	},
+});
+
+const settingsResource = defineResource({
+	name: "settings",
+	basePath: "/users/me/settings",
+	methods: {
+		listSettings: { path: "" },
+		getSetting: { path: "/{setting}" },
+		watchSettings: { path: "/watch", method: "POST" },
+	},
+});
+
+const resources = {
+	calendarList: calendarListResource,
+	calendars: calendarsResource,
+	events: eventsResource,
+	freebusy: freeBusyResource,
+	colors: colorsResource,
+	acl: aclResource,
+	settings: settingsResource,
 };
 
-function createCalendarService(config: TGoogleCalendarConfig) {
-	const client = createCalendarClient({
-		accessToken: config.accessToken,
-		cache: config.cache,
-		cacheTTL: config.cacheTTL,
-	});
+const buildGoogleCalendar = createApiBuilder({
+	baseUrl: GOOGLE_CALENDAR_API_BASE,
+	auth: { type: "bearer" as const },
+	headers: {
+		"Content-Type": "application/json",
+	},
+});
 
-	async function getCalendars(
-		params?: TCalendarListParams,
-	): Promise<TCalendarListEntry[]> {
-		const response =
-			await client.users.me.calendarList.get<TCalendarListResponse>({
-				params,
-			});
-		return response.items;
-	}
-
-	async function getCalendar(calendarId: string): Promise<TCalendarMetadata> {
-		return client.calendars[calendarId].get<TCalendarMetadata>();
-	}
-
-	async function getEvents(
-		calendarId: string = "primary",
-		params?: TEventListParams,
-	): Promise<TCalendarEvent[]> {
-		const transformedParams = params
-			? {
-					...params,
-					...(params.eventTypes && {
-						eventTypes: params.eventTypes.join(","),
-					}),
-				}
-			: undefined;
-
-		const response = await client.calendars[
-			calendarId
-		].events.get<TEventListResponse>({
-			params: transformedParams as Record<string, string | number | boolean>,
-		});
-		return response.items;
-	}
-
-	async function getEvent(
+type TGoogleCalendarModule = TModule<typeof resources> & {
+	getCalendars: () => Promise<any>;
+	getCalendar: (calendarId: string) => Promise<any>;
+	getEvents: (calendarId?: string, options?: any) => Promise<any>;
+	getEvent: (calendarId: string, eventId: string) => Promise<any>;
+	getUpcomingEvents: (calendarId?: string, maxResults?: number) => Promise<any>;
+	getEventsInDateRange: (
 		calendarId: string,
-		eventId: string,
-	): Promise<TCalendarEvent> {
-		return client.calendars[calendarId].events[eventId].get<TCalendarEvent>();
-	}
+		startDate: Date,
+		endDate: Date,
+	) => Promise<any>;
+	getTodaysEvents: (calendarId?: string) => Promise<any>;
+	searchEvents: (
+		query: string,
+		calendarId?: string,
+		maxResults?: number,
+	) => Promise<any>;
+	getColors: () => Promise<any>;
+	getFreeBusy: (params: any) => Promise<any>;
+	isTimeSlotBusy: (
+		calendarId: string,
+		startTime: Date,
+		endTime: Date,
+	) => Promise<boolean>;
+	getAllCalendarEvents: (
+		maxResults?: number,
+	) => Promise<{ calendar: any; events: any[] }[]>;
+	createEvent: (calendarId: string, event: any) => Promise<any>;
+	updateEvent: (calendarId: string, eventId: string, event: any) => Promise<any>;
+	deleteEvent: (calendarId: string, eventId: string) => Promise<any>;
+	quickAddEvent: (calendarId: string, text: string) => Promise<any>;
+};
 
-	async function getUpcomingEvents(
+export function GoogleCalendar(config: {
+	token: string;
+}): TGoogleCalendarModule {
+	const base = buildGoogleCalendar(config, resources);
+	const calendar = base as TGoogleCalendarModule;
+
+	calendar.getCalendars = function () {
+		return base.calendarList.listCalendars();
+	};
+
+	calendar.getCalendar = function (calendarId: string) {
+		return base.calendars.getCalendar({ calendarId });
+	};
+
+	calendar.getEvents = function (calendarId: string = "primary", options?: any) {
+		return base.events.listEvents({ calendarId, ...options });
+	};
+
+	calendar.getEvent = function (calendarId: string, eventId: string) {
+		return base.events.getEvent({ calendarId, eventId });
+	};
+
+	calendar.getUpcomingEvents = async function (
 		calendarId: string = "primary",
 		maxResults: number = 10,
-	): Promise<TCalendarEvent[]> {
+	) {
 		const now = new Date().toISOString();
-		return getEvents(calendarId, {
+		const response = await base.events.listEvents({
+			calendarId,
 			timeMin: now,
 			maxResults,
 			singleEvents: true,
 			orderBy: "startTime",
 		});
-	}
+		return response.items || [];
+	};
 
-	async function getEventsInDateRange(
+	calendar.getEventsInDateRange = async function (
 		calendarId: string = "primary",
 		startDate: Date,
 		endDate: Date,
-	): Promise<TCalendarEvent[]> {
-		return getEvents(calendarId, {
+	) {
+		const response = await base.events.listEvents({
+			calendarId,
 			timeMin: startDate.toISOString(),
 			timeMax: endDate.toISOString(),
 			singleEvents: true,
 			orderBy: "startTime",
 		});
-	}
+		return response.items || [];
+	};
 
-	async function getTodaysEvents(
-		calendarId: string = "primary",
-	): Promise<TCalendarEvent[]> {
+	calendar.getTodaysEvents = async function (calendarId: string = "primary") {
 		const today = new Date();
 		const startOfDay = new Date(
 			today.getFullYear(),
@@ -108,94 +200,93 @@ function createCalendarService(config: TGoogleCalendarConfig) {
 			today.getDate() + 1,
 		);
 
-		return getEventsInDateRange(calendarId, startOfDay, endOfDay);
-	}
+		return calendar.getEventsInDateRange(calendarId, startOfDay, endOfDay);
+	};
 
-	async function searchEvents(
+	calendar.searchEvents = async function (
 		query: string,
 		calendarId: string = "primary",
 		maxResults: number = 25,
-	): Promise<TCalendarEvent[]> {
-		return getEvents(calendarId, {
+	) {
+		const response = await base.events.listEvents({
+			calendarId,
 			q: query,
 			maxResults,
 			singleEvents: true,
 			orderBy: "startTime",
 		});
-	}
+		return response.items || [];
+	};
 
-	async function getColors(): Promise<TCalendarColors> {
-		return client.colors.get<TCalendarColors>();
-	}
+	calendar.getColors = function () {
+		return base.colors.getColors();
+	};
 
-	async function getFreeBusy(params: TFreeBusyParams): Promise<TFreeBusy> {
-		const transformedParams = {
-			...params,
-			items: JSON.stringify(params.items),
-		} as Record<string, string | number | boolean>;
+	calendar.getFreeBusy = function (params: any) {
+		return base.freebusy.queryFreeBusy(params);
+	};
 
-		return client.freebusy.query.get<TFreeBusy>({
-			params: transformedParams,
-		});
-	}
-
-	async function isTimeSlotBusy(
+	calendar.isTimeSlotBusy = async function (
 		calendarId: string,
 		startTime: Date,
 		endTime: Date,
-	): Promise<boolean> {
-		const freeBusyResult = await getFreeBusy({
+	) {
+		const freeBusyResult = await base.freebusy.queryFreeBusy({
 			timeMin: startTime.toISOString(),
 			timeMax: endTime.toISOString(),
 			items: [{ id: calendarId }],
 		});
 
-		const calendarBusy = freeBusyResult.calendars[calendarId]?.busy || [];
+		const calendarBusy = freeBusyResult.calendars?.[calendarId]?.busy || [];
 		return calendarBusy.length > 0;
-	}
+	};
 
-	async function getAllCalendarEvents(
-		maxResults?: number,
-	): Promise<{ calendar: TCalendarListEntry; events: TCalendarEvent[] }[]> {
-		const calendars = await getCalendars();
+	calendar.getAllCalendarEvents = async function (maxResults?: number) {
+		const calendarListResponse = await base.calendarList.listCalendars();
+		const calendars = calendarListResponse.items || [];
 		const results = [];
 
-		for (const calendar of calendars) {
+		for (const cal of calendars) {
 			if (
-				calendar.accessRole === "reader" ||
-				calendar.accessRole === "writer" ||
-				calendar.accessRole === "owner"
+				cal.accessRole === "reader" ||
+				cal.accessRole === "writer" ||
+				cal.accessRole === "owner"
 			) {
 				try {
-					const events = await getEvents(calendar.id, {
+					const eventsResponse = await base.events.listEvents({
+						calendarId: cal.id,
 						maxResults,
 						singleEvents: true,
 						orderBy: "startTime",
 					});
-					results.push({ calendar, events });
+					results.push({ calendar: cal, events: eventsResponse.items || [] });
 				} catch {}
 			}
 		}
 
 		return results;
-	}
-
-	return {
-		getCalendars,
-		getCalendar,
-		getEvents,
-		getEvent,
-		getUpcomingEvents,
-		getEventsInDateRange,
-		getTodaysEvents,
-		searchEvents,
-		getColors,
-		getFreeBusy,
-		isTimeSlotBusy,
-		getAllCalendarEvents,
 	};
-}
 
-export { createCalendarService };
-export type { TGoogleCalendarConfig };
+	calendar.createEvent = function (calendarId: string, event: any) {
+		return base.events.insertEvent({ calendarId, ...event });
+	};
+
+	calendar.updateEvent = function (
+		calendarId: string,
+		eventId: string,
+		event: any,
+	) {
+		return base.events.updateEvent({ calendarId, eventId, ...event });
+	};
+
+	calendar.deleteEvent = function (calendarId: string, eventId: string) {
+		return base.events.deleteEvent({ calendarId, eventId });
+	};
+
+	calendar.quickAddEvent = function (calendarId: string, text: string) {
+		return base.events.quickAddEvent({ calendarId, text });
+	};
+
+	return calendar;
+}
 export * from "./types";

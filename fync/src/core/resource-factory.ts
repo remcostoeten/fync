@@ -2,9 +2,24 @@ import type { TApiClient } from "./api-factory";
 import type { TMethodConfig } from "./method-factory";
 import { buildMethodFromConfig } from "./method-factory";
 
-type TResourceConfig = {
+type TMethodDefinition = {
+	path: string;
+	method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+	transform?: (response: any) => any;
+};
+
+type TResourceMethods = Record<string, TMethodDefinition>;
+
+type TResourceConfig<TMethods extends TResourceMethods = TResourceMethods> = {
 	name: string;
-	methods: Record<string, TMethodConfig | string>;
+	basePath: string;
+	methods: TMethods;
+};
+
+type TResource<TMethods extends TResourceMethods> = {
+	[K in keyof TMethods]: TMethods[K]["method"] extends "POST" | "PUT" | "PATCH"
+		? (data?: any, options?: any) => Promise<any>
+		: (options?: any) => Promise<any>;
 };
 
 type TResourceBuilder = {
