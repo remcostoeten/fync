@@ -1,6 +1,8 @@
+export type TDateValue = string | Date;
+
 export type TTimestamps = {
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt?: TDateValue;
+	updatedAt?: TDateValue;
 };
 
 export type TBaseEntity = {
@@ -8,8 +10,8 @@ export type TBaseEntity = {
 } & TTimestamps;
 
 export type TOptionalTimestamps = {
-	createdAt?: Date;
-	updatedAt?: Date;
+	createdAt?: TDateValue;
+	updatedAt?: TDateValue;
 };
 
 export type TCreateEntity<T> = Omit<T, "id" | "createdAt" | "updatedAt">;

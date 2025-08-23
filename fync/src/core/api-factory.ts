@@ -40,9 +40,7 @@ function buildAuthHeaders(auth?: TApiConfig["auth"]): Record<string, string> {
 			return { Authorization: `Bearer ${auth.token}` };
 		case "basic": {
 			const { username = "", password = "" } = auth.credentials || {};
-			const encoded = Buffer.from(`${username}:${password}`).toString(
-				"base64",
-			);
+			const encoded = Buffer.from(`${username}:${password}`).toString("base64");
 			return { Authorization: `Basic ${encoded}` };
 		}
 		case "apikey":

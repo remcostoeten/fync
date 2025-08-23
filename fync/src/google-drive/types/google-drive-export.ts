@@ -4,7 +4,7 @@ export type TGoogleDriveExportFormat = {
 	description: string;
 };
 
-export type TGoogleDriveMimeType = 
+export type TGoogleDriveMimeType =
 	| "application/vnd.google-apps.audio"
 	| "application/vnd.google-apps.document"
 	| "application/vnd.google-apps.drive-sdk"

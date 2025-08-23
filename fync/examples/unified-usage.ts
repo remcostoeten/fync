@@ -5,10 +5,8 @@
  * All APIs follow the same pattern and provide rich convenience methods
  */
 
-import { GitHub } from "../src/github/index.new";
-import { NPM } from "../src/npm/index.new";
-import { Spotify } from "../src/spotify/index.new";
-import { Vercel } from "../src/vercel/index.new";
+import { GitHub, NPM, Spotify, Vercel } from "src";
+
 
 async function githubExamples() {
 	const github = GitHub({ token: process.env.GITHUB_TOKEN! });

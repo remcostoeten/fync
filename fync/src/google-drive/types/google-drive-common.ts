@@ -39,7 +39,13 @@ export type TGoogleDrivePermission = {
 	type: "user" | "group" | "domain" | "anyone";
 	emailAddress?: string;
 	domain?: string;
-	role: "owner" | "organizer" | "fileOrganizer" | "writer" | "commenter" | "reader";
+	role:
+		| "owner"
+		| "organizer"
+		| "fileOrganizer"
+		| "writer"
+		| "commenter"
+		| "reader";
 	displayName?: string;
 	photoLink?: string;
 	deleted?: boolean;
@@ -65,7 +71,7 @@ export type TGoogleDriveSpace = "drive" | "appDataFolder" | "photos";
 
 export type TGoogleDriveCorpus = "user" | "domain" | "drive" | "allDrives";
 
-export type TGoogleDriveOrderBy = 
+export type TGoogleDriveOrderBy =
 	| "createdTime"
 	| "folder"
 	| "modifiedByMeTime"
@@ -98,16 +104,19 @@ export type TGoogleDriveLabelInfo = {
 	labels?: Array<{
 		id: string;
 		revisionId: string;
-		fields?: Record<string, {
-			valueType: string;
-			values: Array<{
-				text?: string;
-				integer?: string;
-				date?: string;
-				selection?: string;
-				user?: Array<TGoogleDriveUser>;
-			}>;
-		}>;
+		fields?: Record<
+			string,
+			{
+				valueType: string;
+				values: Array<{
+					text?: string;
+					integer?: string;
+					date?: string;
+					selection?: string;
+					user?: Array<TGoogleDriveUser>;
+				}>;
+			}
+		>;
 	}>;
 };
 

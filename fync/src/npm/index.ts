@@ -1,8 +1,4 @@
-import {
-	createApiBuilder,
-	defineResource,
-	type TModule,
-} from "../core";
+import { createApiBuilder, defineResource, type TModule } from "../core";
 
 const NPM_API_BASE = "https://registry.npmjs.org";
 const NPM_SEARCH_BASE = "https://registry.npmjs.org/-/v1";
@@ -55,7 +51,10 @@ type TNpmModule = TModule<typeof resources> & {
 	getPackageDownloads: (packageName: string, period?: string) => Promise<any>;
 	getPackageSize: (packageName: string) => Promise<any>;
 	searchPackages: (query: string, options?: any) => Promise<any>;
-	getPackageDependencies: (packageName: string, version?: string) => Promise<any>;
+	getPackageDependencies: (
+		packageName: string,
+		version?: string,
+	) => Promise<any>;
 	getPackageStats: (packageName: string) => Promise<any>;
 	isPackageDeprecated: (packageName: string) => Promise<boolean>;
 	getPackageMaintainers: (packageName: string) => Promise<any[]>;

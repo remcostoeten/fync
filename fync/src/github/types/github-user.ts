@@ -1,4 +1,4 @@
-import type { TBaseEntity } from "./base-entity";
+import type { TBaseEntity } from "../../core/types";
 
 export type TGitHubUser = {
 	/** The GitHub username */

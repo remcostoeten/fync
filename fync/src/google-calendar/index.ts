@@ -173,8 +173,7 @@ function createCalendarService(config: TGoogleCalendarConfig) {
 						orderBy: "startTime",
 					});
 					results.push({ calendar, events });
-				} catch {
-				}
+				} catch {}
 			}
 		}
 

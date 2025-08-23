@@ -1,8 +1,4 @@
-import {
-	createApiBuilder,
-	defineResource,
-	type TModule,
-} from "../core";
+import { createApiBuilder, defineResource, type TModule } from "../core";
 
 const GITHUB_API_BASE = "https://api.github.com";
 
@@ -45,17 +41,17 @@ const repoResource = defineResource({
 		getRepoPull: { path: "/{owner}/{repo}/pulls/{pull_number}" },
 		getRepoContents: { path: "/{owner}/{repo}/contents/{path}" },
 		getRepoReadme: { path: "/{owner}/{repo}/readme" },
-		createRepoIssue: { 
+		createRepoIssue: {
 			path: "/{owner}/{repo}/issues",
-			method: "POST" 
+			method: "POST",
 		},
-		updateRepoIssue: { 
+		updateRepoIssue: {
 			path: "/{owner}/{repo}/issues/{issue_number}",
-			method: "PATCH" 
+			method: "PATCH",
 		},
-		createRepoPull: { 
+		createRepoPull: {
 			path: "/{owner}/{repo}/pulls",
-			method: "POST" 
+			method: "POST",
 		},
 	},
 });
@@ -109,27 +105,27 @@ const activityResource = defineResource({
 	methods: {
 		getPublicEvents: { path: "/events" },
 		getNotifications: { path: "/notifications" },
-		markNotificationAsRead: { 
+		markNotificationAsRead: {
 			path: "/notifications/{notification_id}",
-			method: "PATCH" 
+			method: "PATCH",
 		},
 		getStarred: { path: "/user/starred" },
-		starRepo: { 
+		starRepo: {
 			path: "/user/starred/{owner}/{repo}",
-			method: "PUT" 
+			method: "PUT",
 		},
-		unstarRepo: { 
+		unstarRepo: {
 			path: "/user/starred/{owner}/{repo}",
-			method: "DELETE" 
+			method: "DELETE",
 		},
 		getWatching: { path: "/user/subscriptions" },
-		watchRepo: { 
+		watchRepo: {
 			path: "/user/subscriptions/{owner}/{repo}",
-			method: "PUT" 
+			method: "PUT",
 		},
-		unwatchRepo: { 
+		unwatchRepo: {
 			path: "/user/subscriptions/{owner}/{repo}",
-			method: "DELETE" 
+			method: "DELETE",
 		},
 	},
 });
@@ -213,7 +209,10 @@ type TGitHubModule = TModule<typeof resources> & {
 	getRepositoryFromUrl: (url: string) => Promise<any>;
 	getUserCommits: (username: string, options?: any) => Promise<any>;
 	getUserLatestCommit: (username: string) => Promise<any>;
-	getUserCommitsInTimeframe: (username: string, timeframe: string) => Promise<any>;
+	getUserCommitsInTimeframe: (
+		username: string,
+		timeframe: string,
+	) => Promise<any>;
 	getRepositoryStars: (owner: string, repo: string) => Promise<number>;
 	getUserStarredCount: (username: string) => Promise<number>;
 	getUserStats: (username: string) => Promise<any>;
@@ -223,9 +222,9 @@ type TGitHubModule = TModule<typeof resources> & {
 
 export function GitHub(config: { token: string }): TGitHubModule {
 	const base = buildGitHub(config, resources);
-	
+
 	function parseGitHubUrl(url: string): { owner: string; repo: string } | null {
-		const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+		const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
 		if (match) {
 			return { owner: match[1], repo: match[2].replace(/\.git$/, "") };
 		}
@@ -274,9 +273,9 @@ export function GitHub(config: { token: string }): TGitHubModule {
 	};
 
 	github.getUserCommits = async function (username: string, options?: any) {
-		const events = await base.users.getUserEvents({ 
+		const events = await base.users.getUserEvents({
 			username,
-			per_page: options?.limit || 100 
+			per_page: options?.limit || 100,
 		});
 		return events.filter((e: any) => e.type === "PushEvent");
 	};

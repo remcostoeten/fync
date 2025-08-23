@@ -1,8 +1,4 @@
-import {
-	createApiBuilder,
-	defineResource,
-	type TModule,
-} from "../core";
+import { createApiBuilder, defineResource, type TModule } from "../core";
 
 const VERCEL_API_BASE = "https://api.vercel.com";
 
@@ -100,12 +96,15 @@ type TVercelModule = TModule<typeof resources> & {
 	getTeamUsage: (teamId: string) => Promise<any>;
 };
 
-export function Vercel(config: { token: string; teamId?: string }): TVercelModule {
-	const apiConfig = { 
+export function Vercel(config: {
+	token: string;
+	teamId?: string;
+}): TVercelModule {
+	const apiConfig = {
 		token: config.token,
-		headers: config.teamId ? { "x-vercel-team-id": config.teamId } : {}
+		headers: config.teamId ? { "x-vercel-team-id": config.teamId } : {},
 	};
-	
+
 	const base = buildVercel(apiConfig, resources);
 	const vercel = base as TVercelModule;
 
@@ -141,7 +140,7 @@ export function Vercel(config: { token: string; teamId?: string }): TVercelModul
 	vercel.redeployProject = async function (projectId: string) {
 		const latest = await vercel.getLatestDeployment(projectId);
 		if (!latest) throw new Error("No deployments found");
-		
+
 		return base.deployments.createDeployment({
 			name: latest.name,
 			project: projectId,
@@ -149,7 +148,10 @@ export function Vercel(config: { token: string; teamId?: string }): TVercelModul
 		});
 	};
 
-	vercel.getProjectAnalytics = async function (projectId: string, options?: any) {
+	vercel.getProjectAnalytics = async function (
+		projectId: string,
+		options?: any,
+	) {
 		const project = await base.projects.getProject({ projectId });
 		return {
 			project,

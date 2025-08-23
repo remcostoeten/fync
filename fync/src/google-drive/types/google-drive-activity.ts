@@ -1,4 +1,7 @@
-import type { TGoogleDriveUser, TGoogleDrivePermission } from "./google-drive-common";
+import type {
+	TGoogleDrivePermission,
+	TGoogleDriveUser,
+} from "./google-drive-common";
 import type { TGoogleDriveFile } from "./google-drive-file";
 
 export type TGoogleDriveRevision = {
@@ -207,14 +210,35 @@ export type TGoogleDrivePermissionChangeAction = {
 export type TGoogleDriveCommentAction = {
 	mentionedUsers?: TGoogleDriveUser[];
 	post?: {
-		subtype?: "ADDED" | "DELETED" | "REPLY_ADDED" | "REPLY_DELETED" | "RESOLVED" | "REOPENED";
+		subtype?:
+			| "ADDED"
+			| "DELETED"
+			| "REPLY_ADDED"
+			| "REPLY_DELETED"
+			| "RESOLVED"
+			| "REOPENED";
 	};
 	assignment?: {
-		subtype?: "ADDED" | "DELETED" | "REPLY_ADDED" | "REPLY_DELETED" | "RESOLVED" | "REOPENED" | "REASSIGNED";
+		subtype?:
+			| "ADDED"
+			| "DELETED"
+			| "REPLY_ADDED"
+			| "REPLY_DELETED"
+			| "RESOLVED"
+			| "REOPENED"
+			| "REASSIGNED";
 		assignedUser?: TGoogleDriveUser;
 	};
 	suggestion?: {
-		subtype?: "ADDED" | "DELETED" | "REPLY_ADDED" | "REPLY_DELETED" | "ACCEPTED" | "REJECTED" | "ACCEPT_DELETED" | "REJECT_DELETED";
+		subtype?:
+			| "ADDED"
+			| "DELETED"
+			| "REPLY_ADDED"
+			| "REPLY_DELETED"
+			| "ACCEPTED"
+			| "REJECTED"
+			| "ACCEPT_DELETED"
+			| "REJECT_DELETED";
 	};
 };
 
@@ -228,7 +252,12 @@ export type TGoogleDriveReferenceAction = {
 
 export type TGoogleDriveSettingsChangeAction = {
 	restrictionChanges?: Array<{
-		feature?: "SHARING_OUTSIDE_DOMAIN" | "DIRECT_SHARING" | "ITEM_DUPLICATION" | "DRIVE_FILE_STREAM" | "FILE_ORGANIZER_CAN_SHARE_FOLDERS";
+		feature?:
+			| "SHARING_OUTSIDE_DOMAIN"
+			| "DIRECT_SHARING"
+			| "ITEM_DUPLICATION"
+			| "DRIVE_FILE_STREAM"
+			| "FILE_ORGANIZER_CAN_SHARE_FOLDERS";
 		newRestriction?: "UNRESTRICTED" | "FULLY_RESTRICTED";
 	}>;
 };

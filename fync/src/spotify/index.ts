@@ -1,8 +1,4 @@
-import {
-	createApiBuilder,
-	defineResource,
-	type TModule,
-} from "../core";
+import { createApiBuilder, defineResource, type TModule } from "../core";
 
 const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
 
@@ -48,9 +44,14 @@ const playlistResource = defineResource({
 		createPlaylist: { path: "/{user_id}/playlists", method: "POST" },
 		updatePlaylist: { path: "/{playlist_id}", method: "PUT" },
 		addTracksToPlaylist: { path: "/{playlist_id}/tracks", method: "POST" },
-		removeTracksFromPlaylist: { path: "/{playlist_id}/tracks", method: "DELETE" },
+		removeTracksFromPlaylist: {
+			path: "/{playlist_id}/tracks",
+			method: "DELETE",
+		},
 		getFeaturedPlaylists: { path: "/browse/featured-playlists" },
-		getCategoryPlaylists: { path: "/browse/categories/{category_id}/playlists" },
+		getCategoryPlaylists: {
+			path: "/browse/categories/{category_id}/playlists",
+		},
 	},
 });
 
@@ -90,8 +91,14 @@ const meResource = defineResource({
 		removeSavedAlbums: { path: "/albums", method: "DELETE" },
 		followArtists: { path: "/following", method: "PUT" },
 		unfollowArtists: { path: "/following", method: "DELETE" },
-		followPlaylist: { path: "/playlists/{playlist_id}/followers", method: "PUT" },
-		unfollowPlaylist: { path: "/playlists/{playlist_id}/followers", method: "DELETE" },
+		followPlaylist: {
+			path: "/playlists/{playlist_id}/followers",
+			method: "PUT",
+		},
+		unfollowPlaylist: {
+			path: "/playlists/{playlist_id}/followers",
+			method: "DELETE",
+		},
 	},
 });
 
@@ -161,7 +168,10 @@ type TSpotifyModule = TModule<typeof resources> & {
 	getCurrentlyPlaying: () => Promise<any>;
 	getRecommendations: (options: any) => Promise<any>;
 	createPlaylist: (userId: string, name: string, options?: any) => Promise<any>;
-	addTracksToPlaylist: (playlistId: string, trackUris: string[]) => Promise<any>;
+	addTracksToPlaylist: (
+		playlistId: string,
+		trackUris: string[],
+	) => Promise<any>;
 	playTrack: (trackUri: string, deviceId?: string) => Promise<any>;
 	pausePlayback: () => Promise<any>;
 	skipToNext: () => Promise<any>;

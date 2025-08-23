@@ -1,7 +1,4 @@
-export type THttpMethod =
-	| "GET"
-	| "HEAD"
-	| "OPTIONS";
+export type THttpMethod = "GET" | "HEAD" | "OPTIONS";
 
 export type THttpHeaders = Record<string, string>;
 

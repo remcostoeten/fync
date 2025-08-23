@@ -24,9 +24,12 @@ type TResource<TMethods extends TResourceMethods> = {
 	[K in keyof TMethods]: TMethodImplementation<TMethods[K]>;
 };
 
-function interpolatePath(template: string, params: Record<string, any>): string {
+function interpolatePath(
+	template: string,
+	params: Record<string, any>,
+): string {
 	let path = template;
-	let queryParams: Record<string, any> = {};
+	const queryParams: Record<string, any> = {};
 
 	Object.entries(params).forEach(function ([key, value]) {
 		const placeholder = `{${key}}`;
@@ -62,11 +65,9 @@ export function createFyncResource<TMethods extends TResourceMethods>(
 						fullPath,
 						options || {},
 					);
-					const response = await apiClient[definition.method.toLowerCase() as "post" | "put" | "patch"](
-						path,
-						data,
-						{ params: queryParams },
-					);
+					const response = await apiClient[
+						definition.method.toLowerCase() as "post" | "put" | "patch"
+					](path, data, { params: queryParams });
 					return definition.transform
 						? definition.transform(response)
 						: response;
@@ -76,10 +77,9 @@ export function createFyncResource<TMethods extends TResourceMethods>(
 			return async function (options?: any) {
 				const { path, queryParams } = interpolatePath(fullPath, options || {});
 				const method = definition.method || "GET";
-				const response = await apiClient[method.toLowerCase() as "get" | "delete"](
-					path,
-					{ params: queryParams },
-				);
+				const response = await apiClient[
+					method.toLowerCase() as "get" | "delete"
+				](path, { params: queryParams });
 				return definition.transform ? definition.transform(response) : response;
 			};
 		}
@@ -96,9 +96,4 @@ export function defineResource<TMethods extends TResourceMethods>(
 	return config;
 }
 
-export type {
-	TMethodDefinition,
-	TResource,
-	TResourceConfig,
-	TResourceMethods,
-};
+export type { TMethodDefinition, TResource, TResourceConfig, TResourceMethods };

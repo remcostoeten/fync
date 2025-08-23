@@ -1,27 +1,14 @@
-import type { TSpotifyConfig } from "../spotify/types/spotify-common";
-import type { TNpmConfig } from "../npm/types/npm-common";
 import type { TGitHubConfig } from "../github/types/github-common";
 import type { TGoogleCalendarConfig } from "../google-calendar";
-
-export type TTimestamps = {
-	createdAt: Date;
-	updatedAt: Date;
-};
-
-export type TBaseEntity = {
-	id: number;
-} & TTimestamps;
-
-export type TOptionalTimestamps = {
-	createdAt?: Date;
-	updatedAt?: Date;
-};
-
-export type TCreateEntity<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
-
-export type TUpdateEntity<T> = Partial<Omit<T, "id" | "createdAt">> & {
-	id: number;
-};
+import type { TNpmConfig } from "../npm/types/npm-common";
+import type { TSpotifyConfig } from "../spotify/types/spotify-common";
+import type {
+	TTimestamps,
+	TBaseEntity,
+	TOptionalTimestamps,
+	TCreateEntity,
+	TUpdateEntity,
+} from "../core/types";
 
 export type TApiResponse<T> = {
 	data: T;
@@ -100,7 +87,9 @@ export type TFyncConfig = {
 export type TSpotifyClient = import("../spotify").TSpotify;
 export type TGitHubClient = import("../github").TGitHub;
 export type TNpmClient = import("../npm").TNpm;
-export type TGoogleCalendarClient = ReturnType<typeof import("../google-calendar").createCalendarService>;
+export type TGoogleCalendarClient = ReturnType<
+	typeof import("../google-calendar").createCalendarService
+>;
 
 export type TUnifiedFyncClient = {
 	spotify?: TSpotifyClient;

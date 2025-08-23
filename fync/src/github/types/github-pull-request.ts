@@ -1,4 +1,4 @@
-import type { TBaseEntity } from "./base-entity";
+import type { TBaseEntity } from "../../core/types";
 import type { TGitHubRepository } from "./github-repository";
 import type { TGitHubUser } from "./github-user";
 

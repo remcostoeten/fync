@@ -1,10 +1,10 @@
 import type {
-	TGoogleDriveUser,
-	TGoogleDrivePermission,
 	TGoogleDriveContentRestriction,
 	TGoogleDriveLabelInfo,
-	TGoogleDriveShortcutDetails,
 	TGoogleDriveLinkShareMetadata,
+	TGoogleDrivePermission,
+	TGoogleDriveShortcutDetails,
+	TGoogleDriveUser,
 } from "./google-drive-common";
 
 export type TGoogleDriveFile = {
