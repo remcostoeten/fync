@@ -4,7 +4,26 @@
 [![npm downloads](https://img.shields.io/npm/dm/@remcostoeten/fync.svg)](https://www.npmjs.com/package/@remcostoeten/fync)
 [![GitHub license](https://img.shields.io/github/license/remcostoeten/fync.svg)](https://github.com/remcostoeten/fync/blob/main/LICENSE)
 
-A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)
+A unified TypeScript library providing consistent, chainable interfaces for popular APIs including GitHub, Spotify, NPM, Google Calendar, Google Drive, and Vercel.
+
+## Features
+
+- **Unified Architecture**: Consistent API patterns across all supported services
+- **TypeScript First**: Full type safety with comprehensive type definitions
+- **Error Handling**: Built-in TResult pattern with structured error information
+- **Caching**: Configurable request caching with TTL support
+- **Rate Limiting**: Built-in rate limiting to respect API limits
+- **ESM & CJS**: Supports both ES modules and CommonJS
+- **Zero Config**: Works out of the box with sensible defaults
+
+## Supported APIs
+
+- **GitHub** - Repositories, users, issues, pull requests, actions, and more
+- **Spotify** - Tracks, playlists, user profiles, playback control
+- **NPM Registry** - Package information, versions, downloads, search
+- **Google Calendar** - Events, calendars, scheduling
+- **Google Drive** - Files, folders, sharing, metadata
+- **Vercel** - Projects, deployments, analytics
 
 ## Installation
 
@@ -12,83 +31,53 @@ A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, G
 npm install @remcostoeten/fync
 ```
 
-## Usage
-
-### Spotify API
-
-```typescript
-import { Spotify } from '@remcostoeten/fync/spotify'
-
-// Use environment variables for security
-const spotify = Spotify({
-  accessToken: process.env.SPOTIFY_ACCESS_TOKEN // Get from Spotify OAuth 2.0 flow
-})
-
-// Get current user profile
-const user = await spotify.me.get()
-
-// Search for tracks
-const trackResults = await spotify.search.tracks('bohemian rhapsody')
-
-// Get user's playlists
-const playlists = await spotify.me.playlists.get()
-
-// Get user's saved tracks
-const savedTracks = await spotify.me.tracks.get()
-
-// Control playback
-await spotify.player.play({ uris: ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'] })
-await spotify.player.pause()
-await spotify.player.next()
-
-// Get currently playing track
-const nowPlaying = await spotify.player.currentlyPlaying()
-
-// Add tracks to a playlist
-const playlist = spotify.playlist('playlist-id')
-await playlist.tracks.add(['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'])
-```
+## Quick Start
 
 ### GitHub API
 
 ```typescript
 import { GitHub } from '@remcostoeten/fync/github'
 
-// Use environment variables for security
 const github = GitHub({
-  token: process.env.GITHUB_TOKEN // Get from GitHub settings > Developer settings > Personal access tokens
+  token: process.env.GITHUB_TOKEN
 })
 
-// Get user info
+// Get user information
 const user = await github.user('octocat').get()
+const myProfile = await github.me.get()
 
-// Get current authenticated user
-const me = await github.me.get()
-
-// Get repository details
+// Repository operations
 const repo = await github.repo('facebook', 'react').get()
-
-// Get repository issues
 const issues = await github.repo('facebook', 'react').getIssues()
-
-// Get a specific issue
-const issue = await github.repo('facebook', 'react').getIssue(1)
-
-// Get releases
 const releases = await github.repo('facebook', 'react').getReleases()
-const latestRelease = await github.repo('facebook', 'react').getLatestRelease()
 
-// Search repositories
-const searchResults = await github.search.repositories('react')
+// Search functionality
+const repositories = await github.search.repositories('typescript')
+const users = await github.search.users('john')
+```
 
-// Search users
-const users = await github.search.users('octocat')
+### Spotify API
 
-// Get rate limit info
-const rateLimit = await github.rateLimit.get()
+```typescript
+import { Spotify } from '@remcostoeten/fync/spotify'
 
-// Get notifications
-const notifications = await github.notifications.get()
+const spotify = Spotify({
+  accessToken: process.env.SPOTIFY_ACCESS_TOKEN
+})
+
+// User and library
+const profile = await spotify.me.get()
+const playlists = await spotify.me.playlists.get()
+const savedTracks = await spotify.me.tracks.get()
+
+// Playback control
+await spotify.player.play({ uris: ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'] })
+await spotify.player.pause()
+const nowPlaying = await spotify.player.currentlyPlaying()
+
+// Search and discovery
+const tracks = await spotify.search.tracks('bohemian rhapsody')
+const artists = await spotify.search.artists('queen')
 ```
 
 ### NPM Registry API
@@ -96,184 +85,210 @@ const notifications = await github.notifications.get()
 ```typescript
 import { NPM } from '@remcostoeten/fync/npm'
 
-// No authentication required - public API
+// No authentication required
 const npm = NPM({
   cache: true,
   cacheTTL: 300000 // 5 minutes
 })
 
-// Get package information
+// Package information
 const packageInfo = await npm.package('react').get()
-
-// Get latest version details
 const latestVersion = await npm.package('react').latest()
-
-// Get specific version
 const specificVersion = await npm.package('react').version('18.0.0').get()
 
-// Search packages
-const searchResults = await npm.search.packages('typescript', {
-  size: 10,
-  quality: 0.8
-})
-
-// Get download statistics
-const weeklyDownloads = await npm.downloads.package('react', 'last-week')
-
-// Compare multiple packages
-const frameworkStats = await npm.downloads.packages([
-  'react', 'vue', 'angular', 'svelte'
-], 'last-month')
-
-// Get download trends over time
-const downloadTrend = await npm.downloads.range('react', '2024-01-01', '2024-01-31')
-
-// Direct chainable API access
-const customQuery = await npm.api['@types']['node'].get()
+// Search and statistics
+const packages = await npm.search.packages('typescript')
+const downloads = await npm.downloads.package('react', 'last-week')
+const trends = await npm.downloads.range('react', '2024-01-01', '2024-01-31')
 ```
 
-## Vercel utilities
-
-```ts
-import { getVercelMetadata, getVercelHealth, withVercelContext } from '@remcostoeten/fync/vercel'
-
-const metadata = getVercelMetadata()
-const health = getVercelHealth()
-
-const result = await withVercelContext(async function run(ctx) {
-  return ctx.env
-})
-```
-
-## API Reference
-
-### Spotify
-
-The Spotify client provides access to:
-- **User profile and library** - Get user info, saved tracks, albums, playlists
-- **Player controls** - Play, pause, skip, queue tracks
-- **Playlists management** - Create, modify, and manage playlists
-- **Search functionality** - Search tracks, artists, albums, playlists
-- **Recently played** - Get listening history
-- **Audio features** - Get detailed audio analysis
-
-### GitHub
-
-The GitHub client provides access to:
-- **User and organization information** - Get profiles, followers, following
-- **Repository management** - Get repos, branches, commits, contributors
-- **Issues and pull requests** - Create, read, update issues and PRs
-- **Search functionality** - Search repositories, users, issues, code
-- **Actions and workflows** - Get workflow runs, jobs, secrets
-- **Releases and tags** - Manage releases and version tags
-- **Notifications** - Get and manage notifications
-- **Rate limiting** - Check API rate limit status
-
-### NPM Registry
-
-The NPM client provides access to:
-- **Package information** - Get package metadata, versions, dependencies
-- **Version details** - Get specific version info, latest version, all versions
-- **Search functionality** - Search packages with quality, popularity, and maintenance scores
-- **Download statistics** - Get download counts for packages over different time periods
-- **Trend analysis** - Compare package popularity and track download trends
-- **Registry data** - Access to full NPM registry API (no authentication required)
-
-## Error Handling
-
-Fync provides a comprehensive error handling system with structured error information:
+### Google Calendar API
 
 ```typescript
-import { initializeErrorHandling, BaseError, HttpErrorHandler } from '@remcostoeten/fync/core'
+import { GoogleCalendar } from '@remcostoeten/fync/google-calendar'
 
-// Initialize error handling system
-initializeErrorHandling()
-
-// Use HTTP error handler with retry logic
-const errorHandler = new HttpErrorHandler({
-  maxAttempts: 3,
-  baseDelay: 1000,
-  backoffMultiplier: 2
+const calendar = GoogleCalendar({
+  accessToken: process.env.GOOGLE_ACCESS_TOKEN
 })
 
-try {
-  const result = await errorHandler.execute(
-    async () => {
-      // Your API call here
-      return await api.getData()
-    },
-    {
-      service: 'github',
-      endpoint: '/user',
-      method: 'GET'
-    }
-  )
-} catch (error) {
-  if (error instanceof BaseError) {
-    console.log('Error code:', error.info.code)
-    console.log('Service:', error.info.service)
-    console.log('Category:', error.info.category)
-    console.log('User message:', error.info.userMessage)
-    console.log('Suggested action:', error.info.suggestedAction)
-    console.log('Is retryable:', error.info.isRetryable)
-  }
+// Calendar operations
+const calendars = await calendar.calendars.list()
+const events = await calendar.calendar('primary').events.list()
+const event = await calendar.calendar('primary').events.get('event-id')
+
+// Create and manage events
+const newEvent = await calendar.calendar('primary').events.create({
+  summary: 'Meeting',
+  start: { dateTime: '2024-01-15T10:00:00Z' },
+  end: { dateTime: '2024-01-15T11:00:00Z' }
+})
+```
+
+### Google Drive API
+
+```typescript
+import { GoogleDrive } from '@remcostoeten/fync/google-drive'
+
+const drive = GoogleDrive({
+  accessToken: process.env.GOOGLE_ACCESS_TOKEN
+})
+
+// File operations
+const files = await drive.files.list()
+const file = await drive.files.get('file-id')
+const metadata = await drive.files.getMetadata('file-id')
+
+// Folder operations
+const folders = await drive.folders.list()
+const contents = await drive.folders.contents('folder-id')
+```
+
+### Vercel API
+
+```typescript
+import { Vercel } from '@remcostoeten/fync/vercel'
+
+const vercel = Vercel({
+  token: process.env.VERCEL_TOKEN
+})
+
+// Project operations
+const projects = await vercel.projects.list()
+const project = await vercel.projects.get('project-id')
+const deployments = await vercel.deployments.list('project-id')
+
+// Analytics
+const analytics = await vercel.analytics.get('project-id', {
+  from: '2024-01-01',
+  to: '2024-01-31'
+})
+```
+
+## Advanced Features
+
+### Error Handling with TResult Pattern
+
+```typescript
+import { createApiFactoryEnhanced } from '@remcostoeten/fync/core'
+
+const api = createApiFactoryEnhanced({
+  baseUrl: 'https://api.github.com',
+  useResult: true // Enable TResult pattern
+})
+
+const result = await api.get('/user')
+if (result.success) {
+  console.log(result.data)
+} else {
+  console.error(result.error)
 }
 ```
 
-### Error Categories
+### Caching
 
-- **Authentication**: Invalid tokens, expired auth, permission denied
-- **Network**: Connection issues, timeouts, DNS failures  
-- **Rate Limit**: API rate limiting exceeded
-- **Validation**: Invalid input parameters or data
-- **API**: API-specific errors (404, 422, etc.)
-- **Configuration**: Missing or invalid config
-- **Unknown**: Unexpected errors
+```typescript
+const github = GitHub({
+  token: process.env.GITHUB_TOKEN,
+  cache: {
+    enabled: true,
+    ttl: 300000 // 5 minutes
+  }
+})
+```
 
-### Service-Specific Errors
+### Rate Limiting
 
-- **Spotify**: Token expiration, premium requirements, rate limits
-- **GitHub**: Rate limits, repository access, insufficient scopes
-- **NPM**: Package not found, registry unavailable
-- **Google Calendar**: Quota exceeded, access denied
+```typescript
+const api = createApiFactoryEnhanced({
+  baseUrl: 'https://api.github.com',
+  rateLimiter: {
+    maxRequests: 100,
+    windowMs: 60000 // 1 minute
+  }
+})
+```
 
 ## Configuration
 
-All clients support configuration options for:
-- API tokens
-- Base URLs
-- Caching settings
-- Request timeouts
-- Error handling and retry logic
+All API clients support consistent configuration:
+
+```typescript
+const config = {
+  // Authentication
+  token: process.env.API_TOKEN,
+  accessToken: process.env.ACCESS_TOKEN,
+  
+  // Caching
+  cache: {
+    enabled: true,
+    ttl: 300000 // 5 minutes
+  },
+  
+  // Rate limiting
+  rateLimiter: {
+    maxRequests: 100,
+    windowMs: 60000
+  },
+  
+  // Error handling
+  useResult: true, // Enable TResult pattern
+  
+  // Request settings
+  timeout: 30000,
+  retries: 3
+}
+```
+
+## TypeScript Support
+
+Fync is built with TypeScript and provides comprehensive type definitions:
+
+```typescript
+import type { 
+  TGitHubUser, 
+  TGitHubRepository,
+  TSpotifyTrack,
+  TSpotifyPlaylist,
+  TNpmPackage
+} from '@remcostoeten/fync'
+
+// All responses are fully typed
+const user: TGitHubUser = await github.user('octocat').get()
+const track: TSpotifyTrack = await spotify.search.tracks('query')
+```
 
 ## Security
 
-⚠️ **Important**: Never hardcode API tokens in your source code or commit them to version control.
+Never hardcode API tokens in your source code. Always use environment variables:
 
-### Setup Environment Variables
+```bash
+# .env file
+GITHUB_TOKEN=ghp_your_token_here
+SPOTIFY_ACCESS_TOKEN=your_spotify_token
+GOOGLE_ACCESS_TOKEN=your_google_token
+VERCEL_TOKEN=your_vercel_token
+```
 
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
+```typescript
+// Load environment variables
+import 'dotenv/config'
 
-2. Add your API tokens to `.env`:
-   ```env
-   GITHUB_TOKEN=ghp_your_github_personal_access_token
-   SPOTIFY_ACCESS_TOKEN=your_spotify_access_token
-   ```
-
-3. Load environment variables in your application:
-   ```typescript
-   import 'dotenv/config' // Add this at the top of your main file
-   ```
+const github = GitHub({
+  token: process.env.GITHUB_TOKEN
+})
+```
 
 For detailed security guidelines, see [SECURITY.md](./SECURITY.md).
 
+## Requirements
+
+- Node.js 18+
+- TypeScript 5.0+ (for development)
+
 ## License
 
-MIT
+MIT License - see [LICENSE](./LICENSE) for details.
 
 ## Contributing
 
-Contributions are welcome! Please see the [GitHub repository](https://github.com/remcostoeten/fync) for more information.
+Contributions welcome! Please read our contributing guidelines and submit pull requests to our [GitHub repository](https://github.com/remcostoeten/fync).
