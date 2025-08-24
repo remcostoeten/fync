@@ -1,7 +1,7 @@
 {
 	"name": "@remcostoeten/fync",
-	"version": "4.0.0",
-	"description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
+	"version": "5.0.0",
+	"description": "Unified TypeScript library for 9 popular APIs with consistent functional architecture",
 	"main": "dist/src/index.js",
 	"types": "dist/src/index.d.ts",
 	"module": "dist/src/index.js",
