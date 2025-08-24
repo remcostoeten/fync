@@ -20,6 +20,16 @@ type TModule<TResources extends TModuleResources> = {
 	api: TApiClient;
 };
 
+/**
+ * Build a typed module that bundles an API client with resource handlers and optional helpers.
+ *
+ * Constructs and returns a TModule whose `api` property is an API client created from `config.apiConfig`,
+ * whose resource keys are handlers created from `config.resources`, and which includes any `config.helpers`
+ * attached at the top level.
+ *
+ * @param config - Module configuration containing `name`, `apiConfig`, `resources`, and optional `helpers`.
+ * @returns A fully assembled module typed as `TModule<TResources>`.
+ */
 export function createFyncModule<TResources extends TModuleResources>(
 	config: TModuleConfig<TResources>,
 ): TModule<TResources> {

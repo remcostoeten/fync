@@ -184,6 +184,17 @@ type TSpotifyModule = TModule<typeof resources> & {
 	searchPlaylists: (query: string, options?: any) => Promise<any>;
 };
 
+/**
+ * Create a configured Spotify client module with convenience wrappers for common endpoints.
+ *
+ * The function builds a resource-based Spotify API client using the provided bearer token
+ * and augments it with higher-level helper methods (e.g., getTrack, searchTracks,
+ * createPlaylist, playTrack, pausePlayback, getMyTopTracks) that return Promises for
+ * corresponding Spotify API calls.
+ *
+ * @param config - Configuration object containing a Spotify OAuth bearer token (`token`) used for requests.
+ * @returns A configured TSpotifyModule instance exposing both the underlying resources and the convenience methods.
+ */
 export function Spotify(config: { token: string }): TSpotifyModule {
 	const base = buildSpotify(config, resources);
 	const spotify = base as unknown as TSpotifyModule;

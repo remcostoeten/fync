@@ -96,6 +96,18 @@ type TVercelModule = TModule<typeof resources> & {
 	getTeamUsage: (teamId: string) => Promise<any>;
 };
 
+/**
+ * Creates and returns a typed Vercel API module with convenience helpers.
+ *
+ * Builds a client configured with the provided token (and optional team ID)
+ * and exposes resource methods (projects, deployments, domains, teams, user)
+ * plus higher-level helpers such as getProject, listProjects, getLatestDeployment,
+ * getDeploymentStatus, redeployProject, getProjectAnalytics, getDomainStatus, and getTeamUsage.
+ *
+ * @param config.token - Vercel personal or team API token used for Authorization.
+ * @param config.teamId - Optional Vercel team ID; when provided it is sent as `x-vercel-team-id` on requests.
+ * @returns A TVercelModule instance: the generated API client augmented with higher-level helper methods.
+ */
 export function Vercel(config: {
 	token: string;
 	teamId?: string;

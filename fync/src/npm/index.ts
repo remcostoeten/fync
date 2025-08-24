@@ -62,6 +62,19 @@ type TNpmModule = TModule<typeof resources> & {
 	getPackageReadme: (packageName: string) => Promise<string>;
 };
 
+/**
+ * Create a configured NPM registry client module with convenience methods for querying package metadata, downloads, search, and stats.
+ *
+ * The returned module exposes resource-based API methods plus helpers such as:
+ * - getPackage, getPackageVersion, getLatestVersion
+ * - getPackageDownloads, getPackageSize, getPackageStats
+ * - searchPackages
+ * - getPackageDependencies, getPackageMaintainers, getPackageKeywords, getPackageReadme
+ * - isPackageDeprecated
+ *
+ * @param config - Optional configuration. If provided, `config.registry` overrides the default registry base URL.
+ * @returns A TNpmModule instance bound to the configured registry.
+ */
 export function NPM(config?: { registry?: string }): TNpmModule {
 	const base = buildNpm(
 		{
