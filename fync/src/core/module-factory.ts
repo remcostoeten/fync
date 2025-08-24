@@ -23,8 +23,8 @@ type TModule<TResources extends TModuleResources> = {
 export function createFyncModule<TResources extends TModuleResources>(
 	config: TModuleConfig<TResources>,
 ): TModule<TResources> {
-	const apiClient = createFyncApi(config.apiConfig);
-	const module = { api: apiClient } as TModule<TResources>;
+const apiClient = createFyncApi(config.apiConfig);
+const module = { api: apiClient } as TModule<TResources>;
 
 	Object.entries(config.resources).forEach(function ([
 		resourceName,

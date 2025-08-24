@@ -102,11 +102,11 @@ export function Vercel(config: {
 }): TVercelModule {
 	const apiConfig = {
 		token: config.token,
-		headers: config.teamId ? { "x-vercel-team-id": config.teamId } : {},
+		headers: config.teamId ? { "x-vercel-team-id": config.teamId } : undefined,
 	};
 
 	const base = buildVercel(apiConfig, resources);
-	const vercel = base as TVercelModule;
+	const vercel = base as unknown as TVercelModule;
 
 	vercel.getProject = function (projectId: string) {
 		return base.projects.getProject({ projectId });

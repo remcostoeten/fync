@@ -102,11 +102,14 @@ export function createEnhancedApi(config: TApiConfig): TEnhancedApiClient {
 	const cache = new Cache(config.cache);
 
 	// Initialize rate limiter
-	const rateLimiter = new RateLimiter(
-		typeof config.rateLimit === "string"
-			? RATE_LIMIT_PRESETS[config.rateLimit as keyof typeof RATE_LIMIT_PRESETS]?.default
-			: config.rateLimit
-	);
+const ratePreset = typeof config.rateLimit === "string"
+	? (() => {
+		const preset = RATE_LIMIT_PRESETS[config.rateLimit as keyof typeof RATE_LIMIT_PRESETS] as any;
+		return preset?.default ?? preset?.authenticated ?? preset?.unauthenticated ?? undefined;
+	})()
+	: config.rateLimit;
+
+	const rateLimiter = new RateLimiter(ratePreset);
 
 	// Setup retry configuration
 	const retryConfig = {

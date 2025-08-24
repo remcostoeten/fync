@@ -11,8 +11,10 @@ export * from "./core";
 export { version } from "./core";
 // API exports
 export { GitHub } from "./github";
+export { GitLab } from "./gitlab";
 // Type exports
 export * from "./github/types";
+export * from "./gitlab/types";
 export { NPM } from "./npm";
 export * from "./npm/types";
 export { Spotify } from "./spotify";

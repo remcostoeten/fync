@@ -70,7 +70,7 @@ export function NPM(config?: { registry?: string }): TNpmModule {
 		resources,
 	);
 
-	const npm = base as TNpmModule;
+	const npm = base as unknown as TNpmModule;
 
 	npm.getPackage = function (packageName: string) {
 		return base.packages.getPackage({ packageName });

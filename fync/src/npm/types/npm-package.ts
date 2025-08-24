@@ -1,54 +1,67 @@
+import type { TBaseEntity } from "../../core/types";
 import type {
 	TNpmBugs,
-	TNpmDependencies,
-	TNpmDistInfo,
-	TNpmEngines,
 	TNpmMaintainer,
 	TNpmPerson,
 	TNpmRepository,
-	TNpmScripts,
 } from "./npm-common";
 
 type TNpmPackageVersion = {
+	_id: string;
+	_rev: string;
 	name: string;
 	version: string;
 	description?: string;
 	keywords?: string[];
 	homepage?: string;
-	bugs?: TNpmBugs;
 	license?: string;
 	author?: TNpmPerson;
 	contributors?: TNpmPerson[];
-	maintainers?: TNpmMaintainer[];
-	repository?: TNpmRepository;
+	files: string[];
 	main?: string;
-	module?: string;
-	types?: string;
-	exports?: Record<string, unknown>;
-	scripts?: TNpmScripts;
-	dependencies?: TNpmDependencies;
-	devDependencies?: TNpmDependencies;
-	peerDependencies?: TNpmDependencies;
-	optionalDependencies?: TNpmDependencies;
-	engines?: TNpmEngines;
+	bin?: Record<string, string>;
+	man?: string | string[];
+	directories?: {
+		lib?: string;
+		bin?: string;
+		man?: string;
+		test?: string;
+		example?: string;
+	};
+	repository?: TNpmRepository;
+	scripts?: Record<string, string>;
+	config?: Record<string, any>;
+	dependencies?: Record<string, string>;
+	devDependencies?: Record<string, string>;
+	peerDependencies?: Record<string, string>;
+	optionalDependencies?: Record<string, string>;
+	engines?: Record<string, string>;
 	os?: string[];
 	cpu?: string[];
-	files?: string[];
-	bin?: Record<string, string> | string;
-	directories?: Record<string, string>;
-	publishConfig?: Record<string, unknown>;
-	dist: TNpmDistInfo;
-	_id: string;
-	_nodeVersion: string;
-	_npmVersion: string;
-	_hasShrinkwrap?: boolean;
+	preferGlobal?: boolean;
+	private?: boolean;
+	publishConfig?: Record<string, any>;
+	dist: {
+		shasum: string;
+		tarball: string;
+		integrity?: string;
+		unpackedSize?: number;
+		npmSignature?: string;
+		signatures?: Array<{
+			keyid: string;
+			sig: string;
+		}>;
+		fileCount?: number;
+	};
+	gitHead?: string;
+	deprecated?: string;
+	hasShrinkwrap?: boolean;
+	bugs?: TNpmBugs;
 	_shasum: string;
 	_resolved?: string;
 	_integrity?: string;
 	_from?: string;
 };
-
-import type { TBaseEntity } from "../../core/types";
 
 type TNpmPackageInfo = TBaseEntity<string> & {
 	_id: string;
@@ -108,8 +121,6 @@ type TNpmSearchResponse = {
 	total: number;
 	time: string;
 };
-
-import type { TBaseEntity } from "../../core/types";
 
 type TNpmDownloadsPoint = TBaseEntity<string> & {
 	downloads: number;

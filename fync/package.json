@@ -22,6 +22,11 @@
 			"require": "./dist-cjs/src/github/index.js",
 			"types": "./dist/src/github/index.d.ts"
 		},
+		"./gitlab": {
+			"import": "./dist/src/gitlab/index.js",
+			"require": "./dist-cjs/src/gitlab/index.js",
+			"types": "./dist/src/gitlab/index.d.ts"
+		},
 		"./core": {
 			"import": "./dist/src/core/index.js",
 			"require": "./dist-cjs/src/core/index.js",
@@ -80,6 +85,7 @@
 		"api",
 		"typescript",
 		"github",
+		"gitlab",
 		"spotify",
 		"npm-registry",
 		"google-calendar",

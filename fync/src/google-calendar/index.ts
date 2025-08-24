@@ -139,7 +139,7 @@ export function GoogleCalendar(config: {
 	token: string;
 }): TGoogleCalendarModule {
 	const base = buildGoogleCalendar(config, resources);
-	const calendar = base as TGoogleCalendarModule;
+	const calendar = base as unknown as TGoogleCalendarModule;
 
 	calendar.getCalendars = function () {
 		return base.calendarList.listCalendars();

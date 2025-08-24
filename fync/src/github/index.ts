@@ -256,7 +256,7 @@ export function GitHub(config: { token: string }): TGitHubModule {
 		return now.toISOString();
 	}
 
-	const github = base as TGitHubModule;
+	const github = base as unknown as TGitHubModule;
 
 	github.getUser = function (username: string) {
 		return base.users.getUser({ username });
