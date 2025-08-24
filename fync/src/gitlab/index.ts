@@ -225,6 +225,19 @@ type TGitLabModule = TModule<typeof resources> & {
 	getCurrentUser: () => Promise<any>;
 };
 
+/**
+ * Create a configured GitLab API module exposing resource endpoints and higher-level helpers.
+ *
+ * Returns a module built against the GitLab API (https://gitlab.com/api/v4) that includes:
+ * - typed resource namespaces (users, projects, groups, search, snippets, issues, merge_requests, pipelines, activity, me)
+ * - convenience helpers for common workflows (e.g., getUser, getProject, getProjectFromUrl, getUserCommits, getUserStats, searchProjects, getCurrentUser)
+ *
+ * The returned module delegates most calls to the underlying resource clients and adds small utility functions
+ * for parsing GitLab URLs and computing timeframe dates used by commit-related helpers.
+ *
+ * @param config - Configuration object containing a GitLab personal access token: `{ token: string }`.
+ * @returns A configured TGitLabModule instance with resource methods and helper utilities.
+ */
 export function GitLab(config: { token: string }): TGitLabModule {
 	const base = buildGitLab(config, resources);
 

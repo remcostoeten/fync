@@ -220,6 +220,19 @@ type TGitHubModule = TModule<typeof resources> & {
 	getUserActivity: (username: string, options?: any) => Promise<any>;
 };
 
+/**
+ * Create a configured GitHub API client module.
+ *
+ * Returns a GitHub API wrapper built from the shared resource definitions and the provided personal access token. The returned module exposes the underlying resource methods plus convenience helpers such as:
+ * - getUser, getRepository, getRepositoryFromUrl
+ * - getUserCommits, getUserLatestCommit, getUserCommitsInTimeframe
+ * - getRepositoryStars, getUserStarredCount, getUserStats
+ * - searchRepositories, getUserActivity
+ *
+ * @param config - Configuration object containing authentication credentials.
+ *   - token: A GitHub personal access token used for bearer authentication.
+ * @returns A fully configured TGitHubModule instance with the standard resource methods and additional convenience helpers.
+ */
 export function GitHub(config: { token: string }): TGitHubModule {
 	const base = buildGitHub(config, resources);
 

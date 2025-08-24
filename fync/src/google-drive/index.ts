@@ -157,6 +157,18 @@ type TGoogleDriveModule = TModule<typeof resources> & {
 	permanentlyDeleteFile: (fileId: string) => Promise<any>;
 };
 
+/**
+ * Creates a Google Drive client with low-level resource endpoints and high-level convenience methods.
+ *
+ * Returns an API module bound to the provided bearer token that exposes the underlying resource methods
+ * (files, permissions, comments, replies, revisions, drives, changes, channels, about) and a set of
+ * higher-level helper functions for common operations (listing, creating, updating, moving, downloading,
+ * exporting files; folder management; searching; sharing; quota retrieval; etc.).
+ *
+ * @param config - Configuration object
+ * @param config.token - OAuth2 bearer token used for authenticating requests
+ * @returns A TGoogleDriveModule instance providing both resource-level API methods and convenience helpers
+ */
 export function GoogleDrive(config: { token: string }): TGoogleDriveModule {
 	const base = buildGoogleDrive(config, resources);
 	const drive = base as unknown as TGoogleDriveModule;

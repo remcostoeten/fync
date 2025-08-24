@@ -68,6 +68,17 @@ function buildUrl(
 	return url.toString();
 }
 
+/**
+ * Creates an API client configured from the provided config.
+ *
+ * The client merges config.headers and authentication headers into default headers,
+ * constructs URLs from config.baseUrl and per-call paths/params, and performs fetch requests.
+ * Request bodies for non-GET methods are JSON-stringified; responses are parsed as JSON and returned.
+ * Non-OK HTTP responses cause an Error that includes the status and response body text.
+ *
+ * @param config - API configuration (must include `baseUrl`; optional `headers` and `auth` are applied)
+ * @returns A TApiClient with `request`, `get`, `post`, `put`, `delete`, and `patch` methods
+ */
 export function createFyncApi(config: TApiConfig): TApiClient {
 	const authHeaders = buildAuthHeaders(config.auth);
 	const defaultHeaders = {

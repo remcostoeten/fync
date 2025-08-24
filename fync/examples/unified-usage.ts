@@ -7,6 +7,20 @@
 
 import { GitHub, GitLab, NPM, Spotify, Vercel } from "src";
 
+/**
+ * Runs a set of GitLab usage examples against the GitLab API.
+ *
+ * Demonstrates common read, search and mutation operations using the unified GitLab client:
+ * - instantiates the client from `process.env.GITLAB_TOKEN`
+ * - retrieves users, projects (by slug and URL), commits (including timeframe variants)
+ * - queries project stars and aggregated user statistics
+ * - performs project searches with sorting/pagination
+ * - accesses advanced resources (issues, merge requests, pipelines, jobs, groups)
+ * - creates a project issue and logs the authenticated user
+ *
+ * Side effects: performs network requests and creates a new issue via `projects.createProjectIssue`.
+ * Requires a valid `GITLAB_TOKEN` in the environment; without it the client will fail to authenticate.
+ */
 async function gitlabExamples() {
 	const gitlab = GitLab({ token: process.env.GITLAB_TOKEN! });
 
@@ -75,6 +89,14 @@ async function gitlabExamples() {
 	console.log(`Authenticated as: ${currentUser.username}`);
 }
 
+/**
+ * Runs a set of example GitHub API calls using the unified GitHub client.
+ *
+ * Demonstrates instantiation of the client (requires GITHUB_TOKEN in the environment) and common operations:
+ * fetching a user, querying repositories (by owner/name and by URL), retrieving commits (all, latest, and within time frames),
+ * fetching repository stars and user star counts, collecting aggregated user statistics, performing repository searches,
+ * accessing advanced repo resources (issues) and creating a new issue. Results are logged to the console.
+ */
 async function githubExamples() {
 	const github = GitHub({ token: process.env.GITHUB_TOKEN! });
 
@@ -320,7 +342,15 @@ async function addingNewApiExample() {
 	// That's it! New API added in ~30 lines of code
 }
 
-// Run examples
+/**
+ * Orchestrates and runs the example suites for the supported APIs based on environment tokens.
+ *
+ * For each supported service, prints a header and runs its example function only if the corresponding
+ * environment token is present. NPM examples are always executed. The function resolves when all
+ * invoked example tasks complete.
+ *
+ * @returns A promise that resolves when all selected examples have finished running.
+ */
 async function main() {
 	console.log("🚀 Fync Unified API Examples\n");
 

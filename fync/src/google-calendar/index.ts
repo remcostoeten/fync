@@ -135,6 +135,20 @@ type TGoogleCalendarModule = TModule<typeof resources> & {
 	quickAddEvent: (calendarId: string, text: string) => Promise<any>;
 };
 
+/**
+ * Constructs a Google Calendar API module bound to the provided OAuth bearer token.
+ *
+ * Returns a high-level calendar client with convenience methods for listing calendars and events,
+ * querying free/busy, creating/updating/deleting events, and other common operations. The returned
+ * object implements TGoogleCalendarModule and delegates to the underlying Google Calendar REST
+ * resources using the supplied token.
+ *
+ * Note: getAllCalendarEvents will ignore errors when fetching events for individual calendars
+ * (errors for a specific calendar are swallowed and processing continues).
+ *
+ * @param config - Configuration object containing the OAuth bearer token to use for requests.
+ * @returns A TGoogleCalendarModule instance with bound convenience methods.
+ */
 export function GoogleCalendar(config: {
 	token: string;
 }): TGoogleCalendarModule {

@@ -90,6 +90,23 @@ async function sleep(ms: number): Promise<void> {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * Creates an enhanced HTTP API client with built-in authentication headers, caching, rate limiting, and retry logic.
+ *
+ * The returned client supports typed request methods (request/get/post/put/delete/patch), cache management
+ * (clearCache, invalidateCache), and rate-limit introspection (getRateLimitInfo). Behavior is governed by
+ * the provided config: baseUrl and headers are used to build requests; auth selects authentication headers;
+ * cache controls an internal cache instance; rateLimit accepts either a preset name or a custom rate config;
+ * retryConfig controls automatic retries.
+ *
+ * Defaults applied when not provided:
+ * - retryConfig.maxRetries: 3
+ * - retryConfig.retryDelay: 1000 ms
+ * - retryConfig.retryOn: [429, 503, 504]
+ *
+ * @param config - API client configuration (baseUrl, optional headers, auth, cache, rateLimit, retryConfig).
+ * @returns A TEnhancedApiClient instance exposing request helpers, cache controls, and rate-limit information.
+ */
 export function createEnhancedApi(config: TApiConfig): TEnhancedApiClient {
 	const authHeaders = buildAuthHeaders(config.auth);
 	const defaultHeaders = {
