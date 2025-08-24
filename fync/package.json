@@ -52,6 +52,11 @@
 			"require": "./dist-cjs/src/vercel/index.js",
 			"types": "./dist/src/vercel/index.d.ts"
 		},
+		"./discord": {
+			"import": "./dist/src/discord/index.js",
+			"require": "./dist-cjs/src/discord/index.js",
+			"types": "./dist/src/discord/index.d.ts"
+		},
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
@@ -91,6 +96,7 @@
 		"google-calendar",
 		"google-drive",
 		"vercel",
+		"discord",
 		"chainable",
 		"fluent-api",
 		"rate-limiting",

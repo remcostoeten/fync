@@ -25,3 +25,5 @@ export { GoogleCalendar } from "./google-calendar";
 export * from "./google-calendar/types";
 export { GoogleDrive } from "./google-drive";
 export * from "./google-drive/types";
+export { Discord } from "./discord";
+export * from "./discord/types";
