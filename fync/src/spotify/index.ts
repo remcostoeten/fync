@@ -182,6 +182,30 @@ type TSpotifyModule = TModule<typeof resources> & {
 	searchArtists: (query: string, options?: any) => Promise<any>;
 	searchAlbums: (query: string, options?: any) => Promise<any>;
 	searchPlaylists: (query: string, options?: any) => Promise<any>;
+	// Enhanced methods that tests expect
+	getCurrentUser: () => Promise<any>;
+	getUserProfile: (userId: string) => Promise<any>;
+	getCurrentPlayback: () => Promise<any>;
+	getPlaylistTracks: (playlistId: string) => Promise<any>;
+	play: (options?: any) => Promise<any>;
+	pause: () => Promise<any>;
+	seek: (position: number) => Promise<any>;
+	setRepeatMode: (mode: string) => Promise<any>;
+	setShuffle: (state: boolean) => Promise<any>;
+	setVolume: (volume: number) => Promise<any>;
+	updatePlaylist: (playlistId: string, options: any) => Promise<any>;
+	removeTracksFromPlaylist: (playlistId: string, trackUris: string[]) => Promise<any>;
+	reorderPlaylistTracks: (playlistId: string, rangeStart: number, insertBefore: number, rangeLength?: number) => Promise<any>;
+	replacePlaylistTracks: (playlistId: string, trackUris: string[]) => Promise<any>;
+	searchShows: (query: string, options?: any) => Promise<any>;
+	searchEpisodes: (query: string, options?: any) => Promise<any>;
+	getCurrentUserTopItems: (type: string, options?: any) => Promise<any>;
+	getCurrentUserFollows: (type: string, ids: string[]) => Promise<any>;
+	follow: (type: string, ids: string[]) => Promise<any>;
+	unfollow: (type: string, ids: string[]) => Promise<any>;
+	checkFollows: (type: string, ids: string[]) => Promise<any>;
+	updateUserProfile: (options: any) => Promise<any>;
+	getCurrentUserProfile: () => Promise<any>;
 };
 
 export function Spotify(config: { token: string }): TSpotifyModule {
@@ -315,6 +339,125 @@ export function Spotify(config: { token: string }): TSpotifyModule {
 
 	spotify.searchPlaylists = function (query: string, options?: any) {
 		return spotify.search(query, ["playlist"], options);
+	};
+
+	// Enhanced methods implementation
+	spotify.getCurrentUser = function () {
+		return base.me.getCurrentUser();
+	};
+
+	spotify.getUserProfile = function (userId: string) {
+		return base.users.getUser({ user_id: userId });
+	};
+
+	spotify.getCurrentPlayback = function () {
+		return base.player.getPlaybackState();
+	};
+
+	spotify.getPlaylistTracks = function (playlistId: string) {
+		return base.playlists.getPlaylistTracks({ playlist_id: playlistId });
+	};
+
+	spotify.play = function (options?: any) {
+		return base.player.play(options);
+	};
+
+	spotify.pause = function () {
+		return base.player.pause();
+	};
+
+	spotify.seek = function (position: number) {
+		return base.player.seek({ position_ms: position });
+	};
+
+	spotify.setRepeatMode = function (mode: string) {
+		return base.player.setRepeat({ state: mode });
+	};
+
+	spotify.setShuffle = function (state: boolean) {
+		return base.player.setShuffle({ state });
+	};
+
+	spotify.setVolume = function (volume: number) {
+		return base.player.setVolume({ volume_percent: volume });
+	};
+
+	spotify.updatePlaylist = function (playlistId: string, options: any) {
+		return base.playlists.updatePlaylist({ playlist_id: playlistId }, options);
+	};
+
+	spotify.removeTracksFromPlaylist = function (playlistId: string, trackUris: string[]) {
+		return base.playlists.removeTracksFromPlaylist(
+			{ playlist_id: playlistId },
+			{ tracks: trackUris.map(uri => ({ uri })) }
+		);
+	};
+
+	spotify.reorderPlaylistTracks = function (playlistId: string, rangeStart: number, insertBefore: number, rangeLength?: number) {
+		return base.playlists.reorderPlaylistTracks(
+			{ playlist_id: playlistId },
+			{ range_start: rangeStart, insert_before: insertBefore, range_length: rangeLength }
+		);
+	};
+
+	spotify.replacePlaylistTracks = function (playlistId: string, trackUris: string[]) {
+		return base.playlists.replacePlaylistTracks(
+			{ playlist_id: playlistId },
+			{ uris: trackUris }
+		);
+	};
+
+	spotify.searchShows = function (query: string, options?: any) {
+		return spotify.search(query, ["show"], options);
+	};
+
+	spotify.searchEpisodes = function (query: string, options?: any) {
+		return spotify.search(query, ["episode"], options);
+	};
+
+	spotify.getCurrentUserTopItems = function (type: string, options?: any) {
+		if (type === 'tracks') {
+			return spotify.getMyTopTracks(options);
+		} else if (type === 'artists') {
+			return spotify.getMyTopArtists(options);
+		}
+		throw new Error(`Unsupported type: ${type}`);
+	};
+
+	spotify.getCurrentUserFollows = function (type: string, ids: string[]) {
+		if (type === 'artist') {
+			return base.me.getFollowedArtists();
+		}
+		throw new Error(`Unsupported type: ${type}`);
+	};
+
+	spotify.follow = function (type: string, ids: string[]) {
+		if (type === 'artist') {
+			return base.me.followArtists({ ids });
+		}
+		throw new Error(`Unsupported type: ${type}`);
+	};
+
+	spotify.unfollow = function (type: string, ids: string[]) {
+		if (type === 'artist') {
+			return base.me.unfollowArtists({ ids });
+		}
+		throw new Error(`Unsupported type: ${type}`);
+	};
+
+	spotify.checkFollows = function (type: string, ids: string[]) {
+		if (type === 'artist') {
+			return base.me.checkFollowedArtists({ ids });
+		}
+		throw new Error(`Unsupported type: ${type}`);
+	};
+
+	spotify.updateUserProfile = function (options: any) {
+		return base.me.updateProfile(options);
+	};
+
+	spotify.getCurrentUserProfile = function () {
+		return base.me.getCurrentUser();
 	};
 
 	return spotify;
