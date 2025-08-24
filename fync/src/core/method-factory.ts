@@ -1,4 +1,4 @@
-import type { TApiClient } from "./api-factory";
+import type { TEnhancedApiClient as TApiClient } from "./api-factory-enhanced";
 
 type TMethodConfig = {
 	name: string;

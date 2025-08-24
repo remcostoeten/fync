@@ -186,7 +186,7 @@ type TSpotifyModule = TModule<typeof resources> & {
 
 export function Spotify(config: { token: string }): TSpotifyModule {
 	const base = buildSpotify(config, resources);
-	const spotify = base as TSpotifyModule;
+	const spotify = base as unknown as TSpotifyModule;
 
 	spotify.getTrack = function (trackId: string) {
 		return base.tracks.getTrack({ id: trackId });
@@ -204,7 +204,7 @@ export function Spotify(config: { token: string }): TSpotifyModule {
 		return base.playlists.getPlaylist({ playlist_id: playlistId });
 	};
 
-	spotify.search = function (query: string, types: string[], options?: any) {
+	(spotify as any).search = function (query: string, types: string[], options?: any) {
 		return base.search.search({
 			q: query,
 			type: types.join(","),

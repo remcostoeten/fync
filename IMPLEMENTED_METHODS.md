@@ -1,12 +1,14 @@
 # Fync API - Currently Implemented Methods
 
-## Summary (Updated Aug 23 23:10)
-
-### All 6 modules now fully implemented with unified architecture:
+## Summary (Updated Jan 27 2025)
 
 **GitHub** - 88 total methods
 - 78 resource methods across 9 resources
 - 10 convenience methods
+
+**GitLab** - 110 total methods ✅ NEW
+- 96 resource methods across 10 resources
+- 14 convenience methods
 
 **NPM** - 15 total methods  
 - 4 resource methods across 3 resources
@@ -24,11 +26,11 @@
 - 29 resource methods across 7 resources
 - 16 convenience methods
 
-**Google Drive** - 48 total methods ✅ NEW
+**Google Drive** - 48 total methods
 - 25 resource methods across 9 resources
 - 23 convenience methods
 
-### Total: 318 methods implemented across all 6 modules
+### Total: 428 methods implemented across all 7 modules
 
 This document lists all methods currently implemented in the new unified architecture.
 
@@ -57,6 +59,36 @@ This document lists all methods currently implemented in the new unified archite
 - `getUserStats(username)` - Get comprehensive user statistics
 - `searchRepositories(query, options?)` - Search for repositories
 - `getUserActivity(username, options?)` - Get user's activity events
+
+## 🦊 GitLab Module
+
+### Resource Methods (Direct Access)
+- **users**: `getUser`, `getUserProjects`, `getUserSnippets`, `getUserEvents`, `getUserContributedProjects`, `getUserStarredProjects`, `getUserMemberships`, `getUserFollowers`, `getUserFollowing`, `getCurrentUser`, `searchUsers`
+- **projects**: `getProject`, `getProjectCommits`, `getProjectCommit`, `getProjectBranches`, `getProjectTags`, `getProjectReleases`, `getProjectMembers`, `getProjectIssues`, `getProjectIssue`, `getProjectMergeRequests`, `getProjectMergeRequest`, `getProjectContributors`, `getProjectLanguages`, `getProjectRepository`, `getProjectFile`, `getProjectReadme`, `getProjectVariables`, `getProjectPipelines`, `getProjectJobs`, `getProjectEnvironments`, `createProject`, `updateProject`, `deleteProject`, `createProjectIssue`, `updateProjectIssue`, `createProjectMergeRequest`, `updateProjectMergeRequest`, `starProject`, `unstarProject`, `forkProject`
+- **groups**: `getGroup`, `getGroupProjects`, `getGroupMembers`, `getGroupSubgroups`, `getGroupVariables`, `getGroupEpics`, `createGroup`, `updateGroup`, `deleteGroup`, `searchGroups`
+- **search**: `searchProjects`, `searchGroups`, `searchUsers`, `searchSnippets`, `searchIssues`, `searchMergeRequests`, `searchMilestones`, `searchWiki`, `searchCommits`, `searchBlobs`
+- **snippets**: `getPublicSnippets`, `getSnippet`, `getSnippetContent`, `createSnippet`, `updateSnippet`, `deleteSnippet`, `getUserSnippets`
+- **issues**: `getIssues`, `getIssue`, `createIssue`, `updateIssue`, `deleteIssue`, `getIssueNotes`, `createIssueNote`
+- **merge_requests**: `getMergeRequests`, `getMergeRequest`, `createMergeRequest`, `updateMergeRequest`, `deleteMergeRequest`, `acceptMergeRequest`, `getMergeRequestNotes`, `createMergeRequestNote`, `getMergeRequestCommits`, `getMergeRequestChanges`
+- **pipelines**: `getPipelines`, `getPipeline`, `createPipeline`, `deletePipeline`, `retryPipeline`, `cancelPipeline`, `getPipelineJobs`, `getPipelineVariables`
+- **activity**: `getEvents`, `getUserEvents`, `getProjectEvents`, `getTodos`, `markTodoAsDone`, `markAllTodosAsDone`
+- **me**: `getCurrentUser`, `getUserProjects`, `getUserStarredProjects`, `getUserGPGKeys`, `getUserSSHKeys`, `addSSHKey`, `deleteSSHKey`, `getUserEmails`, `addEmail`, `deleteEmail`, `getUserMemberships`, `getUserStatus`, `setUserStatus`
+
+### Convenience Methods
+- `getUser(id)` - Get user profile by ID or username
+- `getProject(id)` - Get project details by ID or path
+- `getProjectFromUrl(url)` - Get project from GitLab URL
+- `getUserCommits(userId, options?)` - Get user's commit events
+- `getUserLatestCommit(userId)` - Get user's most recent commit
+- `getUserCommitsInTimeframe(userId, timeframe)` - Get commits within timeframe (e.g., "1W", "3M", "1Y")
+- `getProjectStars(projectId)` - Get star count for project
+- `getUserStarredCount(userId)` - Get count of projects starred by user
+- `getUserStats(userId)` - Get comprehensive user statistics
+- `searchProjects(query, options?)` - Search for projects
+- `getUserActivity(userId, options?)` - Get user's activity events
+- `getGroup(id)` - Get group details by ID or path
+- `searchGroups(query, options?)` - Search for groups
+- `getCurrentUser()` - Get authenticated user details
 
 ## 📦 NPM Module
 
@@ -234,17 +266,3 @@ const deployments = await vercel.deployments.listDeployments({ projectId: 'id' }
 const calendarList = await calendar.calendarList.listCalendars()
 const driveFiles = await drive.files.listFiles({ q: 'name contains "document"' })
 ```
-
-## Architecture Compliance
-
-✅ **ALL 6 MODULES NOW FULLY COMPLIANT**
-
-- ✅ Use `createApiBuilder` and `defineResource` from core
-- ✅ Named exports only (no default exports)
-- ✅ All functions use `function` declarations (no arrow functions)
-- ✅ All types prefixed with `T`
-- ✅ Consistent initialization pattern
-- ✅ Both convenience methods and direct resource access
-- ✅ Pure functions throughout
-- ✅ Follows exact pattern from architecture.md
-

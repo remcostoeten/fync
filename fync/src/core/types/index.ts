@@ -1,3 +1,3 @@
 export * from "./base";
-export * from "./pagination";
-export * from "./response";
+
+export type TBaseConfig = Record<string, any>;

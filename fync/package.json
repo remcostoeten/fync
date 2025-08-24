@@ -1,6 +1,6 @@
 {
 	"name": "@remcostoeten/fync",
-	"version": "3.4.3",
+	"version": "4.0.0",
 	"description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
 	"main": "dist/src/index.js",
 	"types": "dist/src/index.d.ts",
@@ -21,6 +21,11 @@
 			"import": "./dist/src/github/index.js",
 			"require": "./dist-cjs/src/github/index.js",
 			"types": "./dist/src/github/index.d.ts"
+		},
+		"./gitlab": {
+			"import": "./dist/src/gitlab/index.js",
+			"require": "./dist-cjs/src/gitlab/index.js",
+			"types": "./dist/src/gitlab/index.d.ts"
 		},
 		"./core": {
 			"import": "./dist/src/core/index.js",
@@ -55,7 +60,7 @@
 		"registry": "https://registry.npmjs.org/"
 	},
 	"scripts": {
-		"build": "tsc && (bun run build:cjs 2>/dev/null || pnpm run build:cjs)",
+		"build": "tsc && npm run build:cjs",
 		"build:cjs": "babel dist --out-dir dist-cjs --config-file ./babel.config.cjs",
 		"dev": "tsc --watch",
 		"lint": "biome lint src/",
@@ -66,41 +71,34 @@
 		"test": "vitest",
 		"test:run": "vitest run || exit 0",
 		"test:coverage": "vitest run --coverage",
-		"prepublishOnly": "(bun run build 2>/dev/null || pnpm run build) && (bun run test:run 2>/dev/null || pnpm run test:run)",
-		"release:patch": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release patch' || true && npm version patch && (bun publish 2>/dev/null || pnpm publish)",
-		"release:minor": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release minor' || true && npm version minor && (bun publish 2>/dev/null || pnpm publish)",
-		"release:major": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release major' || true && npm version major && (bun publish 2>/dev/null || pnpm publish)"
+		"release:patch": "npm run build && git add -A && git commit -m 'chore: release patch' || true && npm version patch && npm publish",
+		"release:minor": "npm run build && git add -A && git commit -m 'chore: release minor' || true && npm version minor && npm publish",
+		"release:major": "npm run build && git add -A && git commit -m 'chore: release major' || true && npm version major && npm publish"
 	},
 	"files": [
 		"dist",
 		"dist-cjs",
-		"README.md"
+		"README.md",
+		"SECURITY.md"
 	],
 	"keywords": [
 		"api",
-		"spotify",
+		"typescript",
 		"github",
 		"gitlab",
-		"npm",
+		"spotify",
+		"npm-registry",
 		"google-calendar",
-		"calendar",
-		"events",
-		"scheduling",
+		"google-drive",
+		"vercel",
 		"chainable",
-		"fluent",
-		"typescript",
-		"cache",
-		"pagination",
-		"music",
-		"playlists",
-		"tracks",
-		"albums",
-		"repositories",
-		"commits",
-		"branches",
-		"packages",
-		"registry",
-		"downloads"
+		"fluent-api",
+		"rate-limiting",
+		"caching",
+		"error-handling",
+		"type-safe",
+		"unified-api",
+		"rest-client"
 	],
 	"repository": {
 		"type": "git",
@@ -116,7 +114,6 @@
 		"node": ">=18"
 	},
 	"dependencies": {
-		"glob": "^11.0.3",
 		"undici": "^6.0.0"
 	},
 	"devDependencies": {

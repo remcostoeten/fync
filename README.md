@@ -4,7 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@remcostoeten/fync.svg)](https://www.npmjs.com/package/@remcostoeten/fync)
 [![GitHub license](https://img.shields.io/github/license/remcostoeten/fync.svg)](https://github.com/remcostoeten/fync/blob/main/LICENSE)
 
-A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, NPM, Google Calendar, etc.)
+A unified TypeScript library for easy access to popular APIs (GitHub, GitLab, Spotify, NPM, Google Calendar, etc.)
 
 ## Installation
 
@@ -89,6 +89,61 @@ const rateLimit = await github.rateLimit.get()
 
 // Get notifications
 const notifications = await github.notifications.get()
+```
+
+### GitLab API
+
+```typescript
+import { GitLab } from '@remcostoeten/fync/gitlab'
+
+// Use environment variables for security
+const gitlab = GitLab({
+  token: process.env.GITLAB_TOKEN // Get from GitLab settings > Access tokens
+})
+
+// Get user info
+const user = await gitlab.getUser('remcostoeten')
+
+// Get current authenticated user
+const me = await gitlab.getCurrentUser()
+
+// Get project details
+const project = await gitlab.getProject('gitlab-org/gitlab')
+
+// Get project from URL
+const projectFromUrl = await gitlab.getProjectFromUrl('https://gitlab.com/gitlab-org/gitlab')
+
+// Get project issues
+const issues = await gitlab.projects.getProjectIssues({ id: '278964' })
+
+// Get a specific issue
+const issue = await gitlab.projects.getProjectIssue({ 
+  id: '278964', 
+  issue_iid: '1' 
+})
+
+// Get merge requests
+const mergeRequests = await gitlab.projects.getProjectMergeRequests({ id: '278964' })
+
+// Get pipelines
+const pipelines = await gitlab.projects.getProjectPipelines({ id: '278964' })
+
+// Search projects
+const searchResults = await gitlab.searchProjects('react', {
+  order_by: 'stars',
+  sort: 'desc'
+})
+
+// Get group details
+const group = await gitlab.getGroup('gitlab-org')
+
+// Get user statistics
+const stats = await gitlab.getUserStats('remcostoeten')
+console.log(`Total projects: ${stats.totalProjects}, Total stars: ${stats.totalStars}`)
+
+// Get user's recent commits
+const commits = await gitlab.getUserCommits('remcostoeten')
+const latestCommit = await gitlab.getUserLatestCommit('remcostoeten')
 ```
 
 ### NPM Registry API
@@ -200,6 +255,20 @@ The GitHub client provides access to:
 - **Releases and tags** - Manage releases and version tags
 - **Notifications** - Get and manage notifications
 - **Rate limiting** - Check API rate limit status
+
+### GitLab
+
+The GitLab client provides access to:
+- **User and group information** - Get profiles, followers, following, group memberships
+- **Project management** - Get projects, branches, commits, contributors, languages
+- **Issues and merge requests** - Create, read, update issues and MRs
+- **Search functionality** - Search projects, users, issues, merge requests, code
+- **CI/CD pipelines** - Get pipeline runs, jobs, variables, environments
+- **Releases and tags** - Manage releases and version tags
+- **Snippets** - Create and manage code snippets
+- **Groups and subgroups** - Manage group hierarchies and permissions
+- **Personal access** - Get starred projects, todos, SSH keys
+- **Activity tracking** - Get user events and project activity
 
 ### NPM Registry
 

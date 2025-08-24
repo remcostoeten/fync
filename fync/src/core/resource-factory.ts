@@ -1,6 +1,5 @@
+
 import type { TApiClient } from "./api-factory";
-import type { TMethodConfig } from "./method-factory";
-import { buildMethodFromConfig } from "./method-factory";
 
 type TMethodDefinition = {
 	path: string;
@@ -22,15 +21,11 @@ type TResource<TMethods extends TResourceMethods> = {
 		: (options?: any) => Promise<any>;
 };
 
-type TResourceBuilder = {
-	methods: (methodsMap: Record<string, TMethodConfig | string>) => TResourceBuilder;
-	build: (apiClient: TApiClient) => any;
-};
 
 function interpolatePath(
 	template: string,
 	params: Record<string, any>,
-): string {
+): { path: string; queryParams: Record<string, any> } {
 	let path = template;
 	const queryParams: Record<string, any> = {};
 
@@ -43,7 +38,7 @@ function interpolatePath(
 		}
 	});
 
-	return { path, queryParams } as any;
+	return { path, queryParams };
 }
 
 export function createFyncResource<TMethods extends TResourceMethods>(
@@ -69,7 +64,7 @@ export function createFyncResource<TMethods extends TResourceMethods>(
 						options || {},
 					);
 					const response = await apiClient[
-						definition.method.toLowerCase() as "post" | "put" | "patch"
+						(definition.method || "GET").toLowerCase() as "post" | "put" | "patch"
 					](path, data, { params: queryParams });
 					return definition.transform
 						? definition.transform(response)

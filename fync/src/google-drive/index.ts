@@ -159,7 +159,7 @@ type TGoogleDriveModule = TModule<typeof resources> & {
 
 export function GoogleDrive(config: { token: string }): TGoogleDriveModule {
 	const base = buildGoogleDrive(config, resources);
-	const drive = base as TGoogleDriveModule;
+	const drive = base as unknown as TGoogleDriveModule;
 
 	drive.listFiles = function (options?: any) {
 		return base.files.listFiles(options);

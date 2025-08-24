@@ -1,9 +1,6 @@
 import type { TBaseConfig } from "./types";
-import { type TResult, success, failure, type TApiError } from "./result";
-import { Cache, type TCacheConfig } from "./cache";
-import { RateLimiter, type TRateLimitConfig } from "./rate-limiter";
 
-type TApiConfig = TBaseConfig & {
+export type TApiConfig = TBaseConfig & {
 	baseUrl: string;
 	headers?: Record<string, string>;
 	auth?: {
@@ -22,7 +19,7 @@ type TRequestOptions = {
 	headers?: Record<string, string>;
 };
 
-type TApiClient = {
+export type TApiClient = {
 	request<T>(
 		method: THttpMethod,
 		path: string,
@@ -160,5 +157,3 @@ export function createFyncApi(config: TApiConfig): TApiClient {
 		patch,
 	};
 }
-
-export type { TApiClient, TApiConfig, THttpMethod, TRequestOptions };

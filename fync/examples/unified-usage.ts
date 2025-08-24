@@ -5,13 +5,79 @@
  * All APIs follow the same pattern and provide rich convenience methods
  */
 
-import { GitHub, NPM, Spotify, Vercel } from "src";
+import { GitHub, GitLab, NPM, Spotify, Vercel } from "src";
 
+async function gitlabExamples() {
+	const gitlab = GitLab({ token: process.env.GITLAB_TOKEN! });
+
+	const user = await gitlab.getUser("remcostoeten");
+	console.log(`User ${user.username} has ${user.followers || 0} followers`);
+
+	// Project queries - multiple syntaxes supported
+	const project1 = await gitlab.getProject("remcostoeten/fync");
+	const project2 = await gitlab.getProjectFromUrl("https://gitlab.com/remcostoeten/fync");
+	
+	// Commit queries with various options
+	const allCommits = await gitlab.getUserCommits("remcostoeten");
+	const latestCommit = await gitlab.getUserLatestCommit("remcostoeten");
+	const lastYearCommits = await gitlab.getUserCommitsInTimeframe("remcostoeten", "1Y");
+	const last3MonthCommits = await gitlab.getUserCommitsInTimeframe("remcostoeten", "3M");
+	
+	// Stars and project metadata
+	const projectStars = await gitlab.getProjectStars("remcostoeten/fync");
+	const userStarredCount = await gitlab.getUserStarredCount("remcostoeten");
+	
+	// Comprehensive user statistics
+	const stats = await gitlab.getUserStats("remcostoeten");
+	console.log(`Total projects: ${stats.totalProjects}, Total stars: ${stats.totalStars}`);
+	
+	// Search functionality
+	const searchResults = await gitlab.searchProjects("typescript react", {
+		order_by: "stars",
+		sort: "desc",
+		per_page: 10,
+	});
+
+	// Direct resource access for advanced usage
+	const issues = await gitlab.projects.getProjectIssues({
+		id: "123",
+		state: "opened",
+		labels: "bug",
+	});
+
+	// Creating content
+	const newIssue = await gitlab.projects.createProjectIssue(
+		{
+			title: "Bug report",
+			description: "Something is broken",
+			labels: ["bug", "urgent"],
+		},
+		{ id: "123" }
+	);
+
+	// Groups and organizations
+	const group = await gitlab.getGroup("mygroup");
+	const groupProjects = await gitlab.groups.getGroupProjects({ id: "mygroup" });
+
+	// Merge requests
+	const mergeRequests = await gitlab.projects.getProjectMergeRequests({ id: "123" });
+	const mr = await gitlab.projects.getProjectMergeRequest({ 
+		id: "123", 
+		merge_request_iid: "1" 
+	});
+
+	// Pipelines and CI/CD
+	const pipelines = await gitlab.projects.getProjectPipelines({ id: "123" });
+	const jobs = await gitlab.projects.getProjectJobs({ id: "123" });
+
+	// Current user
+	const currentUser = await gitlab.getCurrentUser();
+	console.log(`Authenticated as: ${currentUser.username}`);
+}
 
 async function githubExamples() {
 	const github = GitHub({ token: process.env.GITHUB_TOKEN! });
 
-	// Simple user queries
 	const user = await github.getUser("remcostoeten");
 	console.log(`User ${user.login} has ${user.followers} followers`);
 
@@ -261,6 +327,11 @@ async function main() {
 	if (process.env.GITHUB_TOKEN) {
 		console.log("📦 GitHub Examples:");
 		await githubExamples();
+	}
+
+	if (process.env.GITLAB_TOKEN) {
+		console.log("\n🦊 GitLab Examples:");
+		await gitlabExamples();
 	}
 
 	console.log("\n📦 NPM Examples:");
