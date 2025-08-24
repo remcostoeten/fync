@@ -30,7 +30,7 @@ type TResourceBuilder = {
 function interpolatePath(
 	template: string,
 	params: Record<string, any>,
-): string {
+): { path: string; queryParams: Record<string, any> } {
 	let path = template;
 	const queryParams: Record<string, any> = {};
 
@@ -43,7 +43,7 @@ function interpolatePath(
 		}
 	});
 
-	return { path, queryParams } as any;
+	return { path, queryParams };
 }
 
 export function createFyncResource<TMethods extends TResourceMethods>(

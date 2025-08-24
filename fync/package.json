@@ -1,6 +1,6 @@
 {
 	"name": "@remcostoeten/fync",
-	"version": "3.4.3",
+	"version": "4.0.0",
 	"description": "A unified TypeScript library for easy access to popular APIs (GitHub, Spotify, GitLab, etc.)",
 	"main": "dist/src/index.js",
 	"types": "dist/src/index.d.ts",
@@ -66,7 +66,6 @@
 		"test": "vitest",
 		"test:run": "vitest run || exit 0",
 		"test:coverage": "vitest run --coverage",
-		"prepublishOnly": "(bun run build 2>/dev/null || pnpm run build) && (bun run test:run 2>/dev/null || pnpm run test:run)",
 		"release:patch": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release patch' || true && npm version patch && (bun publish 2>/dev/null || pnpm publish)",
 		"release:minor": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release minor' || true && npm version minor && (bun publish 2>/dev/null || pnpm publish)",
 		"release:major": "(bun run build 2>/dev/null || pnpm run build) && git add -A && git commit -m 'chore: release major' || true && npm version major && (bun publish 2>/dev/null || pnpm publish)"
