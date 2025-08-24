@@ -52,13 +52,17 @@
 			"require": "./dist-cjs/src/vercel/index.js",
 			"types": "./dist/src/vercel/index.d.ts"
 		},
-		"./discord": {
-			"import": "./dist/src/discord/index.js",
-			"require": "./dist-cjs/src/discord/index.js",
-			"types": "./dist/src/discord/index.d.ts"
-		},
-		"./package.json": "./package.json"
-	},
+    "./discord": {
+      "import": "./dist/src/discord/index.js",
+      "require": "./dist-cjs/src/discord/index.js",
+      "types": "./dist/src/discord/index.d.ts"
+    },
+    "./notion": {
+      "import": "./dist/src/notion/index.js",
+      "require": "./dist-cjs/src/notion/index.js",
+      "types": "./dist/src/notion/index.d.ts"
+    }
+  },
 	"sideEffects": false,
 	"publishConfig": {
 		"access": "public",
@@ -97,6 +101,8 @@
 		"google-drive",
 		"vercel",
 		"discord",
+		"notion",
+		"notion-api",
 		"chainable",
 		"fluent-api",
 		"rate-limiting",

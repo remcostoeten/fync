@@ -27,3 +27,6 @@ export { GoogleDrive } from "./google-drive";
 export * from "./google-drive/types";
 export { Discord } from "./discord";
 export * from "./discord/types";
+export { Notion } from "./notion";
+export * from "./notion/types";
+export type { TNotionModule } from "./notion";
