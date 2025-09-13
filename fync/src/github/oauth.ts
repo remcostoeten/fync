@@ -421,7 +421,7 @@ export class GitHubOAuth {
  * @param config OAuth configuration
  * @returns GitHubOAuth instance
  */
-export function GitHubOAuth(config: GitHubOAuthConfig): GitHubOAuth {
+export function createGitHubOAuth(config: GitHubOAuthConfig): GitHubOAuth {
 	return new GitHubOAuth(config);
 }
 
