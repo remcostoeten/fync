@@ -22,6 +22,11 @@
 			"require": "./dist-cjs/src/github/index.js",
 			"types": "./dist/src/github/index.d.ts"
 		},
+		"./github/oauth": {
+			"import": "./dist/src/github/oauth.js",
+			"require": "./dist-cjs/src/github/oauth.js",
+			"types": "./dist/src/github/oauth.d.ts"
+		},
 		"./gitlab": {
 			"import": "./dist/src/gitlab/index.js",
 			"require": "./dist-cjs/src/gitlab/index.js",
@@ -41,6 +46,11 @@
 			"import": "./dist/src/google-calendar/index.js",
 			"require": "./dist-cjs/src/google-calendar/index.js",
 			"types": "./dist/src/google-calendar/index.d.ts"
+		},
+		"./google/oauth": {
+			"import": "./dist/src/google-calendar/oauth.js",
+			"require": "./dist-cjs/src/google-calendar/oauth.js",
+			"types": "./dist/src/google-calendar/oauth.d.ts"
 		},
 		"./google-drive": {
 			"import": "./dist/src/google-drive/index.js",

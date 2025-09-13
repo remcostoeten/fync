@@ -3,6 +3,7 @@ export * from "./github-actions";
 export * from "./github-common";
 export * from "./github-gist";
 export * from "./github-issues";
+export * from "./github-oauth";
 export * from "./github-organization";
 export * from "./github-pull-request";
 export * from "./github-release";

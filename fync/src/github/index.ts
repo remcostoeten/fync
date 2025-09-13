@@ -342,3 +342,7 @@ export function GitHub(config: { token: string }): TGitHubModule {
 
 	return github;
 }
+
+// Export OAuth functionality
+export { GitHubOAuth } from "./oauth";
+export * from "./types";

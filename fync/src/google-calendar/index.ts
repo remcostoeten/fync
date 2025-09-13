@@ -289,4 +289,6 @@ export function GoogleCalendar(config: {
 
 	return calendar;
 }
+
+export { GoogleOAuth } from "./oauth";
 export * from "./types";
