@@ -429,7 +429,17 @@ export class GoogleOAuth {
  * @param config OAuth configuration
  * @returns GoogleOAuth instance
  */
-export function GoogleOAuth(config: GoogleOAuthConfig): GoogleOAuth {
+export function createGoogleOAuth(config: GoogleOAuthConfig): GoogleOAuth {
+	return new GoogleOAuth(config);
+}
+
+/**
+ * Functional factory for Google OAuth - preferred pattern
+ * 
+ * @param config OAuth configuration
+ * @returns GoogleOAuth instance
+ */
+export function googleOAuth(config: GoogleOAuthConfig): GoogleOAuth {
 	return new GoogleOAuth(config);
 }
 

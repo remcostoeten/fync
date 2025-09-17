@@ -13,8 +13,8 @@ export { version } from "./core";
 export { GitHub } from "./github";
 export { GitLab } from "./gitlab";
 // OAuth exports
-export { GitHubOAuth } from "./github/oauth";
-export { GoogleOAuth } from "./google-calendar/oauth";
+export { GitHubOAuth, createGitHubOAuth, gitHubOAuth } from "./github/oauth";
+export { GoogleOAuth, createGoogleOAuth, googleOAuth } from "./google-calendar/oauth";
 // Type exports
 export * from "./github/types";
 export * from "./gitlab/types";

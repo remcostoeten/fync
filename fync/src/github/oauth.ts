@@ -425,6 +425,16 @@ export function createGitHubOAuth(config: GitHubOAuthConfig): GitHubOAuth {
 	return new GitHubOAuth(config);
 }
 
+/**
+ * Functional factory for GitHub OAuth - preferred pattern
+ * 
+ * @param config OAuth configuration
+ * @returns GitHubOAuth instance
+ */
+export function gitHubOAuth(config: GitHubOAuthConfig): GitHubOAuth {
+	return new GitHubOAuth(config);
+}
+
 // Export types for external use
 export type {
 	GitHubOAuthConfig,

@@ -1,6 +1,6 @@
 {
 	"name": "@remcostoeten/fync",
-	"version": "5.1.1",
+	"version": "5.1.2",
 	"description": "Unified TypeScript library for 9 popular APIs with consistent functional architecture",
 	"main": "dist/src/index.js",
 	"types": "dist/src/index.d.ts",
