@@ -1,0 +1,37 @@
+{
+  "name": "fync-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo for Fync - Unified TypeScript library for 9 popular APIs",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "cd apps/fync && bun run build",
+    "dev": "cd apps/fync && bun run dev",
+    "lint": "cd apps/fync && bun run lint",
+    "lint:fix": "cd apps/fync && bun run lint:fix",
+    "format": "cd apps/fync && bun run format",
+    "check": "cd apps/fync && bun run check",
+    "check:fix": "cd apps/fync && bun run check:fix",
+    "test": "cd apps/fync && bun run test",
+    "test:run": "cd apps/fync && bun run test:run",
+    "test:coverage": "cd apps/fync && bun run test:coverage",
+    "release:patch": "cd apps/fync && bun run release:patch",
+    "release:minor": "cd apps/fync && bun run release:minor",
+    "release:major": "cd apps/fync && bun run release:major"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remcostoeten/fync.git"
+  },
+  "homepage": "https://github.com/remcostoeten/fync#readme",
+  "bugs": {
+    "url": "https://github.com/remcostoeten/fync/issues"
+  },
+  "license": "MIT",
+  "author": "remcostoeten (github.com/remcostoeten)",
+  "engines": {
+    "node": ">=18"
+  }
+}

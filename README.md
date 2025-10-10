@@ -9,7 +9,47 @@ A unified TypeScript library for easy access to popular APIs (GitHub, GitLab, Sp
 ## Installation
 
 ```bash
-npm install @remcostoeten/fync
+bun add @remcostoeten/fync
+```
+
+## Development
+
+This is a monorepo using Bun workspaces. The main library is located in `apps/fync/` and usage examples are in `apps/examples/`.
+
+### Setup
+
+```bash
+# Install dependencies for all workspaces
+bun install
+
+# Build the library
+bun run build
+
+# Run tests
+bun run test
+
+# Start development mode (watch for changes)
+bun run dev
+```
+
+### Project Structure
+
+```
+fync/
+├── README.md           # This file
+├── LICENSE
+├── package.json        # Workspace root
+├── bun.lock
+├── .npmrc
+└── apps/
+    ├── fync/           # Main @remcostoeten/fync package
+    │   ├── src/        # TypeScript source code
+    │   ├── dist/       # Compiled output
+    │   └── package.json
+    └── examples/       # Usage examples
+        ├── oauth-drizzle-nextjs.ts
+        ├── oauth-simple-usage.ts
+        └── unified-usage.ts
 ```
 
 ## Usage

@@ -1,0 +1,17 @@
+{
+  "name": "@remcostoeten/fync-examples",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Usage examples for Fync - Unified TypeScript library for popular APIs",
+  "type": "module",
+  "dependencies": {
+    "@remcostoeten/fync": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^24.0.14"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  }
+}

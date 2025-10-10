@@ -79,7 +79,7 @@
 		"registry": "https://registry.npmjs.org/"
 	},
 	"scripts": {
-		"build": "tsc && npm run build:cjs",
+		"build": "tsc && bun run build:cjs",
 		"build:cjs": "babel dist --out-dir dist-cjs --config-file ./babel.config.cjs",
 		"dev": "tsc --watch",
 		"lint": "biome lint src/",
@@ -90,9 +90,9 @@
 		"test": "vitest",
 		"test:run": "vitest run || exit 0",
 		"test:coverage": "vitest run --coverage",
-		"release:patch": "npm run build && git add -A && git commit -m 'chore: release patch' || true && npm version patch && npm publish",
-		"release:minor": "npm run build && git add -A && git commit -m 'chore: release minor' || true && npm version minor && npm publish",
-		"release:major": "npm run build && git add -A && git commit -m 'chore: release major' || true && npm version major && npm publish"
+		"release:patch": "bun run build && git add -A && git commit -m 'chore: release patch' || true && bun version patch && bun publish",
+		"release:minor": "bun run build && git add -A && git commit -m 'chore: release minor' || true && bun version minor && bun publish",
+		"release:major": "bun run build && git add -A && git commit -m 'chore: release major' || true && bun version major && bun publish"
 	},
 	"files": [
 		"dist",
