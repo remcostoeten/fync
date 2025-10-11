@@ -1,0 +1,113 @@
+'use client'
+
+import { Music } from 'lucide-react'
+import { spotifyContent } from '@/content/spotify'
+import { ApiMethod } from '@/components/api-method'
+import { TableOfContents } from '@/components/table-of-contents'
+import { CodeBlock } from '@/components/code-block'
+import { useToc } from '@/hooks/use-toc'
+
+export function SpotifyApiView() {
+  const tocItems = useToc({ sections: spotifyContent })
+
+  return (
+    <div className="flex gap-8">
+      <div
+        className="flex-1 space-y-12"
+      >
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-green-400/20 rounded-lg flex items-center justify-center">
+              <Music className="w-7 h-7 text-green-400" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground">
+              Spotify API
+            </h1>
+          </div>
+          
+          <p className="text-lg text-muted-foreground max-w-3xl">
+            Full-featured Spotify Web API client with authentication and comprehensive music streaming functionality.
+            Control playback, access user data, manage playlists, and discover new music with type-safe methods.
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            <span className="text-xs px-3 py-1.5 bg-green-400/20 text-green-400 rounded-full">
+              Stable
+            </span>
+            <span className="text-xs px-3 py-1.5 bg-purple-400/20 text-purple-400 rounded-full">
+              OAuth2 Support
+            </span>
+            <span className="text-xs px-3 py-1.5 bg-blue-400/20 text-blue-400 rounded-full">
+              Player Control
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-foreground">
+            Quick Start
+          </h2>
+          <CodeBlock
+            code={`import { Spotify } from '@remcostoeten/fync/spotify'
+
+const spotify = Spotify({ token: 'your-spotify-oauth-token' })
+
+const currentUser = await spotify.getCurrentUser()
+const topTracks = await spotify.getMyTopTracks({ limit: 10 })`}
+            language="typescript"
+            filename="example.ts"
+          />
+        </div>
+
+        <div className="space-y-16">
+          {spotifyContent.map(function renderSection(section, sectionIndex) {
+            return (
+              <section
+                key={section.id}
+                id={section.id}
+                className="space-y-8 scroll-mt-24"
+              >
+                <div className="space-y-3 border-l-4 border-accent pl-4">
+                  <h2 className="text-3xl font-bold text-foreground">
+                    {section.title}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {section.description}
+                  </p>
+                </div>
+
+                <div className="space-y-12">
+                  {section.methods.map(function renderMethod(method) {
+                    return (
+                      <ApiMethod key={method.id} method={method} />
+                    )
+                  })}
+                </div>
+              </section>
+            )
+          })}
+        </div>
+
+        <div className="border-t border-border pt-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Need more examples? Check out the{' '}
+                <a
+                  href="https://github.com/remcostoeten/fync/tree/main/examples"
+                  className="text-accent hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  examples repository
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <TableOfContents items={tocItems} className="w-64" />
+    </div>
+  )
+}
