@@ -23,6 +23,7 @@ const deploymentResource = defineResource({
 	methods: {
 		listDeployments: { path: "" },
 		getDeployment: { path: "/{deploymentId}" },
+    createDeployment: { path: "", method: "POST" },
 		deleteDeployment: { path: "/{deploymentId}", method: "DELETE" },
 		getDeploymentEvents: { path: "/{deploymentId}/events" },
 		getDeploymentFiles: { path: "/{deploymentId}/files" },

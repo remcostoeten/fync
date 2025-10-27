@@ -56,19 +56,30 @@ export function createFyncResource<TMethods extends TResourceMethods>(
 			if (
 				definition.method === "POST" ||
 				definition.method === "PUT" ||
-				definition.method === "PATCH"
+				definition.method === "PATCH" ||
+				definition.method === "DELETE"
 			) {
 				return async function (data?: any, options?: any) {
-					const { path, queryParams } = interpolatePath(
-						fullPath,
-						options || {},
-					);
-					const response = await apiClient[
-						(definition.method || "GET").toLowerCase() as "post" | "put" | "patch"
-					](path, data, { params: queryParams });
-					return definition.transform
-						? definition.transform(response)
-						: response;
+					const method = definition.method || "GET";
+					// Special handling for DELETE to support both legacy (options-only) and body+options forms
+					if (method === "DELETE") {
+						if (options === undefined) {
+							// Legacy signature: delete(options)
+							const { path, queryParams } = interpolatePath(fullPath, data || {});
+							const response = await apiClient.delete(path, { params: queryParams });
+							return definition.transform ? definition.transform(response) : response;
+						}
+						// Body-capable signature: delete(data, options)
+						const { path, queryParams } = interpolatePath(fullPath, options || {});
+						const response = await apiClient.delete(path, { params: queryParams, body: data });
+						return definition.transform ? definition.transform(response) : response;
+					}
+
+					// POST/PUT/PATCH body-capable
+					const { path, queryParams } = interpolatePath(fullPath, options || {});
+					const verb = method.toLowerCase() as "post" | "put" | "patch";
+					const response = await (apiClient as any)[verb](path, data, { params: queryParams });
+					return definition.transform ? definition.transform(response) : response;
 				};
 			}
 

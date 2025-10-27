@@ -64,46 +64,13 @@ export class GitHubOAuth {
 	 * Generate PKCE code verifier and challenge
 	 */
 	generatePKCE(): { codeVerifier: string; codeChallenge: string } {
-		// Generate a random 43-128 character string for code_verifier
-		const array = new Uint8Array(32);
-		if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-			crypto.getRandomValues(array);
-		} else {
-			// Fallback for Node.js environments
-			const cryptoNode = require('crypto');
-			const bytes = cryptoNode.randomBytes(32);
-			for (let i = 0; i < 32; i++) {
-				array[i] = bytes[i];
-			}
-		}
-		
-		const codeVerifier = btoa(String.fromCharCode(...array))
-			.replace(/\+/g, '-')
-			.replace(/\//g, '_')
-			.replace(/=/g, '');
-
-		// Create code_challenge using SHA256
-		const encoder = new TextEncoder();
-		const data = encoder.encode(codeVerifier);
-		
-		let codeChallenge: string;
-		if (typeof crypto !== 'undefined' && crypto.subtle) {
-			// Browser environment
-			crypto.subtle.digest('SHA-256', data).then(hash => {
-				const hashArray = new Uint8Array(hash);
-				codeChallenge = btoa(String.fromCharCode(...hashArray))
-					.replace(/\+/g, '-')
-					.replace(/\//g, '_')
-					.replace(/=/g, '');
-			});
-		} else {
-			// Node.js environment
-			const cryptoNode = require('crypto');
-			const hash = cryptoNode.createHash('sha256').update(codeVerifier).digest();
-			codeChallenge = hash.toString('base64url');
-		}
-
-		return { codeVerifier, codeChallenge: codeChallenge! };
+		// Node/browser safe synchronous implementation
+		const nodeCrypto = require('crypto');
+		const verifierBytes = nodeCrypto.randomBytes(32);
+		const codeVerifier = verifierBytes.toString('base64url');
+		const hash = nodeCrypto.createHash('sha256').update(codeVerifier).digest();
+		const codeChallenge = hash.toString('base64url');
+		return { codeVerifier, codeChallenge };
 	}
 
 	/**

@@ -174,35 +174,31 @@ export function GoogleDrive(config: { token: string }): TGoogleDriveModule {
 		return base.files.createFile(body);
 	};
 
-	drive.updateFile = function (fileId: string, metadata?: any, content?: any) {
-		const body = content ? { ...metadata, media: content } : metadata;
-		return base.files.updateFile({ fileId, ...body });
-	};
+drive.updateFile = function (fileId: string, metadata?: any, content?: any) {
+  const body = content ? { ...metadata, media: content } : (metadata || {});
+  return base.files.updateFile(body, { fileId });
+};
 
 	drive.deleteFile = function (fileId: string) {
 		return base.files.deleteFile({ fileId });
 	};
 
-	drive.copyFile = function (fileId: string, name?: string) {
-		const body = name ? { name } : {};
-		return base.files.copyFile({ fileId, ...body });
-	};
+drive.copyFile = function (fileId: string, name?: string) {
+  const body = name ? { name } : {};
+  return base.files.copyFile(body, { fileId });
+};
 
-	drive.moveFile = function (fileId: string, parentId: string) {
-		return base.files.updateFile({
-			fileId,
-			addParents: parentId,
-			removeParents: "root",
-		});
-	};
+drive.moveFile = function (fileId: string, parentId: string) {
+  return base.files.updateFile({ addParents: parentId, removeParents: "root" }, { fileId });
+};
 
-	drive.downloadFile = function (fileId: string) {
-		return base.files.downloadFile({ fileId, alt: "media" });
-	};
+drive.downloadFile = function (fileId: string) {
+  return base.files.downloadFile({ fileId, alt: "media" });
+};
 
-	drive.exportFile = function (fileId: string, mimeType: string) {
-		return base.files.exportFile({ fileId, mimeType });
-	};
+drive.exportFile = function (fileId: string, mimeType: string) {
+  return base.files.exportFile({ fileId, mimeType });
+};
 
 	drive.createFolder = function (name: string, parentId?: string) {
 		const metadata = {
@@ -309,13 +305,13 @@ export function GoogleDrive(config: { token: string }): TGoogleDriveModule {
 		return base.files.emptyTrash();
 	};
 
-	drive.restoreFile = function (fileId: string) {
-		return base.files.updateFile({ fileId, trashed: false });
-	};
+drive.restoreFile = function (fileId: string) {
+  return base.files.updateFile({ trashed: false }, { fileId });
+};
 
-	drive.permanentlyDeleteFile = function (fileId: string) {
-		return base.files.deleteFile({ fileId, supportsAllDrives: true });
-	};
+drive.permanentlyDeleteFile = function (fileId: string) {
+  return base.files.deleteFile({ fileId, supportsAllDrives: true });
+};
 
 	return drive;
 }

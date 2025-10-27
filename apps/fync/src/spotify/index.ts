@@ -48,6 +48,14 @@ const playlistResource = defineResource({
 			path: "/{playlist_id}/tracks",
 			method: "DELETE",
 		},
+    reorderPlaylistTracks: {
+      path: "/{playlist_id}/tracks",
+      method: "PUT",
+    },
+    replacePlaylistTracks: {
+      path: "/{playlist_id}/tracks",
+      method: "PUT",
+    },
 		getFeaturedPlaylists: { path: "/browse/featured-playlists" },
 		getCategoryPlaylists: {
 			path: "/browse/categories/{category_id}/playlists",
@@ -286,13 +294,13 @@ export function Spotify(config: { token: string }): TSpotifyModule {
 		);
 	};
 
-	spotify.addTracksToPlaylist = function (
+spotify.addTracksToPlaylist = function (
 		playlistId: string,
 		trackUris: string[],
 	) {
 		return base.playlists.addTracksToPlaylist(
-			{ uris: trackUris },
-			{ playlist_id: playlistId },
+    { uris: trackUris },
+    { playlist_id: playlistId },
 		);
 	};
 
@@ -393,19 +401,19 @@ export function Spotify(config: { token: string }): TSpotifyModule {
 		);
 	};
 
-	spotify.reorderPlaylistTracks = function (playlistId: string, rangeStart: number, insertBefore: number, rangeLength?: number) {
-		return base.playlists.reorderPlaylistTracks(
-			{ playlist_id: playlistId },
-			{ range_start: rangeStart, insert_before: insertBefore, range_length: rangeLength }
-		);
-	};
+spotify.reorderPlaylistTracks = function (playlistId: string, rangeStart: number, insertBefore: number, rangeLength?: number) {
+  return base.playlists.reorderPlaylistTracks(
+    { range_start: rangeStart, insert_before: insertBefore, range_length: rangeLength },
+    { playlist_id: playlistId }
+  );
+};
 
-	spotify.replacePlaylistTracks = function (playlistId: string, trackUris: string[]) {
-		return base.playlists.replacePlaylistTracks(
-			{ playlist_id: playlistId },
-			{ uris: trackUris }
-		);
-	};
+spotify.replacePlaylistTracks = function (playlistId: string, trackUris: string[]) {
+  return base.playlists.replacePlaylistTracks(
+    { uris: trackUris },
+    { playlist_id: playlistId }
+  );
+};
 
 	spotify.searchShows = function (query: string, options?: any) {
 		return spotify.search(query, ["show"], options);

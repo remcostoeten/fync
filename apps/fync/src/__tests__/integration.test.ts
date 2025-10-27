@@ -38,6 +38,8 @@ describe('Fync Integration Tests', () => {
       expect(spotify).toBeDefined();
       expect(typeof spotify.getCurrentUser).toBe('function');
       expect(typeof spotify.getUserProfile).toBe('function');
+      expect(typeof (spotify as any).reorderPlaylistTracks).toBe('function');
+      expect(typeof (spotify as any).replacePlaylistTracks).toBe('function');
     });
 
     it('should create other API instances', () => {
@@ -81,6 +83,28 @@ describe('Fync Integration Tests', () => {
       expect(client).toBeDefined();
       expect(typeof client.get).toBe('function');
       expect(typeof client.post).toBe('function');
+    });
+
+    it('api client should attach user-agent header and handle 204/text', async () => {
+      const { createFyncApi } = Fync as any;
+      const originalFetch = (global as any).fetch;
+      try {
+        // 204 case
+        (global as any).fetch = async () => ({ ok: true, status: 204, headers: new Headers(), text: async () => '' });
+        const api = createFyncApi({ baseUrl: 'https://example.com' });
+        const res = await api.get('/no-content');
+        expect(res).toBeUndefined();
+
+        // text case checking user-agent
+        (global as any).fetch = async (_url: string, init: any) => {
+          expect(init.headers['User-Agent']).toBeDefined();
+          return { ok: true, status: 200, headers: new Headers({ 'content-type': 'text/plain' }), text: async () => 'ok' };
+        };
+        const text = await api.get('/text');
+        expect(text).toBe('ok');
+      } finally {
+        (global as any).fetch = originalFetch;
+      }
     });
   });
 

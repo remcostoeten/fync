@@ -268,7 +268,7 @@ export function GoogleCalendar(config: {
 	};
 
 	calendar.createEvent = function (calendarId: string, event: any) {
-		return base.events.insertEvent({ calendarId, ...event });
+		return base.events.insertEvent(event, { calendarId });
 	};
 
 	calendar.updateEvent = function (
@@ -276,7 +276,7 @@ export function GoogleCalendar(config: {
 		eventId: string,
 		event: any,
 	) {
-		return base.events.updateEvent({ calendarId, eventId, ...event });
+		return base.events.updateEvent(event, { calendarId, eventId });
 	};
 
 	calendar.deleteEvent = function (calendarId: string, eventId: string) {
@@ -284,7 +284,7 @@ export function GoogleCalendar(config: {
 	};
 
 	calendar.quickAddEvent = function (calendarId: string, text: string) {
-		return base.events.quickAddEvent({ calendarId, text });
+		return base.events.quickAddEvent({ text }, { calendarId });
 	};
 
 	return calendar;

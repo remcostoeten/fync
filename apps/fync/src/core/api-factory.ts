@@ -1,4 +1,5 @@
 import type { TBaseConfig } from "./types";
+import { userAgent } from "./constants";
 
 export type TApiConfig = TBaseConfig & {
 	baseUrl: string;
@@ -71,40 +72,70 @@ function buildUrl(
 export function createFyncApi(config: TApiConfig): TApiClient {
 	const authHeaders = buildAuthHeaders(config.auth);
 	const defaultHeaders = {
-		"Content-Type": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": userAgent,
 		...config.headers,
 		...authHeaders,
 	};
 
-	async function request<T>(
+  async function request<T>(
 		method: THttpMethod,
 		path: string,
 		options?: TRequestOptions,
 	): Promise<T> {
 		const url = buildUrl(config.baseUrl, path, options?.params);
-		const headers = { ...defaultHeaders, ...options?.headers };
+    const headers = { ...defaultHeaders, ...options?.headers } as Record<string, string>;
 
-		const fetchOptions: RequestInit = {
-			method,
-			headers,
-		};
+    const fetchOptions: RequestInit = {
+      method,
+      headers,
+    };
 
-		if (options?.body && method !== "GET") {
-			fetchOptions.body = JSON.stringify(options.body);
-		}
+    // Body handling for non-GET methods
+    if (options?.body && method !== "GET") {
+      const explicitContentType = headers["Content-Type"] || headers["content-type"];
+      const body = options.body as any;
+
+      if (typeof FormData !== "undefined" && body instanceof FormData) {
+        // Let the browser/node set correct multipart boundary; remove explicit header
+        delete (headers as any)["Content-Type"];
+        delete (headers as any)["content-type"];
+        fetchOptions.body = body as any;
+      } else if (typeof body === "string" || body instanceof Uint8Array || body instanceof ArrayBuffer) {
+        fetchOptions.body = body as any;
+      } else if (explicitContentType && explicitContentType.includes("application/x-www-form-urlencoded")) {
+        const params = new URLSearchParams();
+        Object.entries(body).forEach(function ([k, v]) {
+          if (v !== undefined && v !== null) params.append(k, String(v));
+        });
+        fetchOptions.body = params.toString();
+      } else {
+        fetchOptions.body = JSON.stringify(body);
+      }
+    }
 
 		try {
-			const response = await fetch(url, fetchOptions);
+      const response = await fetch(url, fetchOptions);
 
-			if (!response.ok) {
+      if (!response.ok) {
 				const errorText = await response.text();
 				throw new Error(
 					`API request failed: ${response.status} ${response.statusText} - ${errorText}`,
 				);
 			}
 
-			const data = await response.json();
-			return data as T;
+      // Handle 204 No Content or empty body
+      if (response.status === 204) {
+        return undefined as unknown as T;
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await response.json();
+        return data as T;
+      }
+      const text = await response.text();
+      return text as unknown as T;
 		} catch (error) {
 			if (error instanceof Error) {
 				throw error;
